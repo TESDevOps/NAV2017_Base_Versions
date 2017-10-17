@@ -1,0 +1,60 @@
+OBJECT Table 2000000181 Media
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/09/17;
+    Time=12:00:00;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Media;
+               ENG=Media];
+  }
+  FIELDS
+  {
+    { 1   ;   ;ID                  ;GUID          ;CaptionML=[ENU=ID;
+                                                              ENG=ID] }
+    { 2   ;   ;Description         ;Text250       ;CaptionML=[ENU=Description;
+                                                              ENG=Description] }
+    { 3   ;   ;Content             ;BLOB          ;CaptionML=[ENU=Content;
+                                                              ENG=Content];
+                                                   SubType=Bitmap }
+    { 4   ;   ;Mime Type           ;Text100       ;CaptionML=[ENU=Mime Type;
+                                                              ENG=Mime Type] }
+    { 5   ;   ;Height              ;Integer       ;CaptionML=[ENU=Height;
+                                                              ENG=Height] }
+    { 6   ;   ;Width               ;Integer       ;CaptionML=[ENU=Width;
+                                                              ENG=Width] }
+    { 7   ;   ;Company Name        ;Text30        ;TableRelation=Company.Name;
+                                                   CaptionML=[ENU=Company Name;
+                                                              ENG=Company Name] }
+    { 8   ;   ;Expiration Date     ;DateTime      ;CaptionML=[ENU=Expiration Date;
+                                                              ENG=Expiration Date] }
+    { 10  ;   ;Prohibit Cache      ;Boolean       ;CaptionML=[ENU=Prohibit Cache;
+                                                              ENG=Prohibit Cache] }
+    { 11  ;   ;File Name           ;Text250       ;CaptionML=[ENU=File Name;
+                                                              ENG=File Name] }
+    { 12  ;   ;Security Token      ;Text100       ;CaptionML=[ENU=Security Token;
+                                                              ENG=Security Token] }
+    { 13  ;   ;Creating User       ;Text50        ;CaptionML=[ENU=Creating User;
+                                                              ENG=Creating User] }
+  }
+  KEYS
+  {
+    {    ;ID                                      ;Clustered=Yes }
+    {    ;Security Token                           }
+    {    ;Company Name                             }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

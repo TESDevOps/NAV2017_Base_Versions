@@ -1,0 +1,124 @@
+OBJECT Page 2105 O365 Monthly Customer Listpart
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Customers;
+               ENG=Customers];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    SourceTable=Table18;
+    SourceTableView=SORTING(Name);
+    PageType=ListPart;
+    SourceTableTemporary=Yes;
+    ActionList=ACTIONS
+    {
+      { 3       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 5       ;1   ;Action    ;
+                      ShortCutKey=Return;
+                      CaptionML=[ENU=View;
+                                 ENG=View];
+                      ToolTipML=[ENU=Open the card for the selected record.;
+                                 ENG=Open the card for the selected record.];
+                      ApplicationArea=#Basic, #Suite;
+                      RunObject=Page 2109;
+                      RunPageLink=Sell-to Customer Name=FIELD(Name);
+                      Visible=False;
+                      Image=ViewDetails;
+                      Gesture=None }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                CaptionML=[ENU="";
+                           ENG=""];
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the customer.;
+                           ENG=Specifies the number of the customer.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="No.";
+                Visible=FALSE }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the customer's name. This name will appear on all sales documents for the customer. You can enter a maximum of 50 characters, both numbers and letters.;
+                           ENG=Specifies the customer's name. This name will appear on all sales documents for the customer. You can enter a maximum of 50 characters, both numbers and letters.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Name }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the customer's telephone number.;
+                           ENG=Specifies the customer's telephone number.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Phone No." }
+
+    { 34  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the person you regularly contact when you do business with this customer.;
+                           ENG=Specifies the name of the person you regularly contact when you do business with this customer.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Contact }
+
+    { 62  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the payment amount that the customer owes for completed sales. This value is also known as the customer's balance.;
+                           ENG=Specifies the payment amount that the customer owes for completed sales. This value is also known as the customer's balance.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Balance (LCY)";
+                OnDrillDown=BEGIN
+                              OpenCustomerLedgerEntries(FALSE);
+                            END;
+                             }
+
+    { 59  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies payments from the customer that are overdue per today's date.;
+                           ENG=Specifies payments from the customer that are overdue per today's date.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Balance Due (LCY)";
+                OnDrillDown=BEGIN
+                              OpenCustomerLedgerEntries(TRUE);
+                            END;
+                             }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the total net amount of sales to the customer in LCY.;
+                           ENG=Specifies the total net amount of sales to the customer in LCY.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sales (LCY)" }
+
+  }
+  CODE
+  {
+
+    PROCEDURE InsertData@2(VAR TempCustomer@1000 : TEMPORARY Record 18);
+    BEGIN
+      TempCustomer.SETCURRENTKEY(Name);
+      IF NOT TempCustomer.FINDSET THEN
+        EXIT;
+
+      DELETEALL;
+
+      REPEAT
+        COPY(TempCustomer);
+        INSERT;
+      UNTIL TempCustomer.NEXT = 0;
+
+      CurrPage.UPDATE;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

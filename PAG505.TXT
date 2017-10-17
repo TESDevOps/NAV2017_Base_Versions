@@ -1,0 +1,58 @@
+OBJECT Page 505 Reservation Summary
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Reservation Summary;
+               ENG=Reservation Summary];
+    LinksAllowed=No;
+    SourceTable=Table338;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies which type of line or entry is summarized in the entry summary.;
+                           ENG=Specifies which type of line or entry is summarised in the entry summary.];
+                SourceExpr="Summary Type" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the total quantity of the item in inventory.;
+                           ENG=Specifies the total quantity of the item in inventory.];
+                SourceExpr="Total Quantity" }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the total quantity of the relevant item that is reserved on documents or entries of the type on the line.;
+                           ENG=Specifies the total quantity of the relevant item that is reserved on documents or entries of the type on the line.];
+                SourceExpr="Total Reserved Quantity" }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity available for the user to request, in entries of the type on the line.;
+                           ENG=Specifies the quantity available for the user to request, in entries of the type on the line.];
+                SourceExpr="Total Available Quantity" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity of items in the entry that are reserved for the line that the Reservation window is opened from.;
+                           ENG=Specifies the quantity of items in the entry that are reserved for the line that the Reservation window is opened from.];
+                SourceExpr="Current Reserved Quantity" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,463 @@
+OBJECT Page 5936 Service Credit Memo Subform
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Lines;
+               ENG=Lines];
+    MultipleNewLines=Yes;
+    LinksAllowed=No;
+    SourceTable=Table5902;
+    DelayedInsert=Yes;
+    SourceTableView=WHERE(Document Type=FILTER(Credit Memo));
+    PageType=ListPart;
+    AutoSplitKey=Yes;
+    OnAfterGetRecord=BEGIN
+                       ShowShortcutDimCode(ShortcutDimCode);
+                     END;
+
+    OnNewRecord=BEGIN
+                  Type := xRec.Type;
+                  CLEAR(ShortcutDimCode);
+                END;
+
+    OnDeleteRecord=VAR
+                     ReserveServLine@1000 : Codeunit 99000842;
+                   BEGIN
+                     IF (Quantity <> 0) AND ItemExists("No.") THEN BEGIN
+                       COMMIT;
+                       IF NOT ReserveServLine.DeleteLineConfirm(Rec) THEN
+                         EXIT(FALSE);
+                       ReserveServLine.DeleteLine(Rec);
+                     END;
+                   END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 1906587504;1 ;ActionGroup;
+                      CaptionML=[ENU=F&unctions;
+                                 ENG=F&unctions];
+                      Image=Action }
+      { 1902056104;2 ;Action    ;
+                      AccessByPermission=TableData 279=R;
+                      CaptionML=[ENU=Insert &Ext. Texts;
+                                 ENG=Insert &Ext. Texts];
+                      Image=Text;
+                      OnAction=BEGIN
+                                 InsertExtendedText(TRUE);
+                               END;
+                                }
+      { 1907935204;1 ;ActionGroup;
+                      CaptionML=[ENU=&Line;
+                                 ENG=&Line];
+                      Image=Line }
+      { 1907981204;2 ;ActionGroup;
+                      CaptionML=[ENU=Item Availability by;
+                                 ENG=Item Availability by];
+                      Image=ItemAvailability }
+      { 3       ;3   ;Action    ;
+                      CaptionML=[ENU=Event;
+                                 ENG=Event];
+                      Image=Event;
+                      OnAction=BEGIN
+                                 ItemAvailFormsMgt.ShowItemAvailFromServLine(Rec,ItemAvailFormsMgt.ByEvent);
+                               END;
+                                }
+      { 1903587104;3 ;Action    ;
+                      CaptionML=[ENU=Period;
+                                 ENG=Period];
+                      Image=Period;
+                      OnAction=BEGIN
+                                 ItemAvailFormsMgt.ShowItemAvailFromServLine(Rec,ItemAvailFormsMgt.ByPeriod);
+                               END;
+                                }
+      { 1903193004;3 ;Action    ;
+                      CaptionML=[ENU=Variant;
+                                 ENG=Variant];
+                      Image=ItemVariant;
+                      OnAction=BEGIN
+                                 ItemAvailFormsMgt.ShowItemAvailFromServLine(Rec,ItemAvailFormsMgt.ByVariant);
+                               END;
+                                }
+      { 1901743104;3 ;Action    ;
+                      AccessByPermission=TableData 14=R;
+                      CaptionML=[ENU=Location;
+                                 ENG=Location];
+                      Image=Warehouse;
+                      OnAction=BEGIN
+                                 ItemAvailFormsMgt.ShowItemAvailFromServLine(Rec,ItemAvailFormsMgt.ByLocation);
+                               END;
+                                }
+      { 5       ;3   ;Action    ;
+                      CaptionML=[ENU=BOM Level;
+                                 ENG=BOM Level];
+                      Image=BOMLevel;
+                      OnAction=BEGIN
+                                 ItemAvailFormsMgt.ShowItemAvailFromServLine(Rec,ItemAvailFormsMgt.ByBOM);
+                               END;
+                                }
+      { 1902740304;2 ;Action    ;
+                      AccessByPermission=TableData 348=R;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      Image=Dimensions;
+                      OnAction=BEGIN
+                                 ShowDimensions;
+                               END;
+                                }
+      { 1905987604;2 ;Action    ;
+                      Name=ItemTrackingLines;
+                      ShortCutKey=Shift+Ctrl+I;
+                      CaptionML=[ENU=Item &Tracking Lines;
+                                 ENG=Item &Tracking Lines];
+                      Image=ItemTrackingLines;
+                      OnAction=BEGIN
+                                 OpenItemTrackingLines;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of the service line.;
+                           ENG=Specifies the type of the service line.];
+                SourceExpr=Type;
+                OnValidate=BEGIN
+                             NoOnAfterValidate;
+                           END;
+                            }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of an item, general ledger account, resource code, cost, or standard text.;
+                           ENG=Specifies the number of an item, general ledger account, resource code, cost, or standard text.];
+                SourceExpr="No.";
+                OnValidate=BEGIN
+                             ShowShortcutDimCode(ShortcutDimCode);
+                             NoOnAfterValidate;
+                           END;
+                            }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a code of a variant set up for the item on this line.;
+                           ENG=Specifies a code of a variant set up for the item on this line.];
+                SourceExpr="Variant Code";
+                Visible=FALSE }
+
+    { 38  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies that the item is a nonstock item.;
+                           ENG=Specifies that the item is a nonstock item.];
+                SourceExpr=Nonstock;
+                Visible=FALSE }
+
+    { 58  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the VAT product posting group of the item, resource, or general ledger account on this line.;
+                           ENG=Specifies the code for the VAT product posting group of the item, resource, or general ledger account on this line.];
+                SourceExpr="VAT Prod. Posting Group";
+                Visible=FALSE }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the description of an item, resource, cost, or a standard text on the line.;
+                           ENG=Specifies the description of an item, resource, cost, or a standard text on the line.];
+                SourceExpr=Description }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code explaining why the item was returned.;
+                           ENG=Specifies the code explaining why the item was returned.];
+                SourceExpr="Return Reason Code";
+                Visible=FALSE }
+
+    { 72  ;2   ;Field     ;
+                ToolTipML=[ENU=Indicates the inventory location from where the items on the line should be taken and where they should be registered.;
+                           ENG=Indicates the inventory location from where the items on the line should be taken and where they should be registered.];
+                SourceExpr="Location Code";
+                Visible=TRUE }
+
+    { 50  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a code that describes the bin.;
+                           ENG=Specifies a code that describes the bin.];
+                SourceExpr="Bin Code";
+                Visible=FALSE }
+
+    { 28  ;2   ;Field     ;
+                ToolTipML=[ENU=Indicates whether a reservation can be made for items on this line.;
+                           ENG=Indicates whether a reservation can be made for items on this line.];
+                SourceExpr=Reserve;
+                Visible=FALSE;
+                OnValidate=BEGIN
+                             ReserveOnAfterValidate;
+                           END;
+                            }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of item units, resource hours, cost on the service line.;
+                           ENG=Specifies the number of item units, resource hours, cost on the service line.];
+                BlankZero=Yes;
+                SourceExpr=Quantity;
+                OnValidate=BEGIN
+                             QuantityOnAfterValidate;
+                           END;
+                            }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Indicates how many item units on this line have been reserved.;
+                           ENG=Indicates how many item units on this line have been reserved.];
+                BlankZero=Yes;
+                SourceExpr="Reserved Quantity";
+                Visible=FALSE;
+                OnDrillDown=BEGIN
+                              CurrPage.SAVERECORD;
+                              COMMIT;
+                              ShowReservationEntries(TRUE);
+                              UpdateForm(TRUE);
+                            END;
+                             }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of one unit of measure of the item, resource time, or cost on this line.;
+                           ENG=Specifies the code of one unit of measure of the item, resource time, or cost on this line.];
+                SourceExpr="Unit of Measure Code";
+                OnValidate=BEGIN
+                             UnitofMeasureCodeOnAfterValida;
+                           END;
+                            }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the unit of measure for the item, resource or cost on the line.;
+                           ENG=Specifies the name of the unit of measure for the item, resource or cost on the line.];
+                SourceExpr="Unit of Measure";
+                Visible=FALSE }
+
+    { 70  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the cost per item unit, resource, or cost on the line.;
+                           ENG=Specifies the cost per item unit, resource, or cost on the line.];
+                SourceExpr="Unit Cost (LCY)";
+                Visible=FALSE }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the price per item unit, resource, or cost on the line.;
+                           ENG=Specifies the price per item unit, resource, or cost on the line.];
+                BlankZero=Yes;
+                SourceExpr="Unit Price" }
+
+    { 92  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the net amount (excluding the invoice discount amount) on the line, in the currency of the service document.;
+                           ENG=Specifies the net amount (excluding the invoice discount amount) on the line, in the currency of the service document.];
+                SourceExpr="Line Amount" }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the discount defined for a particular group, item, or combination of the two.;
+                           ENG=Specifies the discount defined for a particular group, item, or combination of the two.];
+                BlankZero=Yes;
+                SourceExpr="Line Discount %" }
+
+    { 56  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the amount of discount calculated for this line.;
+                           ENG=Specifies the amount of discount calculated for this line.];
+                SourceExpr="Line Discount Amount";
+                Visible=FALSE }
+
+    { 54  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies that the invoice discount will be calculated for the line.;
+                           ENG=Specifies that the invoice discount will be calculated for the line.];
+                SourceExpr="Allow Invoice Disc.";
+                Visible=FALSE }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the invoice discount amount that is calculated on the line.;
+                           ENG=Specifies the invoice discount amount that is calculated on the line.];
+                SourceExpr="Inv. Discount Amount";
+                Visible=FALSE }
+
+    { 86  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the service price adjustment group code that applies to this line.;
+                           ENG=Specifies the service price adjustment group code that applies to this line.];
+                SourceExpr="Serv. Price Adjmt. Gr. Code";
+                Visible=FALSE }
+
+    { 62  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a code for the type of work performed by the resource registered on this line.;
+                           ENG=Specifies a code for the type of work performed by the resource registered on this line.];
+                SourceExpr="Work Type Code";
+                Visible=FALSE }
+
+    { 40  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the contract, if the service order originated from a service contract.;
+                           ENG=Specifies the number of the contract, if the service order originated from a service contract.];
+                SourceExpr="Contract No.";
+                Visible=FALSE }
+
+    { 46  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the service item number linked to this service line.;
+                           ENG=Specifies the service item number linked to this service line.];
+                SourceExpr="Service Item No.";
+                Visible=FALSE }
+
+    { 5810;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the item ledger entry number that the service line is applied from.;
+                           ENG=Specifies the item ledger entry number that the service line is applied from.];
+                SourceExpr="Appl.-from Item Entry";
+                Visible=FALSE }
+
+    { 76  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the Shortcut Dimension 1, which is defined in the Shortcut Dimension 1 Code field in the General Ledger Setup window.;
+                           ENG=Specifies the code of the Shortcut Dimension 1, which is defined in the Shortcut Dimension 1 Code field in the General Ledger Setup window.];
+                SourceExpr="Shortcut Dimension 1 Code";
+                Visible=FALSE }
+
+    { 74  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the Shortcut Dimension 2, which is specified in the Shortcut Dimension 2 Code field in the General Ledger Setup window.;
+                           ENG=Specifies the code of the Shortcut Dimension 2, which is specified in the Shortcut Dimension 2 Code field in the General Ledger Setup window.];
+                SourceExpr="Shortcut Dimension 2 Code";
+                Visible=FALSE }
+
+    { 300 ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[3];
+                CaptionClass='1,2,3';
+                TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(3),
+                                                            Dimension Value Type=CONST(Standard),
+                                                            Blocked=CONST(No));
+                Visible=FALSE;
+                OnValidate=BEGIN
+                             ValidateShortcutDimCode(3,ShortcutDimCode[3]);
+                           END;
+                            }
+
+    { 302 ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[4];
+                CaptionClass='1,2,4';
+                TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(4),
+                                                            Dimension Value Type=CONST(Standard),
+                                                            Blocked=CONST(No));
+                Visible=FALSE;
+                OnValidate=BEGIN
+                             ValidateShortcutDimCode(4,ShortcutDimCode[4]);
+                           END;
+                            }
+
+    { 304 ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[5];
+                CaptionClass='1,2,5';
+                TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(5),
+                                                            Dimension Value Type=CONST(Standard),
+                                                            Blocked=CONST(No));
+                Visible=FALSE;
+                OnValidate=BEGIN
+                             ValidateShortcutDimCode(5,ShortcutDimCode[5]);
+                           END;
+                            }
+
+    { 306 ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[6];
+                CaptionClass='1,2,6';
+                TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(6),
+                                                            Dimension Value Type=CONST(Standard),
+                                                            Blocked=CONST(No));
+                Visible=FALSE;
+                OnValidate=BEGIN
+                             ValidateShortcutDimCode(6,ShortcutDimCode[6]);
+                           END;
+                            }
+
+    { 308 ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[7];
+                CaptionClass='1,2,7';
+                TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(7),
+                                                            Dimension Value Type=CONST(Standard),
+                                                            Blocked=CONST(No));
+                Visible=FALSE;
+                OnValidate=BEGIN
+                             ValidateShortcutDimCode(7,ShortcutDimCode[7]);
+                           END;
+                            }
+
+    { 310 ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[8];
+                CaptionClass='1,2,8';
+                TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(8),
+                                                            Dimension Value Type=CONST(Standard),
+                                                            Blocked=CONST(No));
+                Visible=FALSE;
+                OnValidate=BEGIN
+                             ValidateShortcutDimCode(8,ShortcutDimCode[8]);
+                           END;
+                            }
+
+  }
+  CODE
+  {
+    VAR
+      TransferExtendedText@1000 : Codeunit 378;
+      ItemAvailFormsMgt@1002 : Codeunit 353;
+      ShortcutDimCode@1001 : ARRAY [8] OF Code[20];
+
+    PROCEDURE ApproveCalcInvDisc@1();
+    BEGIN
+      CODEUNIT.RUN(CODEUNIT::"Service-Disc. (Yes/No)",Rec);
+    END;
+
+    LOCAL PROCEDURE InsertExtendedText@5(Unconditionally@1000 : Boolean);
+    BEGIN
+      IF TransferExtendedText.ServCheckIfAnyExtText(Rec,Unconditionally) THEN BEGIN
+        CurrPage.SAVERECORD;
+        TransferExtendedText.InsertServExtText(Rec);
+      END;
+      IF TransferExtendedText.MakeUpdate THEN
+        UpdateForm(TRUE);
+    END;
+
+    PROCEDURE UpdateForm@12(SetSaveRecord@1000 : Boolean);
+    BEGIN
+      CurrPage.UPDATE(SetSaveRecord);
+    END;
+
+    LOCAL PROCEDURE NoOnAfterValidate@19066594();
+    BEGIN
+      InsertExtendedText(FALSE);
+    END;
+
+    LOCAL PROCEDURE ReserveOnAfterValidate@19004502();
+    BEGIN
+      IF (Reserve = Reserve::Always) AND ("Outstanding Qty. (Base)" <> 0) THEN BEGIN
+        CurrPage.SAVERECORD;
+        AutoReserve;
+      END;
+    END;
+
+    LOCAL PROCEDURE QuantityOnAfterValidate@19032465();
+    BEGIN
+      IF Reserve = Reserve::Always THEN BEGIN
+        CurrPage.SAVERECORD;
+        AutoReserve;
+      END;
+    END;
+
+    LOCAL PROCEDURE UnitofMeasureCodeOnAfterValida@19057939();
+    BEGIN
+      IF Reserve = Reserve::Always THEN BEGIN
+        CurrPage.SAVERECORD;
+        AutoReserve;
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

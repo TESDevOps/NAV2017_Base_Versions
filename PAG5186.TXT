@@ -1,0 +1,273 @@
+OBJECT Page 5186 Interaction Template Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Interaction Template Setup;
+               ENG=Interaction Template Setup];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    SourceTable=Table5122;
+    PageType=Card;
+    OnOpenPage=BEGIN
+                 RESET;
+                 IF NOT GET THEN BEGIN
+                   INIT;
+                   INSERT;
+                 END;
+               END;
+
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                CaptionML=[ENU=General;
+                           ENG=General] }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording e-mails as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording e-mails as interactions.];
+                ApplicationArea=#Basic,#Suite,#RelationshipMgmt;
+                SourceExpr="E-Mails" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording cover sheets as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording cover sheets as interactions.];
+                ApplicationArea=#Basic,#Suite,#RelationshipMgmt;
+                SourceExpr="Cover Sheets" }
+
+    { 6   ;2   ;Field     ;
+                CaptionML=[ENU=Outgoing Calls;
+                           ENG=Outgoing Calls];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording outgoing phone calls as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording outgoing phone calls as interactions.];
+                ApplicationArea=#Basic,#Suite,#RelationshipMgmt;
+                SourceExpr="Outg. Calls" }
+
+    { 41  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording meeting invitations as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording meeting invitations as interactions.];
+                ApplicationArea=#Basic,#Suite,#RelationshipMgmt;
+                SourceExpr="Meeting Invitation" }
+
+    { 1904305601;1;Group  ;
+                CaptionML=[ENU=Sales;
+                           ENG=Sales] }
+
+    { 8   ;2   ;Field     ;
+                CaptionML=[ENU=Invoices;
+                           ENG=Invoices];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording sales invoices as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording sales invoices as interactions.];
+                ApplicationArea=#Basic,#Suite,#RelationshipMgmt;
+                SourceExpr="Sales Invoices" }
+
+    { 10  ;2   ;Field     ;
+                CaptionML=[ENU=Credit Memos;
+                           ENG=Credit Memos];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording sales credit memos as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording sales credit memos as interactions.];
+                ApplicationArea=#Basic,#Suite,#RelationshipMgmt;
+                SourceExpr="Sales Cr. Memo" }
+
+    { 12  ;2   ;Field     ;
+                CaptionML=[ENU=Order Confirmations;
+                           ENG=Order Confirmations];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording sales order confirmations as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording sales order confirmations as interactions.];
+                ApplicationArea=#Basic,#Suite,#RelationshipMgmt;
+                SourceExpr="Sales Ord. Cnfrmn." }
+
+    { 14  ;2   ;Field     ;
+                CaptionML=[ENU=Quotes;
+                           ENG=Quotes];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording sales quotes as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording sales quotes as interactions.];
+                ApplicationArea=#Basic,#Suite,#RelationshipMgmt;
+                SourceExpr="Sales Quotes" }
+
+    { 16  ;2   ;Field     ;
+                CaptionML=[ENU=Blanket Orders;
+                           ENG=Blanket Orders];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording sales blanket orders as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording sales blanket orders as interactions.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Sales Blnkt. Ord" }
+
+    { 18  ;2   ;Field     ;
+                CaptionML=[ENU=Shipment Notes;
+                           ENG=Shipment Notes];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording sales shipment notes as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording sales shipment notes as interactions.];
+                ApplicationArea=#Suite;
+                SourceExpr="Sales Shpt. Note" }
+
+    { 20  ;2   ;Field     ;
+                CaptionML=[ENU=Statements;
+                           ENG=Statements];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording sales statements as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording sales statements as interactions.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Sales Statement" }
+
+    { 22  ;2   ;Field     ;
+                CaptionML=[ENU=Reminders;
+                           ENG=Reminders];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording sales reminders as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording sales reminders as interactions.];
+                SourceExpr="Sales Rmdr." }
+
+    { 53  ;2   ;Field     ;
+                CaptionML=[ENU=Return Orders;
+                           ENG=Return Orders];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording sales return orders as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording sales return orders as interactions.];
+                SourceExpr="Sales Return Order" }
+
+    { 55  ;2   ;Field     ;
+                CaptionML=[ENU=Return Receipts;
+                           ENG=Return Receipts];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording sales return receipts as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording sales return receipts as interactions.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Sales Return Receipt" }
+
+    { 57  ;2   ;Field     ;
+                CaptionML=[ENU=Finance Charge Memos;
+                           ENG=Finance Charge Memos];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording sales finance charge memos as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording sales finance charge memos as interactions.];
+                SourceExpr="Sales Finance Charge Memo" }
+
+    { 1907458401;1;Group  ;
+                CaptionML=[ENU=Purchases;
+                           ENG=Purchases] }
+
+    { 24  ;2   ;Field     ;
+                CaptionML=[ENU=Invoices;
+                           ENG=Invoices];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording purchase invoices as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording purchase invoices as interactions.];
+                ApplicationArea=#Basic,#Suite,#RelationshipMgmt;
+                SourceExpr="Purch Invoices" }
+
+    { 26  ;2   ;Field     ;
+                CaptionML=[ENU=Credit Memos;
+                           ENG=Credit Memos];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording purchase credit memos as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording purchase credit memos as interactions.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Purch Cr Memos" }
+
+    { 28  ;2   ;Field     ;
+                CaptionML=[ENU=Orders;
+                           ENG=Orders];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording purchase orders as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording purchase orders as interactions.];
+                SourceExpr="Purch. Orders" }
+
+    { 30  ;2   ;Field     ;
+                CaptionML=[ENU=Quotes;
+                           ENG=Quotes];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording purchase quotes as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording purchase quotes as interactions.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Purch. Quotes" }
+
+    { 32  ;2   ;Field     ;
+                CaptionML=[ENU=Blanket Orders;
+                           ENG=Blanket Orders];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording purchase blanket orders as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording purchase blanket orders as interactions.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Purch Blnkt Ord" }
+
+    { 34  ;2   ;Field     ;
+                CaptionML=[ENU=Receipts;
+                           ENG=Receipts];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording purchase receipts as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording purchase receipts as interactions.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Purch. Rcpt." }
+
+    { 49  ;2   ;Field     ;
+                CaptionML=[ENU=Return Shipments;
+                           ENG=Return Shipments];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording purchase return shipments as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording purchase return shipments as interactions.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Purch. Return Shipment" }
+
+    { 51  ;2   ;Field     ;
+                CaptionML=[ENU=Return Order Confirmations;
+                           ENG=Return Order Confirmations];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording purchase return order confirmations as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording purchase return order confirmations as interactions.];
+                SourceExpr="Purch. Return Ord. Cnfrmn." }
+
+    { 1902138501;1;Group  ;
+                CaptionML=[ENU=Service;
+                           ENG=Service] }
+
+    { 38  ;2   ;Field     ;
+                CaptionML=[ENU=Service Order Create;
+                           ENG=Service Order Create];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording the creation of service orders as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording the creation of service orders as interactions.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Serv Ord Create" }
+
+    { 43  ;2   ;Field     ;
+                CaptionML=[ENU=Contracts;
+                           ENG=Contracts];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording service contracts as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording service contracts as interactions.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Service Contract" }
+
+    { 45  ;2   ;Field     ;
+                CaptionML=[ENU=Contract Quotes;
+                           ENG=Contract Quotes];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording service contract quotes as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording service contract quotes as interactions.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Service Contract Quote" }
+
+    { 47  ;2   ;Field     ;
+                CaptionML=[ENU=Quotes;
+                           ENG=Quotes];
+                ToolTipML=[ENU=Specifies the code of the interaction template to use when recording service quotes as interactions.;
+                           ENG=Specifies the code of the interaction template to use when recording service quotes as interactions.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Service Quote" }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

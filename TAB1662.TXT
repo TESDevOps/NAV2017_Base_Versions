@@ -1,0 +1,42 @@
+OBJECT Table 1662 Payroll Import Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Payroll Import Buffer;
+               ENG=Payroll Import Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=Entry No.;
+                                                              ENG=Entry No.] }
+    { 10  ;   ;Transaction date    ;Date          ;CaptionML=[ENU=Transaction date;
+                                                              ENG=Transaction date] }
+    { 11  ;   ;Account No.         ;Code20        ;CaptionML=[ENU=Account No.;
+                                                              ENG=Account No.] }
+    { 12  ;   ;Amount              ;Decimal       ;CaptionML=[ENU=Amount;
+                                                              ENG=Amount] }
+    { 13  ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ENG=Description] }
+  }
+  KEYS
+  {
+    {    ;Entry No.                               ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

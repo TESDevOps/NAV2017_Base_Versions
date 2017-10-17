@@ -1,0 +1,92 @@
+OBJECT Page 2129 O365 Export Invoices
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Export Invoices;
+               ENG=Export Invoices];
+    PageType=List;
+    OnInit=BEGIN
+             Initialize;
+           END;
+
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                GroupType=Group }
+
+    { 3   ;2   ;Field     ;
+                CaptionML=[ENU=Start Date;
+                           ENG=Start Date];
+                ToolTipML=[ENU=Specifies the starting date of the time period to export invoices;
+                           ENG=Specifies the starting date of the time period to export invoices];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=StartDate;
+                ShowMandatory=TRUE }
+
+    { 4   ;2   ;Field     ;
+                CaptionML=[ENU=End Date;
+                           ENG=End Date];
+                ToolTipML=[ENU=Specifies the ending date of the time period to export invoices;
+                           ENG=Specifies the ending date of the time period to export invoices];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=EndDate;
+                ShowMandatory=TRUE }
+
+    { 5   ;2   ;Field     ;
+                CaptionML=[ENU=Email;
+                           ENG=Email];
+                ToolTipML=[ENU=Specifies the email receipient for the exported invoices;
+                           ENG=Specifies the email receipient for the exported invoices];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Email;
+                OnValidate=BEGIN
+                             MailManagement.CheckValidEmailAddress(Email);
+                           END;
+
+                ShowMandatory=TRUE }
+
+    { 6   ;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=ExportInvoicesLbl;
+                Editable=FALSE;
+                OnDrillDown=BEGIN
+                              O365ExportInvoicesEmail.ExportInvoicesToExcelandEmail(StartDate,EndDate,Email);
+                            END;
+                             }
+
+  }
+  CODE
+  {
+    VAR
+      MailManagement@1007 : Codeunit 9520;
+      O365ExportInvoicesEmail@1006 : Codeunit 2129;
+      StartDate@1000 : Date;
+      EndDate@1001 : Date;
+      Email@1002 : Text[80];
+      ExportInvoicesLbl@1004 : TextConst 'ENU=Export Invoices;ENG=Export Invoices';
+
+    LOCAL PROCEDURE Initialize@2();
+    VAR
+      O365EmailSetup@1000 : Record 2118;
+    BEGIN
+      StartDate := CALCDATE('<-CM>',WORKDATE);
+      EndDate := WORKDATE;
+      IF O365EmailSetup.FINDLAST THEN
+        Email := O365EmailSetup.Email;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

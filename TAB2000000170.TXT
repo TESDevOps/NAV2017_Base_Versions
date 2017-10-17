@@ -1,0 +1,47 @@
+OBJECT Table 2000000170 Configuration Package File
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/09/17;
+    Time=12:00:00;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Configuration Package File;
+               ENG=Configuration Package File];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code20        ;CaptionML=[ENU=Code;
+                                                              ENG=Code] }
+    { 2   ;   ;Name                ;Text50        ;CaptionML=[ENU=Name;
+                                                              ENG=Name] }
+    { 3   ;   ;Language ID         ;Integer       ;CaptionML=[ENU=Language ID;
+                                                              ENG=Language ID] }
+    { 4   ;   ;Setup Type          ;Option        ;CaptionML=[ENU=Setup Type;
+                                                              ENG=Setup Type];
+                                                   OptionCaptionML=[ENU=Company,Application,Other;
+                                                                    ENG=Company,Application,Other];
+                                                   OptionString=Company,Application,Other }
+    { 5   ;   ;Processing Order    ;Integer       ;CaptionML=[ENU=Processing Order;
+                                                              ENG=Processing Order] }
+    { 6   ;   ;Package             ;BLOB          ;CaptionML=[ENU=Package;
+                                                              ENG=Package] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

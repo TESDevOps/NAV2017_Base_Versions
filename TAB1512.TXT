@@ -1,0 +1,78 @@
+OBJECT Table 1512 Notification Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    OnDelete=VAR
+               NotificationSchedule@1000 : Record 1513;
+             BEGIN
+               IF NotificationSchedule.GET("User ID","Notification Type") THEN
+                 NotificationSchedule.DELETE(TRUE);
+             END;
+
+    CaptionML=[ENU=Notification Setup;
+               ENG=Notification Setup];
+    LookupPageID=Page1512;
+    DrillDownPageID=Page1512;
+  }
+  FIELDS
+  {
+    { 1   ;   ;User ID             ;Code50        ;TableRelation="User Setup";
+                                                   CaptionML=[ENU=User ID;
+                                                              ENG=User ID] }
+    { 2   ;   ;Notification Type   ;Option        ;CaptionML=[ENU=Notification Type;
+                                                              ENG=Notification Type];
+                                                   OptionCaptionML=[ENU=New Record,Approval,Overdue;
+                                                                    ENG=New Record,Approval,Overdue];
+                                                   OptionString=New Record,Approval,Overdue }
+    { 3   ;   ;Notification Method ;Option        ;CaptionML=[ENU=Notification Method;
+                                                              ENG=Notification Method];
+                                                   OptionCaptionML=[ENU=Email,Note;
+                                                                    ENG=Email,Note];
+                                                   OptionString=Email,Note }
+    { 5   ;   ;Schedule            ;Option        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("Notification Schedule".Recurrence WHERE (User ID=FIELD(User ID),
+                                                                                                                Notification Type=FIELD(Notification Type)));
+                                                   CaptionML=[ENU=Schedule;
+                                                              ENG=Schedule];
+                                                   OptionCaptionML=[ENU=Instantly,Daily,Weekly,Monthly;
+                                                                    ENG=Instantly,Daily,Weekly,Monthly];
+                                                   OptionString=Instantly,Daily,Weekly,Monthly }
+    { 6   ;   ;Display Target      ;Option        ;CaptionML=[ENU=Display Target;
+                                                              ENG=Display Target];
+                                                   OptionCaptionML=[ENU=Web,Windows;
+                                                                    ENG=Web,Windows];
+                                                   OptionString=Web,Windows }
+  }
+  KEYS
+  {
+    {    ;User ID,Notification Type               ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE GetNotificationSetup@1(NotificationType@1002 : 'New Record,Approval,Overdue');
+    VAR
+      NotificationManagement@1000 : Codeunit 1510;
+    BEGIN
+      IF GET(USERID,NotificationType) THEN
+        EXIT;
+      IF GET('',NotificationType) THEN
+        EXIT;
+      NotificationManagement.CreateDefaultNotificationSetup(NotificationType);
+      GET('',NotificationType)
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,65 @@
+OBJECT Table 9160 TempStack
+{
+  OBJECT-PROPERTIES
+  {
+    Date=24/11/16;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.14199;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=TempStack;
+               ENG=TempStack];
+  }
+  FIELDS
+  {
+    { 1   ;   ;StackOrder          ;Integer       ;CaptionML=[ENU=StackOrder;
+                                                              ENG=StackOrder] }
+    { 2   ;   ;Value               ;RecordID      ;CaptionML=[ENU=Value;
+                                                              ENG=Value] }
+  }
+  KEYS
+  {
+    {    ;StackOrder                              ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      LastIndex@1000 : Integer;
+
+    PROCEDURE Push@1(NewValue@1000 : RecordID);
+    BEGIN
+      VALIDATE(StackOrder,LastIndex);
+      VALIDATE(Value,NewValue);
+      INSERT;
+      LastIndex := LastIndex + 1;
+    END;
+
+    PROCEDURE Pop@2(VAR TopValue@1000 : RecordID) : Boolean;
+    BEGIN
+      IF FINDLAST THEN BEGIN
+        TopValue := Value;
+        DELETE;
+        LastIndex := LastIndex - 1;
+        EXIT(TRUE);
+      END;
+      EXIT(FALSE);
+    END;
+
+    PROCEDURE Peek@5(VAR TopValue@1000 : RecordID) : Boolean;
+    BEGIN
+      IF FINDLAST THEN BEGIN
+        TopValue := Value;
+        EXIT(TRUE);
+      END;
+      EXIT(FALSE);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

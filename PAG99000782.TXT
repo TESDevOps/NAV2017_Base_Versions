@@ -1,0 +1,71 @@
+OBJECT Page 99000782 Where-Used Item List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Where-Used;
+               ENG=Where-Used];
+    SourceTable=Table27;
+    DataCaptionFields=Routing No.;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the item.;
+                           ENG=Specifies the number of the item.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="No.";
+                TableRelation=Item }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description of the item.;
+                           ENG=Specifies a description of the item.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Description }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the production BOM.;
+                           ENG=Specifies the number of the production BOM.];
+                SourceExpr="Production BOM No." }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the inventory posting group. Links business transactions made for the item with an inventory account in the general ledger, to group amounts for that item type.;
+                           ENG=Specifies the inventory posting group. Links business transactions made for the item with an inventory account in the general ledger, to group amounts for that item type.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Inventory Posting Group" }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

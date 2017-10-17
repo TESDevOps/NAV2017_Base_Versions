@@ -1,0 +1,421 @@
+OBJECT Page 9028 Team Member Role Center
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Role Center;
+               ENG=Role Centre];
+    PageType=RoleCenter;
+    ActionList=ACTIONS
+    {
+      { 6       ;0   ;ActionContainer;
+                      ActionContainerType=HomeItems }
+      { 5       ;1   ;Action    ;
+                      CaptionML=[ENU=Time Sheets;
+                                 ENG=Time Sheets];
+                      ToolTipML=[ENU=View all time sheets.;
+                                 ENG=View all time sheets.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 951 }
+      { 56      ;    ;ActionContainer;
+                      ActionContainerType=ActivityButtons }
+      { 55      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Finance;
+                                 ENG=Finance];
+                      ToolTipML=[ENU=Collect and make payments, prepare statements, and reconcile bank accounts.;
+                                 ENG=Collect and make payments, prepare statements, and reconcile bank accounts.];
+                      Image=Journals }
+      { 54      ;2   ;Action    ;
+                      Name=GeneralJournals;
+                      CaptionML=[ENU=General Journals;
+                                 ENG=General Journals];
+                      ToolTipML=[ENU=Open the list of general journal, for example, to record or post a payment that has no related document.;
+                                 ENG=Open the list of general journal, for example, to record or post a payment that has no related document.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 251;
+                      RunPageView=WHERE(Template Type=CONST(General),
+                                        Recurring=CONST(No));
+                      Image=Journal }
+      { 53      ;2   ;Action    ;
+                      CaptionML=[ENU=Chart of Accounts;
+                                 ENG=Chart of Accounts];
+                      ToolTipML=[ENU=View the chart of accounts.;
+                                 ENG=View the chart of accounts.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 16 }
+      { 52      ;2   ;Action    ;
+                      CaptionML=[ENU=Account Schedules;
+                                 ENG=Account Schedules];
+                      ToolTipML=[ENU=Open your account schedules to analyze figures in general ledger accounts or to compare general ledger entries with general ledger budget entries.;
+                                 ENG=Open your account schedules to analyse figures in general ledger accounts or to compare general ledger entries with general ledger budget entries.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 103 }
+      { 51      ;2   ;Action    ;
+                      CaptionML=[ENU=G/L Account Categories;
+                                 ENG=G/L Account Categories];
+                      ToolTipML=[ENU=View the categories that are created to organize G/L accounts.;
+                                 ENG=View the categories that are created to organise G/L accounts.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 790 }
+      { 50      ;2   ;Action    ;
+                      Name=CashReceiptJournals;
+                      CaptionML=[ENU=Cash Receipt Journals;
+                                 ENG=Cash Receipt Journals];
+                      ToolTipML=[ENU=Register received payments by applying them to the related customer, vendor, or bank ledger entries.;
+                                 ENG=Register received payments by applying them to the related customer, vendor, or bank ledger entries.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 251;
+                      RunPageView=WHERE(Template Type=CONST(Cash Receipts),
+                                        Recurring=CONST(No));
+                      Image=Journals }
+      { 49      ;2   ;Action    ;
+                      Name=PaymentJournals;
+                      CaptionML=[ENU=Payment Journals;
+                                 ENG=Payment Journals];
+                      ToolTipML=[ENU=Open the list of payment journals where you can register payments to vendors.;
+                                 ENG=Open the list of payment journals where you can register payments to vendors.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 251;
+                      RunPageView=WHERE(Template Type=CONST(Payments),
+                                        Recurring=CONST(No));
+                      Image=Journals }
+      { 48      ;2   ;Action    ;
+                      CaptionML=[ENU=Bank Accounts;
+                                 ENG=Bank Accounts];
+                      ToolTipML=[ENU=View or set up your the customers and vendors bank accounts. You can set up any number of bank accounts for each.;
+                                 ENG=View or set up your the customers and vendors bank accounts. You can set up any number of bank accounts for each.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 371;
+                      Image=BankAccount }
+      { 47      ;2   ;Action    ;
+                      CaptionML=[ENU=Payment Reconciliation Journals;
+                                 ENG=Payment Reconciliation Journals];
+                      ToolTipML=[ENU=Open a list of journals where you can reconcile unpaid documents automatically with their related bank transactions by importing a bank statement feed or file.;
+                                 ENG=Open a list of journals where you can reconcile unpaid documents automatically with their related bank transactions by importing a bank statement feed or file.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 1294;
+                      Image=ApplyEntries }
+      { 46      ;2   ;Action    ;
+                      CaptionML=[ENU=Bank Acc. Statements;
+                                 ENG=Bank Acc. Statements];
+                      ToolTipML=[ENU=View statements for selected bank accounts. For each bank transaction, the report shows a description, an applied amount, a statement amount, and other information.;
+                                 ENG=View statements for selected bank accounts. For each bank transaction, the report shows a description, an applied amount, a statement amount, and other information.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 389;
+                      Image=BankAccountStatement }
+      { 45      ;2   ;Action    ;
+                      CaptionML=[ENU=Direct Debit Collections;
+                                 ENG=Direct Debit Collections];
+                      ToolTipML=[ENU=View and edit entries that are generated for the direct-debit collection.;
+                                 ENG=View and edit entries that are generated for the direct-debit collection.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 1207 }
+      { 44      ;2   ;Action    ;
+                      CaptionML=[ENU=Currencies;
+                                 ENG=Currencies];
+                      ToolTipML=[ENU=View the different currencies that you trade in.;
+                                 ENG=View the different currencies that you trade in.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 5;
+                      Image=Currency }
+      { 43      ;2   ;Action    ;
+                      CaptionML=[ENU=Employees;
+                                 ENG=Employees];
+                      ToolTipML=[ENU=View the list of employees.;
+                                 ENG=View the list of employees.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 5201 }
+      { 42      ;2   ;Action    ;
+                      CaptionML=[ENU=VAT Statements;
+                                 ENG=VAT Statements];
+                      ToolTipML=[ENU=View the VAT statements.;
+                                 ENG=View the VAT statements.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 320 }
+      { 40      ;2   ;Action    ;
+                      CaptionML=[ENU=Intrastat Journals;
+                                 ENG=Intrastat Journals];
+                      ToolTipML=[ENU=View the Intrastat Journals.;
+                                 ENG=View the Intrastat Journals.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 327 }
+      { 41      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Sales;
+                                 ENG=Sales];
+                      ToolTipML=[ENU=Make quotes, orders, and credit memos. See customers and transaction history.;
+                                 ENG=Make quotes, orders, and credit memos. See customers and transaction history.];
+                      Image=Sales }
+      { 39      ;2   ;Action    ;
+                      Name=Sales_CustomerList;
+                      CaptionML=[ENU=Customers;
+                                 ENG=Customers];
+                      ToolTipML=[ENU=Open the list of customers.;
+                                 ENG=Open the list of customers.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 22 }
+      { 38      ;2   ;Action    ;
+                      CaptionML=[ENU=Sales Quotes;
+                                 ENG=Sales Quotes];
+                      ToolTipML=[ENU=Open the list of sales quotes where you offer items or services to customers.;
+                                 ENG=Open the list of sales quotes where you offer items or services to customers.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 9300 }
+      { 37      ;2   ;Action    ;
+                      CaptionML=[ENU=Sales Orders;
+                                 ENG=Sales Orders];
+                      ToolTipML=[ENU=Open the list of sales orders where you can sell items and services.;
+                                 ENG=Open the list of sales orders where you can sell items and services.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 9305 }
+      { 36      ;2   ;Action    ;
+                      CaptionML=[ENU=Sales Invoices;
+                                 ENG=Sales Invoices];
+                      ToolTipML=[ENU=Open the list of sales invoices where you can invoice items or services.;
+                                 ENG=Open the list of sales invoices where you can invoice items or services.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 9301 }
+      { 35      ;2   ;Action    ;
+                      CaptionML=[ENU=Sales Credit Memos;
+                                 ENG=Sales Credit Memos];
+                      ToolTipML=[ENU=Open the list of sales credit memos where you can revert posted sales invoices.;
+                                 ENG=Open the list of sales credit memos where you can revert posted sales invoices.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 9302 }
+      { 34      ;2   ;Action    ;
+                      CaptionML=[ENU=Reminders;
+                                 ENG=Reminders];
+                      ToolTipML=[ENU=View the reminders that you have sent to the customer.;
+                                 ENG=View the reminders that you have sent to the customer.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 436;
+                      Image=Reminder }
+      { 33      ;2   ;Action    ;
+                      CaptionML=[ENU=Finance Charge Memos;
+                                 ENG=Finance Charge Memos];
+                      ToolTipML=[ENU=View the finance charge memos that you have sent to the customer.;
+                                 ENG=View the finance charge memos that you have sent to the customer.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 448;
+                      Image=FinChargeMemo }
+      { 32      ;2   ;Action    ;
+                      CaptionML=[ENU=Posted Sales Invoices;
+                                 ENG=Posted Sales Invoices];
+                      ToolTipML=[ENU=View the posted sales invoices.;
+                                 ENG=View the posted sales invoices.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 143 }
+      { 31      ;2   ;Action    ;
+                      CaptionML=[ENU=Posted Sales Credit Memos;
+                                 ENG=Posted Sales Credit Memos];
+                      ToolTipML=[ENU=View the posted sales credit memos.;
+                                 ENG=View the posted sales credit memos.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 144 }
+      { 30      ;2   ;Action    ;
+                      CaptionML=[ENU=Issued Reminders;
+                                 ENG=Issued Reminders];
+                      ToolTipML=[ENU=View the list of issued reminders.;
+                                 ENG=View the list of issued reminders.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 440;
+                      Image=OrderReminder }
+      { 29      ;2   ;Action    ;
+                      CaptionML=[ENU=Issued Finance Charge Memos;
+                                 ENG=Issued Finance Charge Memos];
+                      ToolTipML=[ENU=View the list of issued finance charge memos.;
+                                 ENG=View the list of issued finance charge memos.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 452;
+                      Image=PostedMemo }
+      { 28      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Purchasing;
+                                 ENG=Purchasing];
+                      ToolTipML=[ENU=Manage purchase invoices and credit memos. Maintain vendors and their history.;
+                                 ENG=Manage purchase invoices and credit memos. Maintain vendors and their history.];
+                      Image=AdministrationSalesPurchases }
+      { 27      ;2   ;Action    ;
+                      Name=Purchase_VendorList;
+                      CaptionML=[ENU=Vendors;
+                                 ENG=Vendors];
+                      ToolTipML=[ENU=View a list of vendors that you can buy items from.;
+                                 ENG=View a list of vendors that you can buy items from.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 27 }
+      { 26      ;2   ;Action    ;
+                      CaptionML=[ENU=Incoming Documents;
+                                 ENG=Incoming Documents];
+                      ToolTipML=[ENU=View incoming documents.;
+                                 ENG=View incoming documents.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 190 }
+      { 25      ;2   ;Action    ;
+                      Name=<Page Purchase Orders>;
+                      CaptionML=[ENU=Purchase Orders;
+                                 ENG=Purchase Orders];
+                      ToolTipML=[ENU=Open the list of purchase orders where you can purchase items or services.;
+                                 ENG=Open the list of purchase orders where you can purchase items or services.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 9307 }
+      { 24      ;2   ;Action    ;
+                      Name=<Page Purchase Invoices>;
+                      CaptionML=[ENU=Purchase Invoices;
+                                 ENG=Purchase Invoices];
+                      ToolTipML=[ENU=Open the list of purchase invoices where you can purchase items or services.;
+                                 ENG=Open the list of purchase invoices where you can purchase items or services.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 9308 }
+      { 23      ;2   ;Action    ;
+                      Name=<Page Posted Purchase Invoices>;
+                      CaptionML=[ENU=Posted Purchase Invoices;
+                                 ENG=Posted Purchase Invoices];
+                      ToolTipML=[ENU=View the posted purchase invoices.;
+                                 ENG=View the posted purchase invoices.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 146 }
+      { 22      ;2   ;Action    ;
+                      Name=<Page Purchase Credit Memos>;
+                      CaptionML=[ENU=Purchase Credit Memos;
+                                 ENG=Purchase Credit Memos];
+                      ToolTipML=[ENU=Open the list of purchase credit memos where you can revert posted purchase invoices.;
+                                 ENG=Open the list of purchase credit memos where you can revert posted purchase invoices.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 9309 }
+      { 21      ;2   ;Action    ;
+                      Name=<Page Posted Purchase Credit Memos>;
+                      CaptionML=[ENU=Posted Purchase Credit Memos;
+                                 ENG=Posted Purchase Credit Memos];
+                      ToolTipML=[ENU=View the posted purchase credit memos.;
+                                 ENG=View the posted purchase credit memos.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 147 }
+      { 20      ;2   ;Action    ;
+                      Name=<Page Posted Purchase Receipts>;
+                      CaptionML=[ENU=Posted Purchase Receipts;
+                                 ENG=Posted Purchase Receipts];
+                      ToolTipML=[ENU=View the posted purchase receipts.;
+                                 ENG=View the posted purchase receipts.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 145 }
+      { 19      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Approvals;
+                                 ENG=Approvals];
+                      ToolTipML=[ENU=Approve requests made by other users.;
+                                 ENG=Approve requests made by other users.] }
+      { 18      ;2   ;Action    ;
+                      CaptionML=[ENU=Requests to Approve;
+                                 ENG=Requests to Approve];
+                      ToolTipML=[ENU=View the number of approval requests that require your approval.;
+                                 ENG=View the number of approval requests that require your approval.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 654;
+                      Image=Approvals }
+      { 17      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Advanced Finance;
+                                 ENG=Advanced Finance];
+                      ToolTipML=[ENU=Manage budgets, cash flows, fixed assets, VAT, and analyze sales.;
+                                 ENG=Manage budgets, cash flows, fixed assets, VAT, and analyse sales.];
+                      Image=AnalysisView }
+      { 16      ;2   ;Action    ;
+                      CaptionML=[ENU=G/L Budgets;
+                                 ENG=G/L Budgets];
+                      ToolTipML=[ENU=View summary information about the amount budgeted for each general ledger account in different time periods.;
+                                 ENG=View summary information about the amount budgeted for each general ledger account in different time periods.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 121 }
+      { 15      ;2   ;Action    ;
+                      CaptionML=[ENU=Fixed Assets;
+                                 ENG=Fixed Assets];
+                      ToolTipML=[ENU=Manage periodic depreciation of your machinery or machines, keep track of your maintenance costs, manage insurance policies related to fixed assets, and monitor fixed asset statistics.;
+                                 ENG=Manage periodic depreciation of your machinery or machines, keep track of your maintenance costs, manage insurance policies related to fixed assets, and monitor fixed asset statistics.];
+                      ApplicationArea=#FixedAssets;
+                      RunObject=Page 5601 }
+      { 14      ;2   ;Action    ;
+                      CaptionML=[ENU=Sales Analysis Reports;
+                                 ENG=Sales Analysis Reports];
+                      ToolTipML=[ENU=Analyze the dynamics of your sales according to key sales performance indicators that you select, for example, sales turnover in both amounts and quantities, contribution margin, or progress of actual sales against the budget. You can also use the report to analyze your average sales prices and evaluate the sales performance of your sales force.;
+                                 ENG=Analyse the dynamics of your sales according to key sales performance indicators that you select, for example, sales turnover in both amounts and quantities, contribution margin, or progress of actual sales against the budget. You can also use the report to analyse your average sales prices and evaluate the sales performance of your sales force.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 9376 }
+      { 13      ;2   ;Action    ;
+                      CaptionML=[ENU=Purchase Analysis Reports;
+                                 ENG=Purchase Analysis Reports];
+                      ToolTipML=[ENU=Analyze the dynamics of your purchase volumes. You can also use the report to analyze your vendors' performance and purchase prices.;
+                                 ENG=Analyse the dynamics of your purchase volumes. You can also use the report to analyse your vendors' performance and purchase prices.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 9375 }
+      { 12      ;2   ;Action    ;
+                      CaptionML=[ENU=Inventory Analysis Reports;
+                                 ENG=Inventory Analysis Reports];
+                      ToolTipML=[ENU=Analyze the dynamics of your inventory according to key performance indicators that you select, for example inventory turnover. You can also use the report to analyze your inventory costs, in terms of direct and indirect costs, as well as the value and quantities of your different types of inventory.;
+                                 ENG=Analyse the dynamics of your inventory according to key performance indicators that you select, for example inventory turnover. You can also use the report to analyse your inventory costs, in terms of direct and indirect costs, as well as the value and quantities of your different types of inventory.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 9377 }
+      { 11      ;2   ;Action    ;
+                      CaptionML=[ENU=VAT Reports;
+                                 ENG=VAT Reports];
+                      ToolTipML=[ENU=View the list of VAT reports.;
+                                 ENG=View the list of VAT reports.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 744 }
+      { 10      ;2   ;Action    ;
+                      CaptionML=[ENU=Cash Flow Forecasts;
+                                 ENG=Cash Flow Forecasts];
+                      ToolTipML=[ENU=View the list of cash flow forecasts.;
+                                 ENG=View the list of cash flow forecasts.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 849 }
+      { 9       ;2   ;Action    ;
+                      CaptionML=[ENU=Chart of Cash Flow Accounts;
+                                 ENG=Chart of Cash Flow Accounts];
+                      ToolTipML=[ENU=View the chart of cash flow accounts.;
+                                 ENG=View the chart of cash flow accounts.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 851 }
+      { 8       ;2   ;Action    ;
+                      CaptionML=[ENU=Cash Flow Manual Revenues;
+                                 ENG=Cash Flow Manual Revenues];
+                      ToolTipML=[ENU=View the cash flow manual revenues.;
+                                 ENG=View the cash flow manual revenues.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 857 }
+      { 7       ;2   ;Action    ;
+                      CaptionML=[ENU=Cash Flow Manual Expenses;
+                                 ENG=Cash Flow Manual Expenses];
+                      ToolTipML=[ENU=View the cash flow manual expenses.;
+                                 ENG=View the cash flow manual expenses.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 859 }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=RoleCenterArea }
+
+    { 2   ;1   ;Group     ;
+                GroupType=Group }
+
+    { 3   ;2   ;Part      ;
+                ApplicationArea=#Suite;
+                PagePartID=Page9042;
+                PartType=Page }
+
+    { 4   ;2   ;Part      ;
+                ApplicationArea=#Suite;
+                PagePartID=Page9155;
+                PartType=Page }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

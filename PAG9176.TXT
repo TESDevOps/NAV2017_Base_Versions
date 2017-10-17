@@ -1,0 +1,275 @@
+OBJECT Page 9176 My Settings
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=My Settings;
+               ENG=My Settings];
+    PageType=StandardDialog;
+    OnInit=BEGIN
+             NotRunningOnSaaS := NOT PermissionManager.SoftwareAsAService;
+             IsNotOnMobile := CURRENTCLIENTTYPE <> CLIENTTYPE::Phone;
+           END;
+
+    OnOpenPage=VAR
+                 UserPersonalization@1000 : Record 2000000073;
+                 RoleCenterNotificationMgt@1001 : Codeunit 1430;
+               BEGIN
+                 WITH UserPersonalization DO BEGIN
+                   GET(USERSECURITYID);
+                   ProfileID := "Profile ID";
+                   LanguageID := "Language ID";
+                   LocaleID := "Locale ID";
+                   TimeZoneID := "Time Zone";
+                   VarCompany := Company;
+                   NewWorkdate := WORKDATE;
+                 END;
+                 IF RoleCenterNotificationMgt.IsEvaluationNotificationClicked THEN BEGIN
+                   // set notification state to normal to avoid resending
+                   RoleCenterNotificationMgt.EnableEvaluationNotification;
+                   COMMIT;
+                 END;
+               END;
+
+    OnQueryClosePage=VAR
+                       UserPersonalization@1002 : Record 2000000073;
+                       ShowMessage@1003 : Boolean;
+                     BEGIN
+                       IF CloseAction = ACTION::OK THEN BEGIN
+                         WITH UserPersonalization DO BEGIN
+                           GET(USERSECURITYID);
+
+                           IF ("Language ID" <> LanguageID) OR
+                              ("Locale ID" <> LocaleID) OR
+                              ("Time Zone" <> TimeZoneID) OR
+                              (Company <> VarCompany) OR
+                              ("Profile ID" <> ProfileID)
+                           THEN BEGIN
+                             VALIDATE("Profile ID",ProfileID);
+                             VALIDATE("Language ID",LanguageID);
+                             VALIDATE("Locale ID",LocaleID);
+                             VALIDATE("Time Zone",TimeZoneID);
+                             VALIDATE(Company,VarCompany);
+                             MODIFY(TRUE);
+                             ShowMessage := TRUE;
+                           END;
+                         END;
+
+                         IF ShowMessage THEN
+                           MESSAGE(ReSignInMsg);
+                       END;
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 14  ;1   ;Group     ;
+                GroupType=Group }
+
+    { 13  ;2   ;Field     ;
+                Name=RoleCenter;
+                AssistEdit=Yes;
+                CaptionML=[ENU=Role Center;
+                           ENG=Role Centre];
+                ToolTipML=[ENU=Specifies the Role Center that is associated with the current user.;
+                           ENG=Specifies the Role Centre that is associated with the current user.];
+                ApplicationArea=#All;
+                SourceExpr=GetProfileName;
+                Importance=Promoted;
+                Editable=FALSE;
+                OnAssistEdit=VAR
+                               Profile@1001 : Record 2000000072;
+                             BEGIN
+                               IF PAGE.RUNMODAL(PAGE::"Available Role Centers",Profile) = ACTION::LookupOK THEN
+                                 ProfileID := Profile."Profile ID";
+                             END;
+                              }
+
+    { 6   ;2   ;Field     ;
+                Name=Company;
+                CaptionML=[ENU=Company;
+                           ENG=Company];
+                ToolTipML=[ENU=Specifies the database company that you work in. You must sign out and then sign in again for the change to take effect.;
+                           ENG=Specifies the database company that you work in. You must sign out and then sign in again for the change to take effect.];
+                ApplicationArea=#All;
+                SourceExpr=VarCompany;
+                Editable=FALSE;
+                OnAssistEdit=VAR
+                               SelectedCompany@1001 : Record 2000000006;
+                               AllowedCompanies@1000 : Page 9177;
+                             BEGIN
+                               AllowedCompanies.Initialize;
+
+                               IF SelectedCompany.GET(COMPANYNAME) THEN
+                                 AllowedCompanies.SETRECORD(SelectedCompany);
+
+                               AllowedCompanies.LOOKUPMODE(TRUE);
+
+                               IF AllowedCompanies.RUNMODAL = ACTION::LookupOK THEN BEGIN
+                                 AllowedCompanies.GETRECORD(SelectedCompany);
+                                 OnCompanyChange(SelectedCompany.Name);
+                                 VarCompany := SelectedCompany.Name;
+                               END;
+                             END;
+                              }
+
+    { 7   ;2   ;Field     ;
+                Name=NewWorkdate;
+                CaptionML=[ENU=Work Date;
+                           ENG=Work Date];
+                ToolTipML=[ENU=Specifies the date that will be entered on transactions, typically today's date. This change only affects the date on new transactions.;
+                           ENG=Specifies the date that will be entered on transactions, typically today's date. This change only affects the date on new transactions.];
+                ApplicationArea=#All;
+                SourceExpr=NewWorkdate;
+                OnValidate=BEGIN
+                             WORKDATE := NewWorkdate;
+                           END;
+                            }
+
+    { 2   ;2   ;Group     ;
+                CaptionML=[ENU=Region & Language;
+                           ENG=Region & Language];
+                Visible=NotRunningOnSaaS;
+                GroupType=Group }
+
+    { 4   ;3   ;Field     ;
+                Name=Locale;
+                CaptionML=[ENU=Region;
+                           ENG=Region];
+                ToolTipML=[ENU=Specifies the regional settings, such as date and numeric format, on all devices. You must sign out and then sign in again for the change to take effect.;
+                           ENG=Specifies the regional settings, such as date and numeric format, on all devices. You must sign out and then sign in again for the change to take effect.];
+                ApplicationArea=#All;
+                SourceExpr=GetLocale;
+                Visible=NotRunningOnSaaS;
+                OnAssistEdit=VAR
+                               LanguageManagement@1000 : Codeunit 43;
+                             BEGIN
+                               IF NOT PermissionManager.SoftwareAsAService THEN
+                                 LanguageManagement.LookupWindowsLocale(LocaleID);
+                             END;
+                              }
+
+    { 3   ;3   ;Field     ;
+                Name=Language;
+                CaptionML=[ENU=Language;
+                           ENG=Language];
+                ToolTipML=[ENU=Specifies the display language, on all devices. You must sign out and then sign in again for the change to take effect.;
+                           ENG=Specifies the display language, on all devices. You must sign out and then sign in again for the change to take effect.];
+                ApplicationArea=#All;
+                SourceExpr=GetLanguage;
+                Importance=Promoted;
+                Visible=NotRunningOnSaaS;
+                Editable=FALSE;
+                OnAssistEdit=VAR
+                               LanguageManagement@1001 : Codeunit 43;
+                             BEGIN
+                               IF NOT PermissionManager.SoftwareAsAService THEN
+                                 LanguageManagement.LookupApplicationLanguage(LanguageID);
+                             END;
+                              }
+
+    { 5   ;3   ;Field     ;
+                Name=TimeZone;
+                CaptionML=[ENU=Time Zone;
+                           ENG=Time Zone];
+                ToolTipML=[ENU=Specifies the time zone that you work in. You must sign out and then sign in again for the change to take effect.;
+                           ENG=Specifies the time zone that you work in. You must sign out and then sign in again for the change to take effect.];
+                ApplicationArea=#All;
+                SourceExpr=GetTimeZone;
+                Visible=NotRunningOnSaaS;
+                OnAssistEdit=VAR
+                               ConfPersonalizationMgt@1001 : Codeunit 9170;
+                             BEGIN
+                               IF NOT PermissionManager.SoftwareAsAService THEN
+                                 ConfPersonalizationMgt.LookupTimeZone(TimeZoneID);
+                             END;
+                              }
+
+    { 11  ;2   ;Field     ;
+                ApplicationArea=#All;
+                SourceExpr=MyNotificationsLbl;
+                Visible=IsNotOnMobile;
+                Editable=FALSE;
+                OnDrillDown=BEGIN
+                              PAGE.RUNMODAL(PAGE::"My Notifications");
+                            END;
+                             }
+
+  }
+  CODE
+  {
+    VAR
+      PermissionManager@1008 : Codeunit 9002;
+      LanguageID@1001 : Integer;
+      ReSignInMsg@1004 : TextConst '@@@="""sign out"" and ""sign in"" are the same terms as shown in the Dynamics NAV client.";ENU=You must sign out and then sign in again for the change to take effect.;ENG=You must sign out and then sign in again for the change to take effect.';
+      LocaleID@1000 : Integer;
+      TimeZoneID@1002 : Text[180];
+      VarCompany@1003 : Text;
+      NewWorkdate@1005 : Date;
+      ProfileID@1007 : Code[30];
+      NotRunningOnSaaS@1012 : Boolean;
+      MyNotificationsLbl@1013 : TextConst 'ENU=Change when I receive notifications.;ENG=Change when I receive notifications.';
+      IsNotOnMobile@1006 : Boolean;
+
+    LOCAL PROCEDURE GetLanguage@20() : Text;
+    BEGIN
+      EXIT(GetWindowsLanguageNameFromID(LanguageID));
+    END;
+
+    LOCAL PROCEDURE GetWindowsLanguageNameFromID@12(ID@1000 : Integer) : Text;
+    VAR
+      WindowsLanguage@1001 : Record 2000000045;
+    BEGIN
+      IF WindowsLanguage.GET(ID) THEN
+        EXIT(WindowsLanguage.Name);
+    END;
+
+    LOCAL PROCEDURE GetLocale@1() : Text;
+    BEGIN
+      EXIT(GetWindowsLanguageNameFromID(LocaleID));
+    END;
+
+    LOCAL PROCEDURE GetTimeZone@2() : Text;
+    VAR
+      TimeZone@1000 : Record 2000000164;
+    BEGIN
+      TimeZone.SETRANGE(ID,TimeZoneID);
+      IF TimeZone.FINDFIRST THEN
+        EXIT(TimeZone."Display Name");
+    END;
+
+    LOCAL PROCEDURE GetProfileName@5() : Text;
+    VAR
+      Profile@1000 : Record 2000000072;
+    BEGIN
+      IF NOT Profile.GET(ProfileID) THEN BEGIN
+        Profile.SETRANGE("Default Role Center",TRUE);
+        IF NOT Profile.FINDFIRST THEN
+          EXIT('');
+      END;
+      EXIT(Profile.Description);
+    END;
+
+    [Integration]
+    LOCAL PROCEDURE OnCompanyChange@3(NewCompanyName@1000 : Text);
+    BEGIN
+    END;
+
+    BEGIN
+    {
+      Contains various system-wide settings which are personal to an individual user.
+      Styled as a StandardDialog which is ideal for presenting a single field. Once more fields are added,
+      this page should be converted to a Card page.
+    }
+    END.
+  }
+}
+

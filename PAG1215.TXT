@@ -1,0 +1,109 @@
+OBJECT Page 1215 Data Exch Line Def Part
+{
+  OBJECT-PROPERTIES
+  {
+    Date=30/06/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.17501;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Line Definitions;
+               ENG=Line Definitions];
+    SourceTable=Table1227;
+    PageType=ListPart;
+    CardPageID=Data Exch Mapping Card;
+    OnAfterGetCurrRecord=VAR
+                           DataExchDef@1000 : Record 1222;
+                         BEGIN
+                           DataExchDef.GET("Data Exch. Def Code");
+                           IsXMLFileType := NOT DataExchDef.CheckEnableDisableIsNonXMLFileType;
+                         END;
+
+    ActionList=ACTIONS
+    {
+      { 7       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 9       ;1   ;Action    ;
+                      Name=Field Mapping;
+                      CaptionML=[ENU=Field Mapping;
+                                 ENG=Field Mapping];
+                      ToolTipML=[ENU=Associates columns in the data file with fields in Dynamics NAV.;
+                                 ENG=Associates columns in the data file with fields in Dynamics NAV.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 1214;
+                      RunPageLink=Data Exch. Def Code=FIELD(Data Exch. Def Code),
+                                  Data Exch. Line Def Code=FIELD(Code);
+                      Promoted=No;
+                      PromotedIsBig=Yes;
+                      Image=MapAccounts;
+                      RunPageMode=Edit }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                CaptionML=[ENU=Group;
+                           ENG=Group];
+                GroupType=Repeater }
+
+    { 11  ;2   ;Field     ;
+                CaptionML=[ENU=Line Type;
+                           ENG=Line Type];
+                ToolTipML=[ENU=Specifies the type of the line in the file.;
+                           ENG=Specifies the type of the line in the file.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Line Type" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the line in the file.;
+                           ENG=Specifies the line in the file.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Code }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the mapping setup.;
+                           ENG=Specifies the name of the mapping setup.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Name }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how many columns the line in the bank statement file has.;
+                           ENG=Specifies how many columns the line in the bank statement file has.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Column Count" }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the position in the related XML schema of the element that represents the main entry of the data file.;
+                           ENG=Specifies the position in the related XML schema of the element that represents the main entry of the data file.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Data Line Tag" }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the namespace (uniform resource name (urn)) for a target document that is expected in the file for validation. You can leave the field blank if you do not want to enable namespace validation.;
+                           ENG=Specifies the namespace (uniform resource name (urn)) for a target document that is expected in the file for validation. You can leave the field blank if you do not want to enable namespace validation.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Namespace;
+                Editable=IsXMLFileType }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the parent of the child that is specified in the Code field in cases where the data exchange setup is for files with parent and children entries, such as a document header and lines.;
+                           ENG=Specifies the parent of the child that is specified in the Code field in cases where the data exchange setup is for files with parent and children entries, such as a document header and lines.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Parent Code" }
+
+  }
+  CODE
+  {
+    VAR
+      IsXMLFileType@1000 : Boolean;
+
+    BEGIN
+    END.
+  }
+}
+

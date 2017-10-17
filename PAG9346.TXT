@@ -1,0 +1,280 @@
+OBJECT Page 9346 Purchase Quote Archives
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Purchase Quote Archives;
+               ENG=Purchase Quote Archives];
+    SourceTable=Table5109;
+    SourceTableView=WHERE(Document Type=CONST(Quote));
+    PageType=List;
+    CardPageID=Purchase Quote Archive;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 1102601000;1 ;ActionGroup;
+                      CaptionML=[ENU=Ver&sion;
+                                 ENG=Ver&sion];
+                      Image=Versions }
+      { 1102601003;2 ;Action    ;
+                      AccessByPermission=TableData 348=R;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      Image=Dimensions;
+                      OnAction=BEGIN
+                                 ShowDimensions;
+                               END;
+                                }
+      { 1102601004;2 ;Action    ;
+                      CaptionML=[ENU=Co&mments;
+                                 ENG=Co&mments];
+                      RunObject=Page 5179;
+                      RunPageLink=Document Type=FIELD(Document Type),
+                                  No.=FIELD(No.),
+                                  Document Line No.=CONST(0),
+                                  Doc. No. Occurrence=FIELD(Doc. No. Occurrence),
+                                  Version No.=FIELD(Version No.);
+                      Image=ViewComments }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="No." }
+
+    { 50  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the version number of the archived document.;
+                           ENG=Specifies the version number of the archived document.];
+                SourceExpr="Version No." }
+
+    { 52  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date when the document was archived.;
+                           ENG=Specifies the date when the document was archived.];
+                SourceExpr="Date Archived" }
+
+    { 54  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies what time the document was archived.;
+                           ENG=Specifies what time the document was archived.];
+                SourceExpr="Time Archived" }
+
+    { 56  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the user ID of the person who archived this document.;
+                           ENG=Specifies the user ID of the person who archived this document.];
+                SourceExpr="Archived By" }
+
+    { 58  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies that the archived document is linked to an interaction log entry.;
+                           ENG=Specifies that the archived document is linked to an interaction log entry.];
+                SourceExpr="Interaction Exist" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Buy-from Vendor No." }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Order Address Code";
+                Visible=FALSE }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Buy-from Vendor Name" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Vendor Authorization No." }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Buy-from Post Code";
+                Visible=FALSE }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Buy-from Country/Region Code";
+                Visible=FALSE }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Buy-from Contact";
+                Visible=FALSE }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Pay-to Vendor No.";
+                Visible=FALSE }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Pay-to Name";
+                Visible=FALSE }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Pay-to Post Code";
+                Visible=FALSE }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Pay-to Country/Region Code";
+                Visible=FALSE }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Pay-to Contact";
+                Visible=FALSE }
+
+    { 28  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Ship-to Code";
+                Visible=FALSE }
+
+    { 30  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Ship-to Name";
+                Visible=FALSE }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Ship-to Post Code";
+                Visible=FALSE }
+
+    { 34  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Ship-to Country/Region Code";
+                Visible=FALSE }
+
+    { 36  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Ship-to Contact";
+                Visible=FALSE }
+
+    { 38  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Posting Date";
+                Visible=FALSE }
+
+    { 40  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Shortcut Dimension 1 Code";
+                Visible=FALSE }
+
+    { 42  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Shortcut Dimension 2 Code";
+                Visible=FALSE }
+
+    { 44  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Location Code";
+                Visible=TRUE }
+
+    { 46  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Purchaser Code";
+                Visible=FALSE }
+
+    { 48  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Currency Code";
+                Visible=FALSE }
+
+    { 1102601001;2;Field  ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Document Date";
+                Visible=FALSE }
+
+    { 1102601005;2;Field  ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Payment Terms Code";
+                Visible=FALSE }
+
+    { 1102601007;2;Field  ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Due Date";
+                Visible=FALSE }
+
+    { 1102601009;2;Field  ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Payment Discount %";
+                Visible=FALSE }
+
+    { 1102601011;2;Field  ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Payment Method Code";
+                Visible=FALSE }
+
+    { 1102601013;2;Field  ;
+                ToolTipML=[ENU=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.;
+                           ENG=Specifies information about sales quotes, purchase quotes, or orders in earlier versions of the document.];
+                SourceExpr="Shipment Method Code";
+                Visible=FALSE }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

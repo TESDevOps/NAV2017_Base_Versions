@@ -1,0 +1,62 @@
+OBJECT Page 99000792 Family Lines
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Lines;
+               ENG=Lines];
+    MultipleNewLines=Yes;
+    LinksAllowed=No;
+    SourceTable=Table99000774;
+    DataCaptionFields=Family No.;
+    PageType=ListPart;
+    AutoSplitKey=Yes;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies which items belong to a family.;
+                           ENG=Specifies which items belong to a family.];
+                SourceExpr="Item No." }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description for the product family line.;
+                           ENG=Specifies a description for the product family line.];
+                SourceExpr=Description }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies an extended description if there is not enough space in the Description field.;
+                           ENG=Specifies an extended description if there is not enough space in the Description field.];
+                SourceExpr="Description 2";
+                Visible=FALSE }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit of measure the family line refers to.;
+                           ENG=Specifies the unit of measure the family line refers to.];
+                SourceExpr="Unit of Measure Code" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity for the item in this family line.;
+                           ENG=Specifies the quantity for the item in this family line.];
+                SourceExpr=Quantity }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

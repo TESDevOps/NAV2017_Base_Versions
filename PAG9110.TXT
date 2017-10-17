@@ -1,0 +1,95 @@
+OBJECT Page 9110 Item Attributes Factbox
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Item Attributes;
+               ENG=Item Attributes];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    SourceTable=Table7501;
+    PageType=ListPart;
+    SourceTableTemporary=Yes;
+    RefreshOnActivate=Yes;
+    OnOpenPage=BEGIN
+                 SETAUTOCALCFIELDS("Attribute Name");
+                 TranslatedValuesVisible := CURRENTCLIENTTYPE <> CLIENTTYPE::Phone;
+               END;
+
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                Name=Attribute;
+                CaptionML=[ENU=Attribute;
+                           ENG=Attribute];
+                ToolTipML=[ENU=Specifies the name of the item attribute.;
+                           ENG=Specifies the name of the item attribute.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=GetAttributeNameInCurrentLanguage;
+                Visible=TranslatedValuesVisible }
+
+    { 4   ;2   ;Field     ;
+                Name=Value;
+                CaptionML=[ENU=Value;
+                           ENG=Value];
+                ToolTipML=[ENU=Specifies the value of the item attribute.;
+                           ENG=Specifies the value of the item attribute.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=GetValueInCurrentLanguage;
+                Visible=TranslatedValuesVisible }
+
+    { 6   ;2   ;Field     ;
+                CaptionML=[ENU=Attribute;
+                           ENG=Attribute];
+                ToolTipML=[ENU=Specifies the name of the item attribute.;
+                           ENG=Specifies the name of the item attribute.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Attribute Name";
+                Visible=NOT TranslatedValuesVisible }
+
+    { 5   ;2   ;Field     ;
+                Name=RawValue;
+                CaptionML=[ENU=Value;
+                           ENG=Value];
+                ToolTipML=[ENU=Specifies the value of the item attribute.;
+                           ENG=Specifies the value of the item attribute.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Value;
+                Visible=NOT TranslatedValuesVisible }
+
+  }
+  CODE
+  {
+    VAR
+      TranslatedValuesVisible@1000 : Boolean;
+
+    PROCEDURE LoadItemAttributesData@15(KeyValue@1000 : Code[20]);
+    BEGIN
+      LoadItemAttributesFactBoxData(KeyValue);
+      CurrPage.UPDATE(FALSE);
+    END;
+
+    PROCEDURE LoadCategoryAttributesData@1(CategoryCode@1000 : Code[20]);
+    BEGIN
+      LoadCategoryAttributesFactBoxData(CategoryCode);
+      CurrPage.UPDATE(FALSE);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

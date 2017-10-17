@@ -1,0 +1,43 @@
+OBJECT Codeunit 4 ClientTypeManagement
+{
+  OBJECT-PROPERTIES
+  {
+    Date=24/11/16;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.14199;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+
+    PROCEDURE GetCurrentClientType@1() CurrClientType : ClientType;
+    BEGIN
+      CurrClientType := CURRENTCLIENTTYPE;
+      OnAfterGetCurrentClientType(CurrClientType);
+    END;
+
+    PROCEDURE IsClientType@3(ExpectedClientType@1000 : ClientType) : Boolean;
+    BEGIN
+      EXIT(ExpectedClientType = GetCurrentClientType);
+    END;
+
+    PROCEDURE IsCommonWebClientType@4() : Boolean;
+    BEGIN
+      EXIT(GetCurrentClientType IN [CLIENTTYPE::Web,CLIENTTYPE::Tablet,CLIENTTYPE::Phone]);
+    END;
+
+    [Integration]
+    LOCAL PROCEDURE OnAfterGetCurrentClientType@2(VAR CurrClientType@1000 : ClientType);
+    BEGIN
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

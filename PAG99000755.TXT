@@ -1,0 +1,304 @@
+OBJECT Page 99000755 Work Center List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=30/03/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16177;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Work Center List;
+               ENG=Work Centre List];
+    SourceTable=Table99000754;
+    PageType=List;
+    CardPageID=Work Center Card;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 22      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Wor&k Ctr.;
+                                 ENG=Wor&k Ctr.];
+                      Image=WorkCenter }
+      { 30      ;2   ;Action    ;
+                      ShortCutKey=Ctrl+F7;
+                      CaptionML=[ENU=Capacity Ledger E&ntries;
+                                 ENG=Capacity Ledger E&ntries];
+                      RunObject=Page 5832;
+                      RunPageView=SORTING(Work Center No.,Work Shift Code,Posting Date);
+                      RunPageLink=Work Center No.=FIELD(No.),
+                                  Posting Date=FIELD(Date Filter);
+                      Image=CapacityLedger }
+      { 31      ;2   ;Action    ;
+                      CaptionML=[ENU=Co&mments;
+                                 ENG=Co&mments];
+                      RunObject=Page 99000784;
+                      RunPageView=WHERE(Table Name=CONST(Work Center));
+                      RunPageLink=No.=FIELD(No.);
+                      Image=ViewComments }
+      { 28      ;2   ;ActionGroup;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      Image=Dimensions }
+      { 38      ;3   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions-Single;
+                                 ENG=Dimensions-Single];
+                      ToolTipML=[ENU=View or edit the single set of dimensions that are set up for the selected record.;
+                                 ENG=View or edit the single set of dimensions that are set up for the selected record.];
+                      RunObject=Page 540;
+                      RunPageLink=Table ID=CONST(99000754),
+                                  No.=FIELD(No.);
+                      Image=Dimensions }
+      { 40      ;3   ;Action    ;
+                      AccessByPermission=TableData 348=R;
+                      CaptionML=[ENU=Dimensions-&Multiple;
+                                 ENG=Dimensions-&Multiple];
+                      ToolTipML=[ENU=View or edit dimensions for a group of records. You can assign dimension codes to transactions to distribute costs and analyze historical information.;
+                                 ENG=View or edit dimensions for a group of records. You can assign dimension codes to transactions to distribute costs and analyse historical information.];
+                      Image=DimensionSets;
+                      OnAction=VAR
+                                 Work@1001 : Record 99000754;
+                                 DefaultDimMultiple@1000 : Page 542;
+                               BEGIN
+                                 CurrPage.SETSELECTIONFILTER(Work);
+                                 DefaultDimMultiple.SetMultiWorkCenter(Work);
+                                 DefaultDimMultiple.RUNMODAL;
+                               END;
+                                }
+      { 25      ;2   ;Action    ;
+                      CaptionML=[ENU=Lo&ad;
+                                 ENG=Lo&ad];
+                      RunObject=Page 99000887;
+                      RunPageView=SORTING(No.);
+                      RunPageLink=No.=FIELD(No.);
+                      Image=WorkCenterLoad }
+      { 33      ;2   ;Separator  }
+      { 24      ;2   ;Action    ;
+                      ShortCutKey=F7;
+                      CaptionML=[ENU=Statistics;
+                                 ENG=Statistics];
+                      RunObject=Page 99000756;
+                      RunPageLink=No.=FIELD(No.),
+                                  Date Filter=FIELD(Date Filter),
+                                  Work Shift Filter=FIELD(Work Shift Filter);
+                      Promoted=Yes;
+                      Image=Statistics;
+                      PromotedCategory=Process }
+      { 21      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Pla&nning;
+                                 ENG=Pla&nning];
+                      Image=Planning }
+      { 27      ;2   ;Action    ;
+                      CaptionML=[ENU=&Calendar;
+                                 ENG=&Calendar];
+                      RunObject=Page 99000769;
+                      Promoted=Yes;
+                      Image=MachineCenterCalendar;
+                      PromotedCategory=Process }
+      { 35      ;2   ;Action    ;
+                      CaptionML=[ENU=A&bsence;
+                                 ENG=A&bsence];
+                      RunObject=Page 99000772;
+                      RunPageLink=Capacity Type=CONST(Work Center),
+                                  No.=FIELD(No.),
+                                  Date=FIELD(Date Filter);
+                      Promoted=Yes;
+                      Image=WorkCenterAbsence;
+                      PromotedCategory=Process }
+      { 34      ;2   ;Action    ;
+                      CaptionML=[ENU=Ta&sk List;
+                                 ENG=Ta&sk List];
+                      RunObject=Page 99000915;
+                      RunPageView=SORTING(Type,No.)
+                                  WHERE(Type=CONST(Work Center),
+                                        Status=FILTER(..Released),
+                                        Routing Status=FILTER(<>Finished));
+                      RunPageLink=No.=FIELD(No.);
+                      Promoted=Yes;
+                      Image=TaskList;
+                      PromotedCategory=Process }
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 1907912104;1 ;Action    ;
+                      CaptionML=[ENU=Calculate Work Center Calendar;
+                                 ENG=Calculate Work Centre Calendar];
+                      RunObject=Report 99001046;
+                      Promoted=Yes;
+                      Image=CalcWorkCenterCalendar;
+                      PromotedCategory=Process }
+      { 1900000006;0 ;ActionContainer;
+                      ActionContainerType=Reports }
+      { 1900368306;1 ;Action    ;
+                      CaptionML=[ENU=Work Center List;
+                                 ENG=Work Centre List];
+                      RunObject=Report 99000759;
+                      Promoted=Yes;
+                      Image=Report;
+                      PromotedCategory=Report }
+      { 1900358106;1 ;Action    ;
+                      CaptionML=[ENU=Work Center Load;
+                                 ENG=Work Centre Load];
+                      RunObject=Report 99000783;
+                      Promoted=Yes;
+                      Image=Report;
+                      PromotedCategory=Report }
+      { 1902181406;1 ;Action    ;
+                      CaptionML=[ENU=Work Center Load/Bar;
+                                 ENG=Work Centre Load/Bar];
+                      RunObject=Report 99000785;
+                      Promoted=No;
+                      Image=Report;
+                      PromotedCategory=Report }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the work center.;
+                           ENG=Specifies the number of the work centre.];
+                SourceExpr="No." }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the work center.;
+                           ENG=Specifies the name of the work centre.];
+                SourceExpr=Name }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies an alternate work center.;
+                           ENG=Specifies an alternate work centre.];
+                SourceExpr="Alternate Work Center" }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the work center group, if the work center or underlying machine center is assigned to a work center group.;
+                           ENG=Specifies the work centre group, if the work centre or underlying machine centre is assigned to a work centre group.];
+                SourceExpr="Work Center Group Code" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code linked to the work center.;
+                           ENG=Specifies the dimension value code linked to the work centre.];
+                SourceExpr="Global Dimension 1 Code";
+                Visible=FALSE }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code that the work center is linked to.;
+                           ENG=Specifies the dimension value code that the work centre is linked to.];
+                SourceExpr="Global Dimension 2 Code";
+                Visible=FALSE }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the direct unit cost of the work center at one unit of measure.;
+                           ENG=Specifies the direct unit cost of the work centre at one unit of measure.];
+                SourceExpr="Direct Unit Cost";
+                Visible=FALSE }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the indirect costs of the work center, in percent.;
+                           ENG=Specifies the indirect costs of the work centre, in percent.];
+                SourceExpr="Indirect Cost %";
+                Visible=FALSE }
+
+    { 29  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit cost at one unit of measure for the machine center.;
+                           ENG=Specifies the unit cost at one unit of measure for the machine centre.];
+                SourceExpr="Unit Cost";
+                Visible=FALSE }
+
+    { 41  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a unit for production at the work center.;
+                           ENG=Specifies a unit for production at the work centre.];
+                SourceExpr="Unit of Measure Code" }
+
+    { 43  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the capacity of the work center.;
+                           ENG=Specifies the capacity of the work centre.];
+                SourceExpr=Capacity }
+
+    { 45  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the efficiency factor as a percentage of the work center.;
+                           ENG=Specifies the efficiency factor as a percentage of the work centre.];
+                SourceExpr=Efficiency;
+                Visible=FALSE }
+
+    { 47  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the maximum efficiency factor of the work center.;
+                           ENG=Specifies the maximum efficiency factor of the work centre.];
+                SourceExpr="Maximum Efficiency";
+                Visible=FALSE }
+
+    { 49  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the minimum efficiency factor of the work center.;
+                           ENG=Specifies the minimum efficiency factor of the work centre.];
+                SourceExpr="Minimum Efficiency";
+                Visible=FALSE }
+
+    { 53  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the simulation type for the work center.;
+                           ENG=Specifies the simulation type for the work centre.];
+                SourceExpr="Simulation Type";
+                Visible=FALSE }
+
+    { 55  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the shop calendar code that the planning of this work center refers to.;
+                           ENG=Specifies the shop calendar code that the planning of this work centre refers to.];
+                SourceExpr="Shop Calendar Code" }
+
+    { 57  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the search name for the work center.;
+                           ENG=Specifies the search name for the work centre.];
+                SourceExpr="Search Name" }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the overhead rate of this work center.;
+                           ENG=Specifies the overhead rate of this work centre.];
+                SourceExpr="Overhead Rate";
+                Visible=FALSE }
+
+    { 1102601000;2;Field  ;
+                ToolTipML=[ENU=Specifies when the work center card was last modified.;
+                           ENG=Specifies when the work centre card was last modified.];
+                SourceExpr="Last Date Modified";
+                Visible=FALSE }
+
+    { 1102601002;2;Field  ;
+                ToolTipML=[ENU=Specifies the method to use to calculate the output quantity at this work center.;
+                           ENG=Specifies the method to use to calculate the output quantity at this work centre.];
+                SourceExpr="Flushing Method";
+                Visible=FALSE }
+
+    { 1102601004;2;Field  ;
+                ToolTipML=[ENU=Specifies the number of a subcontractor who supplies this work center.;
+                           ENG=Specifies the number of a subcontractor who supplies this work centre.];
+                SourceExpr="Subcontractor No.";
+                Visible=FALSE }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=TRUE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,64 @@
+OBJECT Codeunit 2200 Azure Key Vault Management
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      NavAzureKeyVaultClient@1000 : DotNet "'Microsoft.Dynamics.Nav.AzureKeyVaultClient, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.AzureKeyVaultClient.MachineLearningCredentialsHelper";
+      AzureKeyVaultSecretProvider@1001 : DotNet "'Microsoft.Dynamics.Nav.Ncl, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.Runtime.Encryption.IAzureKeyVaultSecretProvider";
+      ApplicationSecretsTxt@1002 : TextConst '@@@={Locked};ENU=ml-forecast,qbo-consumerkey,qbo-consumersecret,amcname,amcpassword,YodleeCobrandName,YodleeCobrandPassword,YodleeServiceUri;ENG=ml-forecast,qbo-consumerkey,qbo-consumersecret,amcname,amcpassword,YodleeCobrandName,YodleeCobrandPassword,YodleeServiceUri';
+      SecretNotFoundErr@1003 : TextConst '@@@="%1 = Secret Name. %2 = Available secrets.";ENU=%1 is not an application secret. Choose one of the following secrets: %2;ENG=%1 is not an application secret. Choose one of the following secrets: %2';
+
+    [TryFunction]
+    PROCEDURE GetMachineLearningCredentials@2(VAR ApiUri@1000 : Text[250];VAR ApiKey@1001 : Text[200];VAR Limit@1002 : Decimal);
+    VAR
+      ResultArray@1003 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Array";
+    BEGIN
+      NavAzureKeyVaultClient := NavAzureKeyVaultClient.MachineLearningCredentialsHelper;
+      NavAzureKeyVaultClient.SetAzureKeyVaultProvider(AzureKeyVaultSecretProvider);
+      ResultArray := NavAzureKeyVaultClient.GetMLCredentials;
+      ApiKey := FORMAT(ResultArray.GetValue(0));
+      ApiUri := FORMAT(ResultArray.GetValue(1));
+      IF NOT ISNULL(ResultArray.GetValue(2)) THEN
+        EVALUATE(Limit,FORMAT(ResultArray.GetValue(2)));
+    END;
+
+    [TryFunction]
+    PROCEDURE GetAzureKeyVaultSecret@1(VAR Secret@1001 : Text;SecretName@1000 : Text);
+    VAR
+      TypeHelper@1002 : Codeunit 10;
+    BEGIN
+      IF TypeHelper.GetOptionNo(SecretName,ApplicationSecretsTxt) = -1 THEN
+        ERROR(STRSUBSTNO(SecretNotFoundErr,SecretName,ApplicationSecretsTxt));
+      NavAzureKeyVaultClient := NavAzureKeyVaultClient.MachineLearningCredentialsHelper;
+      NavAzureKeyVaultClient.SetAzureKeyVaultProvider(AzureKeyVaultSecretProvider);
+      Secret := NavAzureKeyVaultClient.GetAzureKeyVaultSecret(SecretName);
+    END;
+
+    PROCEDURE SetAzureKeyVaultSecretProvider@5(NewAzureKeyVaultSecretProvider@1000 : DotNet "'Microsoft.Dynamics.Nav.Ncl, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.Runtime.Encryption.IAzureKeyVaultSecretProvider");
+    BEGIN
+      AzureKeyVaultSecretProvider := NewAzureKeyVaultSecretProvider;
+    END;
+
+    PROCEDURE IsEnable@3() : Boolean;
+    BEGIN
+      NavAzureKeyVaultClient := NavAzureKeyVaultClient.MachineLearningCredentialsHelper;
+      EXIT(NavAzureKeyVaultClient.Enable);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

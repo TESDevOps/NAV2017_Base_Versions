@@ -1,0 +1,35 @@
+OBJECT Codeunit 9654 Design-time Report Selection
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    SingleInstance=Yes;
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      SelectedCustomLayoutCode@1000 : Code[20];
+
+    PROCEDURE SetSelectedCustomLayout@3(NewCustomLayoutCode@1000 : Code[20]);
+    BEGIN
+      SelectedCustomLayoutCode := NewCustomLayoutCode;
+    END;
+
+    PROCEDURE GetSelectedCustomLayout@5() : Code[20];
+    BEGIN
+      EXIT(SelectedCustomLayoutCode);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

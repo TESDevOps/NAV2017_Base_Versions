@@ -1,0 +1,50 @@
+OBJECT Table 2000000195 Membership Entitlement
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/09/17;
+    Time=12:00:00;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Membership Entitlement;
+               ENG=Membership Entitlement];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ENG=Type];
+                                                   OptionCaptionML=[ENU=Azure AD Plan,Azure AD Role,User Security ID,Application ID;
+                                                                    ENG=Azure AD Plan,Azure AD Role,User Security ID,Application ID];
+                                                   OptionString=Azure AD Plan,Azure AD Role,User Security ID,Application ID }
+    { 2   ;   ;ID                  ;Text250       ;CaptionML=[ENU=ID;
+                                                              ENG=ID] }
+    { 3   ;   ;Name                ;Text250       ;CaptionML=[ENU=Name;
+                                                              ENG=Name] }
+    { 4   ;   ;Entitlement Set ID  ;Code20        ;TableRelation="Entitlement Set".ID WHERE (ID=FIELD(Entitlement Set ID));
+                                                   CaptionML=[ENU=Entitlement Set ID;
+                                                              ENG=Entitlement Set ID] }
+    { 5   ;   ;Entitlement Set Name;Text250       ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("Entitlement Set".Name WHERE (ID=FIELD(Entitlement Set ID)));
+                                                   CaptionML=[ENU=Entitlement Set Name;
+                                                              ENG=Entitlement Set Name] }
+    { 6   ;   ;Is Evaluation       ;Boolean       ;CaptionML=[ENU=Is Evaluation;
+                                                              ENG=Is Evaluation] }
+  }
+  KEYS
+  {
+    {    ;Type,ID,Entitlement Set ID              ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

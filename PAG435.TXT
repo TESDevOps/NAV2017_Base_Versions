@@ -1,0 +1,231 @@
+OBJECT Page 435 Reminder Lines
+{
+  OBJECT-PROPERTIES
+  {
+    Date=28/05/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16996,NAVGB10.00.00.16996;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Lines;
+               ENG=Lines];
+    LinksAllowed=No;
+    SourceTable=Table296;
+    PageType=ListPart;
+    AutoSplitKey=Yes;
+    OnAfterGetRecord=BEGIN
+                       DescriptionIndent := 0;
+                       DescriptionOnFormat;
+                       OriginalAmountOnFormat;
+                       RemainingAmountOnFormat;
+                       AmountOnFormat;
+                     END;
+
+    OnAfterGetCurrRecord=BEGIN
+                           SetShowMandatoryConditions;
+                         END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 1906587504;1 ;ActionGroup;
+                      CaptionML=[ENU=F&unctions;
+                                 ENG=F&unctions];
+                      Image=Action }
+      { 1900206104;2 ;Action    ;
+                      AccessByPermission=TableData 279=R;
+                      CaptionML=[ENU=Insert &Ext. Texts;
+                                 ENG=Insert &Ext. Texts];
+                      ToolTipML=[ENU=Insert the extended item description that is set up for the item that is being processed on the line.;
+                                 ENG=Insert the extended item description that is set up for the item that is being processed on the line.];
+                      Image=Text;
+                      OnAction=BEGIN
+                                 InsertExtendedText(TRUE);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                IndentationColumnName=DescriptionIndent;
+                IndentationControls=Description;
+                GroupType=Repeater }
+
+    { 28  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the line type.;
+                           ENG=Specifies the line type.];
+                SourceExpr=Type;
+                OnValidate=BEGIN
+                             TypeOnAfterValidate;
+                             NoOnAfterValidate;
+                             SetShowMandatoryConditions
+                           END;
+
+                ShowMandatory=TRUE }
+
+    { 30  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the general ledger account this reminder line is for.;
+                           ENG=Specifies the number of the general ledger account this reminder line is for.];
+                SourceExpr="No.";
+                OnValidate=BEGIN
+                             NoOnAfterValidate;
+                           END;
+
+                ShowMandatory=TypeIsGLAccount }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the posting date of the customer ledger entry that this reminder line is for.;
+                           ENG=Specifies the posting date of the customer ledger entry that this reminder line is for.];
+                SourceExpr="Posting Date";
+                Visible=FALSE }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document date of the customer ledger entry this reminder line is for.;
+                           ENG=Specifies the document date of the customer ledger entry this reminder line is for.];
+                SourceExpr="Document Date";
+                Visible=FALSE }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document type of the customer ledger entry this reminder line is for.;
+                           ENG=Specifies the document type of the customer ledger entry this reminder line is for.];
+                SourceExpr="Document Type";
+                ShowMandatory=TypeIsCustomerLedgerEntry }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document number of the customer ledger entry this reminder line is for.;
+                           ENG=Specifies the document number of the customer ledger entry this reminder line is for.];
+                SourceExpr="Document No.";
+                OnValidate=BEGIN
+                             CurrPage.UPDATE;
+                           END;
+
+                ShowMandatory=TypeIsCustomerLedgerEntry }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the due date of the customer ledger entry this reminder line is for.;
+                           ENG=Specifies the due date of the customer ledger entry this reminder line is for.];
+                SourceExpr="Due Date" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies an entry description, based on the contents of the Type field.;
+                           ENG=Specifies an entry description, based on the contents of the Type field.];
+                SourceExpr=Description }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the original amount of the customer ledger entry that this reminder line is for.;
+                           ENG=Specifies the original amount of the customer ledger entry that this reminder line is for.];
+                SourceExpr="Original Amount";
+                Visible=FALSE }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the remaining amount of the customer ledger entry this reminder line is for.;
+                           ENG=Specifies the remaining amount of the customer ledger entry this reminder line is for.];
+                SourceExpr="Remaining Amount" }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the amount in the currency that is represented by the currency code on the reminder header.;
+                           ENG=Specifies the amount in the currency that is represented by the currency code on the reminder header.];
+                SourceExpr=Amount }
+
+    { 12  ;2   ;Field     ;
+                CaptionML=[ENU=Reminder Level;
+                           ENG=Reminder Level];
+                ToolTipML=[ENU=Specifies a number that indicates the reminder level.;
+                           ENG=Specifies a number that indicates the reminder level.];
+                BlankZero=Yes;
+                SourceExpr="No. of Reminders";
+                Visible=FALSE }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of the reminder line.;
+                           ENG=Specifies the type of the reminder line.];
+                SourceExpr="Line Type";
+                Visible=FALSE }
+
+    { 32  ;2   ;Field     ;
+                SourceExpr="Applies-to Document Type";
+                Visible=FALSE }
+
+    { 34  ;2   ;Field     ;
+                SourceExpr="Applies-to Document No.";
+                Visible=FALSE }
+
+  }
+  CODE
+  {
+    VAR
+      TransferExtendedText@1000 : Codeunit 378;
+      DescriptionEmphasize@19010547 : Boolean INDATASET;
+      DescriptionIndent@19057867 : Integer INDATASET;
+      "Original AmountEmphasize"@19056258 : Boolean INDATASET;
+      "Remaining AmountEmphasize"@19074967 : Boolean INDATASET;
+      AmountEmphasize@19073101 : Boolean INDATASET;
+      TypeIsGLAccount@1002 : Boolean;
+      TypeIsCustomerLedgerEntry@1001 : Boolean;
+
+    LOCAL PROCEDURE InsertExtendedText@5(Unconditionally@1000 : Boolean);
+    BEGIN
+      IF TransferExtendedText.ReminderCheckIfAnyExtText(Rec,Unconditionally) THEN BEGIN
+        CurrPage.SAVERECORD;
+        TransferExtendedText.InsertReminderExtText(Rec);
+      END;
+      IF TransferExtendedText.MakeUpdate THEN
+        CurrPage.UPDATE;
+    END;
+
+    LOCAL PROCEDURE TypeOnAfterValidate@19069045();
+    BEGIN
+      InsertExtendedText(FALSE);
+    END;
+
+    LOCAL PROCEDURE NoOnAfterValidate@19066594();
+    BEGIN
+      InsertExtendedText(FALSE);
+    END;
+
+    LOCAL PROCEDURE DescriptionOnFormat@19023855();
+    VAR
+      Indentation@1040002 : Integer;
+    BEGIN
+      IF "Multiple Interest Rates Entry" THEN BEGIN
+        Indentation := 2;
+        DescriptionIndent := Indentation;
+      END ELSE
+        DescriptionEmphasize := TRUE;
+    END;
+
+    LOCAL PROCEDURE OriginalAmountOnFormat@19024851();
+    BEGIN
+      IF NOT "Multiple Interest Rates Entry" THEN
+        "Original AmountEmphasize" := TRUE;
+    END;
+
+    LOCAL PROCEDURE RemainingAmountOnFormat@19008406();
+    BEGIN
+      IF NOT "Multiple Interest Rates Entry" THEN
+        "Remaining AmountEmphasize" := TRUE;
+    END;
+
+    LOCAL PROCEDURE AmountOnFormat@19014598();
+    BEGIN
+      IF NOT "Multiple Interest Rates Entry" THEN
+        AmountEmphasize := TRUE;
+    END;
+
+    LOCAL PROCEDURE SetShowMandatoryConditions@1();
+    BEGIN
+      TypeIsGLAccount := Type = Type::"G/L Account";
+      TypeIsCustomerLedgerEntry := Type = Type::"Customer Ledger Entry"
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

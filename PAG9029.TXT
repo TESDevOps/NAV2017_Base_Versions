@@ -1,0 +1,78 @@
+OBJECT Page 9029 O365 Sales Activities RC
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=O365 Sales Activities RC;
+               ENG=O365 Sales Activities RC];
+    PageType=RoleCenter;
+    ActionList=ACTIONS
+    {
+      { 6       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 7       ;1   ;Action    ;
+                      Name=Email Settings;
+                      CaptionML=[ENU=Email Settings;
+                                 ENG=Email Settings];
+                      ToolTipML=[ENU=Manage your email settings;
+                                 ENG=Manage your email settings];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 2128;
+                      Image=Setup }
+      { 8       ;1   ;Action    ;
+                      Name=Export Invoices;
+                      CaptionML=[ENU=Export Invoices;
+                                 ENG=Export Invoices];
+                      ToolTipML=[ENU=Export and send invoices.;
+                                 ENG=Export and send invoices.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 2129;
+                      Image=SendEmailPDF }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                ContainerType=RoleCenterArea }
+
+    { 2   ;1   ;Part      ;
+                ApplicationArea=#Basic,#Suite;
+                PagePartID=Page9039;
+                PartType=Page }
+
+    { 3   ;1   ;Part      ;
+                CaptionML=[ENU=Invoices;
+                           ENG=Invoices];
+                ApplicationArea=#Basic,#Suite;
+                PagePartID=Page2103;
+                PartType=Page }
+
+    { 4   ;1   ;Part      ;
+                CaptionML=[ENU=Item List;
+                           ENG=Item List];
+                ApplicationArea=#Basic,#Suite;
+                SubPageView=WHERE(Blocked=CONST(No));
+                PagePartID=Page2104;
+                PartType=Page }
+
+    { 5   ;1   ;Part      ;
+                CaptionML=[ENU=Customer List;
+                           ENG=Customer List];
+                ApplicationArea=#Basic,#Suite;
+                PagePartID=Page2101;
+                PartType=Page }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

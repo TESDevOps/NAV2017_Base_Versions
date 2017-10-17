@@ -1,0 +1,37 @@
+OBJECT Table 1638 Invoiced Booking Item
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Invoiced Booking Item;
+               ENG=Invoiced Booking Item];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Booking Item ID     ;Text50        ;CaptionML=[ENU=Booking Item ID;
+                                                              ENG=Booking Item ID] }
+    { 2   ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              ENG=Document No.] }
+    { 3   ;   ;Posted              ;Boolean       ;CaptionML=[ENU=Posted;
+                                                              ENG=Posted] }
+  }
+  KEYS
+  {
+    {    ;Booking Item ID                         ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

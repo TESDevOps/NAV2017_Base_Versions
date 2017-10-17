@@ -1,0 +1,71 @@
+OBJECT Page 5062 Business Relation Contacts
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Business Relation Contacts;
+               ENG=Business Relation Contacts];
+    SourceTable=Table5054;
+    DataCaptionFields=Business Relation Code;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the contact number of the company you are assigning a business relation.;
+                           ENG=Specifies the contact number of the company you are assigning a business relation.];
+                ApplicationArea=#All;
+                SourceExpr="Contact No." }
+
+    { 4   ;2   ;Field     ;
+                DrillDown=No;
+                ToolTipML=[ENU=Specifies the name of the contact company to which you assign a business relation. This field is not editable.;
+                           ENG=Specifies the name of the contact company to which you assign a business relation. This field is not editable.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Contact Name" }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU="Specifies the name of the table to which the contact is linked. There are four possible options: &lt;blank&gt;, Vendor, Customer, and Bank Account.";
+                           ENG="Specifies the name of the table to which the contact is linked. There are four possible options: &lt;blank&gt;, Vendor, Customer, and Bank Account."];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Link to Table" }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number assigned to the contact in the Customer, Vendor, or Bank Account table. This field is only valid for contacts recorded as customer, vendor or bank accounts.;
+                           ENG=Specifies the number assigned to the contact in the Customer, Vendor, or Bank Account table. This field is only valid for contacts recorded as customer, vendor or bank accounts.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="No." }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

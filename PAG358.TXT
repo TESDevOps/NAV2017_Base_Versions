@@ -1,0 +1,103 @@
+OBJECT Page 358 Objects
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Objects;
+               ENG=Objects];
+    SourceTable=Table2000000058;
+    PageType=List;
+    OnAfterGetRecord=VAR
+                       NAVApp@1000 : Record 2000000160;
+                     BEGIN
+                       ExtensionName := '';
+                       IF ISNULLGUID("App Package ID") THEN
+                         EXIT;
+                       IF NAVApp.GET("App Package ID") THEN
+                         ExtensionName := NAVApp.Name;
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 11  ;2   ;Field     ;
+                CaptionML=[ENU=Type;
+                           ENG=Type];
+                ToolTipML=[ENU=Specifies the object type.;
+                           ENG=Specifies the object type.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Object Type";
+                Visible=FALSE }
+
+    { 2   ;2   ;Field     ;
+                CaptionML=[ENU=ID;
+                           ENG=ID];
+                ToolTipML=[ENU=Specifies the object ID.;
+                           ENG=Specifies the object ID.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Object ID" }
+
+    { 4   ;2   ;Field     ;
+                DrillDown=No;
+                CaptionML=[ENU=Name;
+                           ENG=Name];
+                ToolTipML=[ENU=Specifies the name of the object.;
+                           ENG=Specifies the name of the object.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Object Caption" }
+
+    { 12  ;2   ;Field     ;
+                CaptionML=[ENU=Object Name;
+                           ENG=Object Name];
+                ToolTipML=[ENU=Specifies the name of the object.;
+                           ENG=Specifies the name of the object.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Object Name";
+                Visible=FALSE }
+
+    { 3   ;2   ;Field     ;
+                Name=ExtensionName;
+                CaptionML=[ENU=Extension Name;
+                           ENG=Extension Name];
+                ToolTipML=[ENU=Specifies the name of the extension.;
+                           ENG=Specifies the name of the extension.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=ExtensionName;
+                Visible=FALSE }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      ExtensionName@1000 : Text;
+
+    BEGIN
+    END.
+  }
+}
+

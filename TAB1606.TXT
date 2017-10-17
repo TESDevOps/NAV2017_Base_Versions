@@ -1,0 +1,77 @@
+OBJECT Table 1606 Office Invoice
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[@@@=This table is used to keep track of invoices that have been created from the context of an Office add-in.;
+               ENU=Office Invoice;
+               ENG=Office Invoice];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Item ID             ;Text250       ;CaptionML=[ENU=Item ID;
+                                                              ENG=Item ID] }
+    { 2   ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              ENG=Document No.] }
+    { 3   ;   ;Posted              ;Boolean       ;CaptionML=[ENU=Posted;
+                                                              ENG=Posted] }
+  }
+  KEYS
+  {
+    {    ;Item ID,Document No.,Posted             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE SetCustomer@1(CustNo@1000 : Code[20]);
+    BEGIN
+      SETRANGE("Item ID",CustNo);
+    END;
+
+    PROCEDURE GetCustomer@2() CustNo : Code[20];
+    BEGIN
+      CustNo := COPYSTR(GETFILTER("Item ID"),1,20);
+      SETRANGE("Item ID");
+    END;
+
+    PROCEDURE GetCustomerName@4() CustName : Text[50];
+    VAR
+      SalesHeader@1001 : Record 36;
+      SalesInvoiceHeader@1000 : Record 112;
+    BEGIN
+      IF Posted THEN BEGIN
+        SalesInvoiceHeader.GET("Document No.");
+        CustName := SalesInvoiceHeader."Sell-to Customer Name";
+      END ELSE BEGIN
+        SalesHeader.GET(SalesHeader."Document Type"::Invoice,"Document No.");
+        CustName := SalesHeader."Sell-to Customer Name";
+      END;
+    END;
+
+    PROCEDURE ShowInvoice@15();
+    VAR
+      SalesHeader@1000 : Record 36;
+      SalesInvoiceHeader@1001 : Record 112;
+    BEGIN
+      IF Posted THEN BEGIN
+        SalesInvoiceHeader.GET("Document No.");
+        PAGE.RUN(PAGE::"Posted Sales Invoice",SalesInvoiceHeader);
+      END ELSE BEGIN
+        SalesHeader.GET(SalesHeader."Document Type"::Invoice,"Document No.");
+        PAGE.RUN(PAGE::"Sales Invoice",SalesHeader);
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

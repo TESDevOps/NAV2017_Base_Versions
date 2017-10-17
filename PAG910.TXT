@@ -1,0 +1,46 @@
+OBJECT Page 910 Assembly Item - Details
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Assembly Item - Details;
+               ENG=Assembly Item - Details];
+    SourceTable=Table27;
+    PageType=CardPart;
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Field     ;
+                CaptionML=[ENU=Item No.;
+                           ENG=Item No.];
+                ToolTipML=[ENU=Specifies the number of the item.;
+                           ENG=Specifies the number of the item.];
+                SourceExpr="No." }
+
+    { 3   ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit cost that is used as a standard measure.;
+                           ENG=Specifies the unit cost that is used as a standard measure.];
+                SourceExpr="Standard Cost" }
+
+    { 4   ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the price for one unit of the item, in LCY.;
+                           ENG=Specifies the price for one unit of the item, in LCY.];
+                SourceExpr="Unit Price" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

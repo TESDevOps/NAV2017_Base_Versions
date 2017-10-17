@@ -1,0 +1,199 @@
+OBJECT Page 840 CF Forecast Statistics FactBox
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Cash Flow Forecast Statistic;
+               ENG=Cash Flow Forecast Statistic];
+    SourceTable=Table840;
+    PageType=CardPart;
+    OnAfterGetRecord=BEGIN
+                       IF CurrentDate <> WORKDATE THEN
+                         CurrentDate := WORKDATE;
+
+                       CalculateAllAmounts(0D,0D,Amounts,SumTotal);
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 118 ;1   ;Field     ;
+                Name=LiquidFunds;
+                CaptionML=[ENU=Liquid Funds;
+                           ENG=Liquid Funds];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amounts[CFForecastEntry."Source Type"::"Liquid Funds"];
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource("Source Type Filter"::"Liquid Funds");
+                            END;
+                             }
+
+    { 116 ;1   ;Field     ;
+                Name=Receivables;
+                CaptionML=[ENU=Receivables;
+                           ENG=Receivables];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amounts[CFForecastEntry."Source Type"::Receivables];
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource("Source Type Filter"::Receivables);
+                            END;
+                             }
+
+    { 114 ;1   ;Field     ;
+                Name=SalesOrders;
+                CaptionML=[ENU=Sales Orders;
+                           ENG=Sales Orders];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amounts[CFForecastEntry."Source Type"::"Sales Order"];
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource("Source Type Filter"::"Sales Order");
+                            END;
+                             }
+
+    { 1   ;1   ;Field     ;
+                Name=ServiceOrders;
+                CaptionML=[ENU=Service Orders;
+                           ENG=Service Orders];
+                SourceExpr=Amounts[CFForecastEntry."Source Type"::"Service Orders"];
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource("Source Type Filter"::"Service Orders");
+                            END;
+                             }
+
+    { 112 ;1   ;Field     ;
+                Name=SaleofFixedAssets;
+                CaptionML=[ENU=Fixed Assets Disposal;
+                           ENG=Fixed Assets Disposal];
+                SourceExpr=Amounts[CFForecastEntry."Source Type"::"Fixed Assets Disposal"];
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource("Source Type Filter"::"Fixed Assets Disposal");
+                            END;
+                             }
+
+    { 110 ;1   ;Field     ;
+                Name=ManualRevenues;
+                CaptionML=[ENU=Cash Flow Manual Revenues;
+                           ENG=Cash Flow Manual Revenues];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amounts[CFForecastEntry."Source Type"::"Cash Flow Manual Revenue"];
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource("Source Type Filter"::"Cash Flow Manual Revenue");
+                            END;
+                             }
+
+    { 108 ;1   ;Field     ;
+                Name=Payables;
+                CaptionML=[ENU=Payables;
+                           ENG=Payables];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amounts[CFForecastEntry."Source Type"::Payables];
+                AutoFormatType=1;
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource("Source Type Filter"::Payables);
+                            END;
+                             }
+
+    { 106 ;1   ;Field     ;
+                Name=PurchaseOrders;
+                CaptionML=[ENU=Purchase Orders;
+                           ENG=Purchase Orders];
+                SourceExpr=Amounts[CFForecastEntry."Source Type"::"Purchase Order"];
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource("Source Type Filter"::"Purchase Order");
+                            END;
+                             }
+
+    { 104 ;1   ;Field     ;
+                Name=BudgetedFixedAssets;
+                CaptionML=[ENU=Fixed Assets Budget;
+                           ENG=Fixed Assets Budget];
+                SourceExpr=Amounts[CFForecastEntry."Source Type"::"Fixed Assets Budget"];
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource("Source Type Filter"::"Fixed Assets Budget");
+                            END;
+                             }
+
+    { 102 ;1   ;Field     ;
+                Name=ManualExpenses;
+                CaptionML=[ENU=Cash Flow Manual Expenses;
+                           ENG=Cash Flow Manual Expenses];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amounts[CFForecastEntry."Source Type"::"Cash Flow Manual Expense"];
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource("Source Type Filter"::"Cash Flow Manual Expense");
+                            END;
+                             }
+
+    { 2   ;1   ;Field     ;
+                Name=GLBudgets;
+                CaptionML=[ENU=G/L Budgets;
+                           ENG=G/L Budgets];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amounts[CFForecastEntry."Source Type"::"G/L Budget"];
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource("Source Type Filter"::"G/L Budget");
+                            END;
+                             }
+
+    { 3   ;1   ;Field     ;
+                Name=Jobs;
+                CaptionML=[ENU=Jobs;
+                           ENG=Jobs];
+                ToolTipML=[ENU=Specifies if jobs must be included in cash flow forecasts.;
+                           ENG=Specifies if jobs must be included in cash flow forecasts.];
+                ApplicationArea=#Jobs;
+                SourceExpr=Amounts[CFForecastEntry."Source Type"::Job];
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource("Source Type Filter"::Job);
+                            END;
+                             }
+
+    { 4   ;1   ;Field     ;
+                Name=Tax;
+                CaptionML=[ENU=Tax;
+                           ENG=VAT];
+                ToolTipML=[ENU=Specifies if tax must be included in cash flow forecasts.;
+                           ENG=Specifies if VAT must be included in cash flow forecasts.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amounts[CFForecastEntry."Source Type"::Tax];
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource("Source Type Filter"::Tax);
+                            END;
+                             }
+
+    { 100 ;1   ;Field     ;
+                Name=Total;
+                CaptionML=[ENU=Total;
+                           ENG=Total];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=SumTotal;
+                CaptionClass=FORMAT(STRSUBSTNO(Text1000,FORMAT("Manual Payments To")));
+                OnDrillDown=BEGIN
+                              DrillDownEntriesFromSource(0);
+                            END;
+                             }
+
+  }
+  CODE
+  {
+    VAR
+      Text1000@1000 : TextConst 'ENU=Liquid Funds at %1;ENG=Liquid Funds at %1';
+      CFForecastEntry@1001 : Record 847;
+      SumTotal@1016 : Decimal;
+      CurrentDate@1017 : Date;
+      Amounts@1003 : ARRAY [15] OF Decimal;
+
+    BEGIN
+    END.
+  }
+}
+

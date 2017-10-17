@@ -1,0 +1,50 @@
+OBJECT Page 99000839 Prod. Order Comment List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Comment List;
+               ENG=Comment List];
+    LinksAllowed=No;
+    SourceTable=Table5414;
+    DataCaptionFields=Status,Prod. Order No.;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the production order that this comment is entered for.;
+                           ENG=Specifies the number of the production order that this comment is entered for.];
+                SourceExpr="Prod. Order No." }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a date.;
+                           ENG=Specifies a date.];
+                SourceExpr=Date }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the comment text.;
+                           ENG=Specifies the comment text.];
+                SourceExpr=Comment }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

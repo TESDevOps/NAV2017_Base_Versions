@@ -1,0 +1,44 @@
+OBJECT Table 2000000197 Token Cache
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/09/17;
+    Time=12:00:00;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Token Cache;
+               ENG=Token Cache];
+  }
+  FIELDS
+  {
+    { 1   ;   ;User Security ID    ;GUID          ;TableRelation=User."User Security ID";
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User Security ID;
+                                                              ENG=User Security ID] }
+    { 2   ;   ;User Unique ID      ;GUID          ;CaptionML=[ENU=User Unique ID;
+                                                              ENG=User Unique ID] }
+    { 3   ;   ;Tenant ID           ;GUID          ;CaptionML=[ENU=Tenant ID;
+                                                              ENG=Tenant ID] }
+    { 4   ;   ;Cache Write Time    ;DateTime      ;CaptionML=[ENU=Cache Write Time;
+                                                              ENG=Cache Write Time] }
+    { 5   ;   ;Cache Data          ;BLOB          ;CaptionML=[ENU=Cache Data;
+                                                              ENG=Cache Data] }
+  }
+  KEYS
+  {
+    {    ;User Security ID                        ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,63 @@
+OBJECT Table 1801 Data Migration Entity
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Data Migration Entity;
+               ENG=Data Migration Entity];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Table ID            ;Integer       ;OnValidate=VAR
+                                                                AllObjWithCaption@1000 : Record 2000000058;
+                                                              BEGIN
+                                                                AllObjWithCaption.SETRANGE("Object Type",AllObjWithCaption."Object Type"::Table);
+                                                                AllObjWithCaption.SETRANGE("Object ID","Table ID");
+                                                                IF AllObjWithCaption.FINDFIRST THEN
+                                                                  "Table Name" := AllObjWithCaption."Object Caption";
+                                                              END;
+
+                                                   CaptionML=[ENU=Table ID;
+                                                              ENG=Table ID];
+                                                   Editable=No }
+    { 2   ;   ;Table Name          ;Text250       ;CaptionML=[ENU=Table Name;
+                                                              ENG=Table Name];
+                                                   Editable=No }
+    { 3   ;   ;No. of Records      ;Integer       ;CaptionML=[ENU=No. of Records;
+                                                              ENG=No. of Records];
+                                                   Editable=No }
+    { 4   ;   ;Selected            ;Boolean       ;CaptionML=[ENU=Selected;
+                                                              ENG=Selected] }
+  }
+  KEYS
+  {
+    {    ;Table ID                                ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE InsertRecord@1(TableID@1000 : Integer;NoOfPackageRecords@1001 : Integer);
+    BEGIN
+      INIT;
+      VALIDATE("Table ID",TableID);
+      "No. of Records" := NoOfPackageRecords;
+      IF NoOfPackageRecords > 0 THEN
+        Selected := TRUE
+      ELSE
+        Selected := FALSE;
+      INSERT;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

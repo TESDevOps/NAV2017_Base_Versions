@@ -1,0 +1,212 @@
+OBJECT Codeunit 50 SaaS Log In Management
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      TermsAndConditionsDescriptionTxt@1000 : TextConst 'ENU=Rebranding from Madeira to Dynamics 365 Financials;ENG=Rebranding from Madeira to Dynamics 365 Financials';
+      DateFilterCalc@1001 : Codeunit 358;
+      SettingUpMsg@1002 : TextConst 'ENU=Please wait while we are setting up your new company.;ENG=Please wait while we are setting up your new company.';
+      NoPermissionToEnterTrialErr@1003 : TextConst '@@@="%1 = Company Name";ENU=In order to open %1, your company must start a trial. You must be an administrator to enter the trial period.;ENG=In order to open %1, your company must start a trial. You must be an administrator to enter the trial period.';
+      MyCompanyTxt@1004 : TextConst 'ENU=My Company;ENG=My Company';
+
+    LOCAL PROCEDURE SetTenantLicenseState@17();
+    VAR
+      TenantLicenseState@1001 : Record 2000000189;
+      Company@1003 : Record 2000000006;
+      PermissionManager@1000 : Codeunit 9002;
+    BEGIN
+      IF NOT PermissionManager.SoftwareAsAService THEN
+        EXIT;
+
+      IF NOT TenantLicenseState.FINDLAST THEN BEGIN
+        TenantLicenseState.INIT;
+        TenantLicenseState."Start Date" := DateFilterCalc.ConvertToUtcDateTime(CURRENTDATETIME);
+        TenantLicenseState.State := TenantLicenseState.State::Evaluation;
+        TenantLicenseState."User Security ID" := USERSECURITYID;
+        TenantLicenseState.INSERT(TRUE);
+      END;
+
+      IF TenantLicenseState.State <> TenantLicenseState.State::Evaluation THEN
+        EXIT;
+
+      Company.GET(COMPANYNAME);
+      IF NOT Company."Evaluation Company" THEN
+        StartTrial;
+    END;
+
+    LOCAL PROCEDURE ShowRebrandingDialog@4();
+    VAR
+      TenantLicenseState@1000 : Record 2000000189;
+      TermsAndConditions@1005 : Record 9190;
+      TermsAndConditionsState@1002 : Record 9191;
+      Company@1003 : Record 2000000006;
+      PermissionManager@1001 : Codeunit 9002;
+      MadeiraRebrandingDialog@1004 : Page 9194;
+    BEGIN
+      IF NOT PermissionManager.SoftwareAsAService THEN
+        EXIT;
+
+      IF NOT TermsAndConditions.GET('MADEIRAREBRANDING') THEN BEGIN
+        TermsAndConditions.INIT;
+        TermsAndConditions."No." := 'MADEIRAREBRANDING';
+        TermsAndConditions.Description := TermsAndConditionsDescriptionTxt;
+        TermsAndConditions."Valid From" := 011116D;
+        TermsAndConditions.INSERT;
+      END;
+
+      IF NOT TermsAndConditionsState.GET(TermsAndConditions."No.",USERID) THEN BEGIN
+        TermsAndConditionsState.INIT;
+        TermsAndConditionsState."Terms And Conditions Code" := TermsAndConditions."No.";
+        TermsAndConditionsState."User ID" := USERID;
+        TermsAndConditionsState.INSERT;
+      END;
+
+      IF TermsAndConditionsState.Accepted THEN
+        EXIT;
+
+      TenantLicenseState.FINDFIRST; // Find the first tenant license state, which is the earliest state
+      IF NOT UserHasLoggedOnPriorToFirstLicenseState(TenantLicenseState."Start Date") THEN
+        EXIT;
+
+      COMMIT;
+
+      Company.GET(COMPANYNAME);
+      MadeiraRebrandingDialog.SetProductionCompanyOpened(NOT Company."Evaluation Company");
+      MadeiraRebrandingDialog.RUNMODAL;
+
+      TermsAndConditionsState.Accepted := TRUE;
+      TermsAndConditionsState."Date Accepted" := DateFilterCalc.ConvertToUtcDateTime(CURRENTDATETIME);
+      TermsAndConditionsState.MODIFY;
+    END;
+
+    LOCAL PROCEDURE UserHasLoggedOnPriorToFirstLicenseState@38(StartDate@1001 : DateTime) : Boolean;
+    VAR
+      SessionEvent@1000 : Record 2000000111;
+    BEGIN
+      // The current user has logged on to the system one day prior to the earliest tenant license state (Project "Madeira" user).
+      SessionEvent.SETRANGE("User SID",USERSECURITYID);
+      SessionEvent.SETFILTER("Session ID",'<>%1',SESSIONID);
+      SessionEvent.SETRANGE("Event Type",SessionEvent."Event Type"::Logon);
+      SessionEvent.SETFILTER("Client Type",'<>%1',SessionEvent."Client Type"::Background);
+      SessionEvent.SETFILTER("Event Datetime",'<%1',StartDate - 60 * 60 * 24 * 1000); // Last login must be more than a day ago
+
+      EXIT(NOT SessionEvent.ISEMPTY);
+    END;
+
+    LOCAL PROCEDURE ShowTermsAndConditionsAndSetTenantLicenseState@16(Company@1000 : Record 2000000006);
+    VAR
+      TenantLicenseState@1002 : Record 2000000189;
+      PermissionManager@1003 : Codeunit 9002;
+      RoleCenterNotificationMgt@1004 : Codeunit 1430;
+      ThirtyDayTrialDialog@1001 : Page 9193;
+    BEGIN
+      IF NOT PermissionManager.SoftwareAsAService THEN
+        EXIT;
+
+      IF Company."Evaluation Company" THEN
+        EXIT;
+
+      IF TenantLicenseState.ISEMPTY THEN BEGIN
+        TenantLicenseState.INIT;
+        TenantLicenseState."Start Date" := DateFilterCalc.ConvertToUtcDateTime(CURRENTDATETIME);
+        TenantLicenseState.State := TenantLicenseState.State::Evaluation;
+        TenantLicenseState."User Security ID" := USERSECURITYID;
+        TenantLicenseState.INSERT(TRUE);
+        COMMIT;
+      END;
+
+      TenantLicenseState.FINDLAST;
+      IF TenantLicenseState.State <> TenantLicenseState.State::Evaluation THEN
+        EXIT;
+
+      // Verify, that the user has company setup rights
+      IF NOT Company.WRITEPERMISSION THEN
+        ERROR(NoPermissionToEnterTrialErr,Company.Name);
+
+      ThirtyDayTrialDialog.SetMyCompany(MyCompanyTxt);
+      ThirtyDayTrialDialog.RUNMODAL;
+
+      IF NOT ThirtyDayTrialDialog.Confirmed THEN BEGIN
+        IF RoleCenterNotificationMgt.IsEvaluationNotificationClicked THEN
+          RoleCenterNotificationMgt.ShowEvaluationNotification;
+        ERROR('');
+      END;
+
+      StartTrial;
+    END;
+
+    LOCAL PROCEDURE StartTrial@21();
+    VAR
+      TenantLicenseState@1000 : Record 2000000189;
+    BEGIN
+      TenantLicenseState.INIT;
+      TenantLicenseState."Start Date" := DateFilterCalc.ConvertToUtcDateTime(CURRENTDATETIME) + 1000; // Move time by 1 second to avoid overlap with previous state
+      TenantLicenseState.State := TenantLicenseState.State::Trial;
+      TenantLicenseState."User Security ID" := USERSECURITYID;
+      TenantLicenseState.INSERT(TRUE);
+    END;
+
+    [EventSubscriber(Table,2000000073,OnBeforeValidateEvent,Company)]
+    LOCAL PROCEDURE OnBeforeUserPersonalizationCompanyChange@15(VAR Rec@1000 : Record 2000000073;VAR xRec@1002 : Record 2000000073;CurrFieldNo@1003 : Integer);
+    VAR
+      Company@1001 : Record 2000000006;
+    BEGIN
+      IF Company.GET(Rec.Company) THEN
+        ShowTermsAndConditionsAndSetTenantLicenseState(Company);
+    END;
+
+    [EventSubscriber(Codeunit,40,OnAfterLogInStart)]
+    LOCAL PROCEDURE OnAfterLogInStart@1();
+    BEGIN
+      SetTenantLicenseState;
+      ShowRebrandingDialog;
+    END;
+
+    [EventSubscriber(Table,2000000073,OnAfterModifyEvent)]
+    LOCAL PROCEDURE OnAfterUserPersonalizationModify@2(VAR Rec@1000 : Record 2000000073;VAR xRec@1001 : Record 2000000073;RunTrigger@1002 : Boolean);
+    VAR
+      Company@1005 : Record 2000000006;
+      PendingCompanyRename@1003 : Record 9192;
+      CompanyInformation@1006 : Record 79;
+      PermissionManager@1170000000 : Codeunit 9002;
+      Window@1004 : Dialog;
+    BEGIN
+      IF NOT PermissionManager.SoftwareAsAService THEN
+        EXIT;
+
+      IF NOT PendingCompanyRename.GET(Rec.Company) THEN
+        EXIT;
+
+      Window.OPEN(SettingUpMsg);
+
+      IF CompanyInformation.CHANGECOMPANY(Rec.Company) THEN BEGIN
+        CompanyInformation.GET;
+        CompanyInformation.VALIDATE(Name,PendingCompanyRename."New Company Name");
+        CompanyInformation.MODIFY;
+      END;
+
+      Company.GET(PendingCompanyRename."Current Company Name");
+      Company.RENAME(PendingCompanyRename."New Company Name");
+
+      PendingCompanyRename.DELETE;
+
+      Window.CLOSE;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

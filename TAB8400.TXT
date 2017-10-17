@@ -1,0 +1,44 @@
+OBJECT Table 8400 Record Set Definition
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Record Set Definition;
+               ENG=Record Set Definition];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Table No.           ;Integer       ;CaptionML=[ENU=Table No.;
+                                                              ENG=Table No.] }
+    { 2   ;   ;Set ID              ;Integer       ;InitValue=1;
+                                                   AutoIncrement=Yes;
+                                                   CaptionML=[ENU=Set ID;
+                                                              ENG=Set ID] }
+    { 3   ;   ;Node ID             ;Integer       ;CaptionML=[ENU=Node ID;
+                                                              ENG=Node ID] }
+    { 10  ;   ;Value               ;RecordID      ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("Record Set Tree".Value WHERE (Table No.=FIELD(Table No.),
+                                                                                                     Node ID=FIELD(Node ID)));
+                                                   CaptionML=[ENU=Value;
+                                                              ENG=Value] }
+  }
+  KEYS
+  {
+    {    ;Table No.,Set ID,Node ID                ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

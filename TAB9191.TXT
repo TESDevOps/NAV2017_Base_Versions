@@ -1,0 +1,43 @@
+OBJECT Table 9191 Terms And Conditions State
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Terms And Conditions State;
+               ENG=Terms And Conditions State];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Terms And Conditions Code;Code20   ;TableRelation="Terms And Conditions";
+                                                   CaptionML=[ENU=Terms And Conditions Code;
+                                                              ENG=Terms And Conditions Code] }
+    { 2   ;   ;User ID             ;Code50        ;TableRelation=User;
+                                                   ValidateTableRelation=No;
+                                                   CaptionML=[ENU=User ID;
+                                                              ENG=User ID] }
+    { 3   ;   ;Accepted            ;Boolean       ;CaptionML=[ENU=Accepted;
+                                                              ENG=Accepted] }
+    { 4   ;   ;Date Accepted       ;DateTime      ;CaptionML=[ENU=Date Accepted;
+                                                              ENG=Date Accepted] }
+  }
+  KEYS
+  {
+    {    ;Terms And Conditions Code,User ID       ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

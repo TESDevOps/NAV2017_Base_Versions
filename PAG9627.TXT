@@ -1,0 +1,44 @@
+OBJECT Page 9627 Data Source List Part
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Data Source List Part;
+               ENG=Data Source List Part];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    SourceTable=Table2000000136;
+    DelayedInsert=No;
+    PageType=ListPart;
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                Name=Container;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                CaptionML=[ENU=Name;
+                           ENG=Name];
+                ApplicationArea=#All;
+                SourceExpr=Name }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,121 @@
+OBJECT Table 197 Acc. Sched. KPI Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Acc. Sched. KPI Buffer;
+               ENG=Acc. Sched. KPI Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Integer       ;CaptionML=[ENU=No.;
+                                                              ENG=No.] }
+    { 2   ;   ;Date                ;Date          ;CaptionML=[ENU=Date;
+                                                              ENG=Date] }
+    { 3   ;   ;Closed Period       ;Boolean       ;CaptionML=[ENU=Closed Period;
+                                                              ENG=Closed Period] }
+    { 4   ;   ;Account Schedule Name;Code10       ;CaptionML=[ENU=Account Schedule Name;
+                                                              ENG=Account Schedule Name] }
+    { 5   ;   ;KPI Code            ;Code10        ;CaptionML=[ENU=KPI Code;
+                                                              ENG=KPI Code] }
+    { 6   ;   ;KPI Name            ;Text50        ;CaptionML=[ENU=KPI Name;
+                                                              ENG=KPI Name] }
+    { 7   ;   ;Net Change Actual   ;Decimal       ;CaptionML=[ENU=Net Change Actual;
+                                                              ENG=Net Change Actual] }
+    { 8   ;   ;Balance at Date Actual;Decimal     ;CaptionML=[ENU=Balance at Date Actual;
+                                                              ENG=Balance at Date Actual] }
+    { 9   ;   ;Net Change Budget   ;Decimal       ;CaptionML=[ENU=Net Change Budget;
+                                                              ENG=Net Change Budget] }
+    { 10  ;   ;Balance at Date Budget;Decimal     ;CaptionML=[ENU=Balance at Date Budget;
+                                                              ENG=Balance at Date Budget] }
+    { 11  ;   ;Net Change Actual Last Year;Decimal;CaptionML=[ENU=Net Change Actual Last Year;
+                                                              ENG=Net Change Actual Last Year] }
+    { 12  ;   ;Balance at Date Act. Last Year;Decimal;
+                                                   CaptionML=[ENU=Balance at Date Act. Last Year;
+                                                              ENG=Balance at Date Act. Last Year] }
+    { 13  ;   ;Net Change Budget Last Year;Decimal;CaptionML=[ENU=Net Change Budget Last Year;
+                                                              ENG=Net Change Budget Last Year] }
+    { 14  ;   ;Balance at Date Bud. Last Year;Decimal;
+                                                   CaptionML=[ENU=Balance at Date Bud. Last Year;
+                                                              ENG=Balance at Date Bud. Last Year] }
+    { 15  ;   ;Net Change Forecast ;Decimal       ;CaptionML=[ENU=Net Change Forecast;
+                                                              ENG=Net Change Forecast] }
+    { 16  ;   ;Balance at Date Forecast;Decimal   ;CaptionML=[ENU=Balance at Date Forecast;
+                                                              ENG=Balance at Date Forecast] }
+    { 17  ;   ;Dimension Set ID    ;Integer       ;CaptionML=[ENU=Dimension Set ID;
+                                                              ENG=Dimension Set ID] }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+    {    ;Account Schedule Name,KPI Code,Dimension Set ID }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE AddColumnValue@1(ColumnLayout@1000 : Record 334;Value@1001 : Decimal);
+    BEGIN
+      IF ColumnLayout."Column Type" = ColumnLayout."Column Type"::"Net Change" THEN
+        IF ColumnLayout."Ledger Entry Type" = ColumnLayout."Ledger Entry Type"::Entries THEN
+          IF FORMAT(ColumnLayout."Comparison Date Formula") = '-1Y' THEN
+            "Net Change Actual Last Year" += Value
+          ELSE
+            "Net Change Actual" += Value
+        ELSE
+          IF FORMAT(ColumnLayout."Comparison Date Formula") = '-1Y' THEN
+            "Net Change Budget Last Year" += Value
+          ELSE
+            "Net Change Budget" += Value
+      ELSE
+        IF ColumnLayout."Ledger Entry Type" = ColumnLayout."Ledger Entry Type"::Entries THEN
+          IF FORMAT(ColumnLayout."Comparison Date Formula") = '-1Y' THEN
+            "Balance at Date Act. Last Year" += Value
+          ELSE
+            "Balance at Date Actual" += Value
+        ELSE
+          IF FORMAT(ColumnLayout."Comparison Date Formula") = '-1Y' THEN
+            "Balance at Date Bud. Last Year" += Value
+          ELSE
+            "Balance at Date Budget" += Value;
+    END;
+
+    PROCEDURE GetColumnValue@2(ColumnLayout@1000 : Record 334) Result : Decimal;
+    BEGIN
+      IF ColumnLayout."Column Type" = ColumnLayout."Column Type"::"Net Change" THEN
+        IF ColumnLayout."Ledger Entry Type" = ColumnLayout."Ledger Entry Type"::Entries THEN
+          IF FORMAT(ColumnLayout."Comparison Date Formula") = '-1Y' THEN
+            Result := "Net Change Actual Last Year"
+          ELSE
+            Result := "Net Change Actual"
+        ELSE
+          IF FORMAT(ColumnLayout."Comparison Date Formula") = '-1Y' THEN
+            Result := "Net Change Budget Last Year"
+          ELSE
+            Result := "Net Change Budget"
+      ELSE
+        IF ColumnLayout."Ledger Entry Type" = ColumnLayout."Ledger Entry Type"::Entries THEN
+          IF FORMAT(ColumnLayout."Comparison Date Formula") = '-1Y' THEN
+            Result := "Balance at Date Act. Last Year"
+          ELSE
+            Result := "Balance at Date Actual"
+        ELSE
+          IF FORMAT(ColumnLayout."Comparison Date Formula") = '-1Y' THEN
+            Result := "Balance at Date Bud. Last Year"
+          ELSE
+            Result := "Balance at Date Budget";
+      EXIT(Result)
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

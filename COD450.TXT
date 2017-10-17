@@ -1,0 +1,35 @@
+OBJECT Codeunit 450 Job Queue Error Handler
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    TableNo=472;
+    OnRun=VAR
+            JobQueueLogEntry@1000 : Record 474;
+            JobQueueDispatcher@1001 : Codeunit 448;
+          BEGIN
+            IF NOT FIND THEN
+              EXIT;
+            SetError(GETLASTERRORTEXT);
+            JobQueueLogEntry.SETRANGE(ID,ID);
+            IF JobQueueLogEntry.FINDFIRST THEN BEGIN
+              JobQueueLogEntry.SetErrorMessage(GETLASTERRORTEXT);
+              JobQueueLogEntry.MarkAsError;
+            END ELSE
+              JobQueueDispatcher.InsertLogEntry(Rec,CURRENTDATETIME);
+          END;
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

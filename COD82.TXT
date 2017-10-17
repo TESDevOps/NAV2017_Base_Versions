@@ -1,0 +1,177 @@
+OBJECT Codeunit 82 Sales-Post + Print
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    TableNo=36;
+    OnRun=BEGIN
+            SalesHeader.COPY(Rec);
+            Code;
+            Rec := SalesHeader;
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=&Ship,&Invoice,Ship &and Invoice;ENG=&Ship,&Invoice,Ship &and Invoice';
+      Text001@1001 : TextConst 'ENU=Do you want to post and print the %1?;ENG=Do you want to post and print the %1?';
+      PostAndEmailMsg@1016 : TextConst 'ENU=Do you want to post and email the %1?;ENG=Do you want to post and email the %1?';
+      Text002@1002 : TextConst 'ENU=&Receive,&Invoice,Receive &and Invoice;ENG=&Receive,&Invoice,Receive &and Invoice';
+      SalesHeader@1003 : Record 36;
+      Selection@1010 : Integer;
+      SendReportAsEmail@1009 : Boolean;
+
+    PROCEDURE PostAndEmail@10(VAR ParmSalesHeader@1000 : Record 36);
+    BEGIN
+      SendReportAsEmail := TRUE;
+      SalesHeader.COPY(ParmSalesHeader);
+      Code;
+      ParmSalesHeader := SalesHeader;
+    END;
+
+    LOCAL PROCEDURE Code@2();
+    VAR
+      SalesSetup@1001 : Record 311;
+      SalesPostViaJobQueue@1000 : Codeunit 88;
+    BEGIN
+      WITH SalesHeader DO BEGIN
+        CASE "Document Type" OF
+          "Document Type"::Order:
+            BEGIN
+              Selection := STRMENU(Text000,3);
+              IF Selection = 0 THEN
+                EXIT;
+              Ship := Selection IN [1,3];
+              Invoice := Selection IN [2,3];
+            END;
+          "Document Type"::"Return Order":
+            BEGIN
+              Selection := STRMENU(Text002,3);
+              IF Selection = 0 THEN
+                EXIT;
+              Receive := Selection IN [1,3];
+              Invoice := Selection IN [2,3];
+            END
+          ELSE
+            IF NOT CONFIRM(ConfirmationMessage,FALSE,"Document Type") THEN
+              EXIT;
+        END;
+
+        "Print Posted Documents" := TRUE;
+
+        SalesSetup.GET;
+        IF SalesSetup."Post & Print with Job Queue" AND NOT SendReportAsEmail THEN
+          SalesPostViaJobQueue.EnqueueSalesDoc(SalesHeader)
+        ELSE BEGIN
+          CODEUNIT.RUN(CODEUNIT::"Sales-Post",SalesHeader);
+          GetReport(SalesHeader);
+        END;
+        COMMIT;
+      END;
+    END;
+
+    PROCEDURE GetReport@3(VAR SalesHeader@1000 : Record 36);
+    BEGIN
+      WITH SalesHeader DO
+        CASE "Document Type" OF
+          "Document Type"::Order:
+            BEGIN
+              IF Ship THEN
+                PrintShip(SalesHeader);
+              IF Invoice THEN
+                PrintInvoice(SalesHeader);
+            END;
+          "Document Type"::Invoice:
+            PrintInvoice(SalesHeader);
+          "Document Type"::"Return Order":
+            BEGIN
+              IF Receive THEN
+                PrintReceive(SalesHeader);
+              IF Invoice THEN
+                PrintCrMemo(SalesHeader);
+            END;
+          "Document Type"::"Credit Memo":
+            PrintCrMemo(SalesHeader);
+        END;
+    END;
+
+    LOCAL PROCEDURE ConfirmationMessage@4() : Text;
+    BEGIN
+      IF SendReportAsEmail THEN
+        EXIT(PostAndEmailMsg);
+      EXIT(Text001);
+    END;
+
+    LOCAL PROCEDURE PrintReceive@1(SalesHeader@1001 : Record 36);
+    VAR
+      ReturnRcptHeader@1000 : Record 6660;
+    BEGIN
+      ReturnRcptHeader."No." := SalesHeader."Last Return Receipt No.";
+      IF ReturnRcptHeader.FIND THEN;
+      ReturnRcptHeader.SETRECFILTER;
+
+      IF SendReportAsEmail THEN
+        ReturnRcptHeader.EmailRecords(TRUE)
+      ELSE
+        ReturnRcptHeader.PrintRecords(FALSE);
+    END;
+
+    LOCAL PROCEDURE PrintInvoice@5(SalesHeader@1000 : Record 36);
+    VAR
+      SalesInvHeader@1003 : Record 112;
+    BEGIN
+      IF SalesHeader."Last Posting No." = '' THEN
+        SalesInvHeader."No." := SalesHeader."No."
+      ELSE
+        SalesInvHeader."No." := SalesHeader."Last Posting No.";
+      SalesInvHeader.FIND;
+      SalesInvHeader.SETRECFILTER;
+
+      IF SendReportAsEmail THEN
+        SalesInvHeader.EmailRecords(TRUE)
+      ELSE
+        SalesInvHeader.PrintRecords(FALSE);
+    END;
+
+    LOCAL PROCEDURE PrintShip@7(SalesHeader@1000 : Record 36);
+    VAR
+      SalesShptHeader@1001 : Record 110;
+    BEGIN
+      SalesShptHeader."No." := SalesHeader."Last Shipping No.";
+      IF SalesShptHeader.FIND THEN;
+      SalesShptHeader.SETRECFILTER;
+
+      IF SendReportAsEmail THEN
+        SalesShptHeader.EmailRecords(TRUE)
+      ELSE
+        SalesShptHeader.PrintRecords(FALSE);
+    END;
+
+    LOCAL PROCEDURE PrintCrMemo@8(SalesHeader@1000 : Record 36);
+    VAR
+      SalesCrMemoHeader@1003 : Record 114;
+    BEGIN
+      IF SalesHeader."Last Posting No." = '' THEN
+        SalesCrMemoHeader."No." := SalesHeader."No."
+      ELSE
+        SalesCrMemoHeader."No." := SalesHeader."Last Posting No.";
+      SalesCrMemoHeader.FIND;
+      SalesCrMemoHeader.SETRECFILTER;
+
+      IF SendReportAsEmail THEN
+        SalesCrMemoHeader.EmailRecords(TRUE)
+      ELSE
+        SalesCrMemoHeader.PrintRecords(FALSE);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

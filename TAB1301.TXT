@@ -1,0 +1,281 @@
+OBJECT Table 1301 Item Template
+{
+  OBJECT-PROPERTIES
+  {
+    Date=04/08/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.17972;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               TESTFIELD("Template Name");
+
+               InsertConfigurationTemplateHeaderAndLines(Code,"Template Name",Rec);
+             END;
+
+    OnModify=VAR
+               TempRecordBuffer@1000 : TEMPORARY Record 6529;
+             BEGIN
+               TESTFIELD(Code);
+               TESTFIELD("Template Name");
+               CreateFieldNoList(TempRecordBuffer);
+               ConfigTemplateManagement.UpdateConfigTemplateAndLines(Code,"Template Name",DATABASE::Item,Rec,TempRecordBuffer);
+             END;
+
+    OnDelete=VAR
+               ConfigTemplateHeader@1000 : Record 8618;
+             BEGIN
+               IF ConfigTemplateHeader.GET(Code) THEN BEGIN
+                 ConfigTemplateManagement.DeleteRelatedTemplates(Code,DATABASE::"Default Dimension");
+                 ConfigTemplateHeader.DELETE(TRUE);
+               END;
+             END;
+
+    CaptionML=[ENU=Item Template;
+               ENG=Item Template];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Key                 ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=Key;
+                                                              ENG=Key] }
+    { 2   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ENG=Code];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Template Name       ;Text50        ;CaptionML=[ENU=Template Name;
+                                                              ENG=Template Name];
+                                                   NotBlank=Yes }
+    { 8   ;   ;Base Unit of Measure;Code10        ;TableRelation="Unit of Measure";
+                                                   ValidateTableRelation=No;
+                                                   CaptionML=[ENU=Base Unit of Measure;
+                                                              ENG=Base Unit of Measure] }
+    { 10  ;   ;Type                ;Option        ;OnValidate=BEGIN
+                                                                IF Type = Type::Service THEN
+                                                                  VALIDATE("Inventory Posting Group",'');
+                                                              END;
+
+                                                   CaptionML=[ENU=Type;
+                                                              ENG=Type];
+                                                   OptionCaptionML=[ENU=Inventory,Service;
+                                                                    ENG=Inventory,Service];
+                                                   OptionString=Inventory,Service }
+    { 11  ;   ;Inventory Posting Group;Code10     ;TableRelation="Inventory Posting Group";
+                                                   CaptionML=[ENU=Inventory Posting Group;
+                                                              ENG=Inventory Posting Group] }
+    { 14  ;   ;Item Disc. Group    ;Code20        ;TableRelation="Item Discount Group";
+                                                   CaptionML=[ENU=Item Disc. Group;
+                                                              ENG=Item Disc. Group] }
+    { 15  ;   ;Allow Invoice Disc. ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=[ENU=Allow Invoice Disc.;
+                                                              ENG=Allow Invoice Disc.] }
+    { 19  ;   ;Price/Profit Calculation;Option    ;CaptionML=[ENU=Price/Profit Calculation;
+                                                              ENG=Price/Profit Calculation];
+                                                   OptionCaptionML=[ENU="Profit=Price-Cost,Price=Cost+Profit,No Relationship";
+                                                                    ENG="Profit=Price-Cost,Price=Cost+Profit,No Relationship"];
+                                                   OptionString=Profit=Price-Cost,Price=Cost+Profit,No Relationship }
+    { 20  ;   ;Profit %            ;Decimal       ;CaptionML=[ENU=Profit %;
+                                                              ENG=Profit %];
+                                                   DecimalPlaces=0:5;
+                                                   MaxValue=100 }
+    { 21  ;   ;Costing Method      ;Option        ;CaptionML=[ENU=Costing Method;
+                                                              ENG=Costing Method];
+                                                   OptionCaptionML=[ENU=FIFO,LIFO,Specific,Average,Standard;
+                                                                    ENG=FIFO,LIFO,Specific,Average,Standard];
+                                                   OptionString=FIFO,LIFO,Specific,Average,Standard }
+    { 28  ;   ;Indirect Cost %     ;Decimal       ;CaptionML=[ENU=Indirect Cost %;
+                                                              ENG=Indirect Cost %];
+                                                   DecimalPlaces=0:5;
+                                                   MinValue=0 }
+    { 87  ;   ;Price Includes VAT  ;Boolean       ;CaptionML=[ENU=Price Includes VAT;
+                                                              ENG=Price Includes VAT] }
+    { 91  ;   ;Gen. Prod. Posting Group;Code10    ;TableRelation="Gen. Product Posting Group";
+                                                   CaptionML=[ENU=Gen. Prod. Posting Group;
+                                                              ENG=Gen. Prod. Posting Group] }
+    { 96  ;   ;Automatic Ext. Texts;Boolean       ;CaptionML=[ENU=Automatic Ext. Texts;
+                                                              ENG=Automatic Ext. Texts] }
+    { 98  ;   ;Tax Group Code      ;Code10        ;TableRelation="Tax Group";
+                                                   CaptionML=[ENU=Tax Group Code;
+                                                              ENG=VAT Group Code] }
+    { 99  ;   ;VAT Prod. Posting Group;Code10     ;TableRelation="VAT Product Posting Group";
+                                                   CaptionML=[ENU=VAT Prod. Posting Group;
+                                                              ENG=VAT Prod. Posting Group] }
+    { 5702;   ;Item Category Code  ;Code20        ;TableRelation="Item Category";
+                                                   CaptionML=[ENU=Item Category Code;
+                                                              ENG=Item Category Code] }
+    { 5900;   ;Service Item Group  ;Code10        ;TableRelation="Service Item Group".Code;
+                                                   CaptionML=[ENU=Service Item Group;
+                                                              ENG=Service Item Group] }
+    { 7300;   ;Warehouse Class Code;Code10        ;TableRelation="Warehouse Class";
+                                                   CaptionML=[ENU=Warehouse Class Code;
+                                                              ENG=Warehouse Class Code] }
+  }
+  KEYS
+  {
+    {    ;Key                                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      ConfigTemplateManagement@1000 : Codeunit 8612;
+
+    LOCAL PROCEDURE CreateFieldNoList@31(VAR TempRecordBuffer@1000 : TEMPORARY Record 6529);
+    BEGIN
+      AddFieldNo(TempRecordBuffer,FIELDNO(Type));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Base Unit of Measure"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Automatic Ext. Texts"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Gen. Prod. Posting Group"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("VAT Prod. Posting Group"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Inventory Posting Group"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Costing Method"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Indirect Cost %"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Price Includes VAT"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Profit %"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Price/Profit Calculation"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Allow Invoice Disc."));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Item Disc. Group"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Tax Group Code"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Warehouse Class Code"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Item Category Code"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Service Item Group"));
+    END;
+
+    LOCAL PROCEDURE AddFieldNo@32(VAR TempRecordBuffer@1000 : TEMPORARY Record 6529;FieldNo@1001 : Integer);
+    BEGIN
+      TempRecordBuffer."Entry No." += 1;
+      TempRecordBuffer."Primary Key Field 1 No." := FieldNo;
+      TempRecordBuffer.INSERT;
+    END;
+
+    PROCEDURE InitializeTempRecordFromConfigTemplate@1(VAR TempItemTemplate@1000 : TEMPORARY Record 1301;ConfigTemplateHeader@1001 : Record 8618);
+    VAR
+      RecRef@1003 : RecordRef;
+    BEGIN
+      TempItemTemplate.SETRANGE(Code,ConfigTemplateHeader.Code);
+      TempItemTemplate.SETRANGE("Template Name",ConfigTemplateHeader.Description);
+      IF NOT TempItemTemplate.FINDFIRST THEN BEGIN
+        TempItemTemplate.INIT;
+        TempItemTemplate.Code := ConfigTemplateHeader.Code;
+        TempItemTemplate."Template Name" := ConfigTemplateHeader.Description;
+        TempItemTemplate.INSERT;
+      END;
+
+      RecRef.GETTABLE(TempItemTemplate);
+
+      ConfigTemplateManagement.ApplyTemplateLinesWithoutValidation(ConfigTemplateHeader,RecRef);
+
+      RecRef.SETTABLE(TempItemTemplate);
+    END;
+
+    PROCEDURE CreateConfigTemplateFromExistingItem@5(Item@1000 : Record 27;VAR TempItemTemplate@1001 : TEMPORARY Record 1301);
+    VAR
+      DimensionsTemplate@1002 : Record 1302;
+      ConfigTemplateHeader@1010 : Record 8618;
+      NewTemplateCode@1011 : Code[10];
+    BEGIN
+      InsertConfigurationTemplateHeaderAndLines(NewTemplateCode,'',Item);
+
+      DimensionsTemplate.CreateTemplatesFromExistingMasterRecord(Item."No.",NewTemplateCode,DATABASE::Item);
+      ConfigTemplateHeader.GET(NewTemplateCode);
+      InitializeTempRecordFromConfigTemplate(TempItemTemplate,ConfigTemplateHeader);
+    END;
+
+    PROCEDURE SaveAsTemplate@7(Item@1000 : Record 27);
+    VAR
+      TempItemTemplate@1001 : TEMPORARY Record 1301;
+      ItemTemplateCard@1002 : Page 1342;
+    BEGIN
+      ItemTemplateCard.CreateFromItem(Item);
+      ItemTemplateCard.SETRECORD(TempItemTemplate);
+      ItemTemplateCard.LOOKUPMODE := TRUE;
+      IF ItemTemplateCard.RUNMODAL = ACTION::LookupOK THEN;
+    END;
+
+    LOCAL PROCEDURE InsertConfigurationTemplateHeaderAndLines@2(VAR TemplateCode@1005 : Code[10];TemplateDescription@1004 : Text[50];RecVar@1002 : Variant);
+    VAR
+      TempRecordBuffer@1001 : TEMPORARY Record 6529;
+    BEGIN
+      CreateFieldNoList(TempRecordBuffer);
+      ConfigTemplateManagement.CreateConfigTemplateAndLines(TemplateCode,TemplateDescription,DATABASE::Item,RecVar,TempRecordBuffer);
+    END;
+
+    PROCEDURE NewItemFromTemplate@3(VAR Item@1002 : Record 27) : Boolean;
+    VAR
+      ConfigTemplateHeader@1004 : Record 8618;
+      ConfigTemplates@1001 : Page 1340;
+    BEGIN
+      ConfigTemplateHeader.SETRANGE("Table ID",DATABASE::Item);
+      ConfigTemplateHeader.SETRANGE(Enabled,TRUE);
+
+      IF ConfigTemplateHeader.COUNT = 1 THEN BEGIN
+        ConfigTemplateHeader.FINDFIRST;
+        InsertItemFromTemplate(ConfigTemplateHeader,Item);
+        EXIT(TRUE);
+      END;
+
+      IF (ConfigTemplateHeader.COUNT > 1) AND GUIALLOWED THEN BEGIN
+        ConfigTemplates.SETTABLEVIEW(ConfigTemplateHeader);
+        ConfigTemplates.LOOKUPMODE(TRUE);
+        ConfigTemplates.SetNewMode;
+        IF ConfigTemplates.RUNMODAL = ACTION::LookupOK THEN BEGIN
+          ConfigTemplates.GETRECORD(ConfigTemplateHeader);
+          InsertItemFromTemplate(ConfigTemplateHeader,Item);
+          EXIT(TRUE);
+        END;
+      END;
+
+      EXIT(FALSE);
+    END;
+
+    PROCEDURE UpdateItemFromTemplate@8(VAR Item@1000 : Record 27);
+    VAR
+      ConfigTemplateHeader@1001 : Record 8618;
+      DimensionsTemplate@1004 : Record 1302;
+      ConfigTemplates@1003 : Page 1340;
+      ItemRecRef@1002 : RecordRef;
+    BEGIN
+      IF GUIALLOWED THEN BEGIN
+        ConfigTemplateHeader.SETRANGE("Table ID",DATABASE::Item);
+        ConfigTemplateHeader.SETRANGE(Enabled,TRUE);
+        ConfigTemplates.SETTABLEVIEW(ConfigTemplateHeader);
+        ConfigTemplates.LOOKUPMODE(TRUE);
+        IF ConfigTemplates.RUNMODAL = ACTION::LookupOK THEN BEGIN
+          ConfigTemplates.GETRECORD(ConfigTemplateHeader);
+          ItemRecRef.GETTABLE(Item);
+          ConfigTemplateManagement.UpdateRecord(ConfigTemplateHeader,ItemRecRef);
+          DimensionsTemplate.InsertDimensionsFromTemplates(ConfigTemplateHeader,Item."No.",DATABASE::Item);
+          ItemRecRef.SETTABLE(Item);
+        END;
+      END;
+    END;
+
+    PROCEDURE InsertItemFromTemplate@16(ConfigTemplateHeader@1006 : Record 8618;VAR Item@1003 : Record 27);
+    VAR
+      DimensionsTemplate@1001 : Record 1302;
+      UnitOfMeasure@1004 : Record 204;
+      ConfigTemplateMgt@1002 : Codeunit 8612;
+      RecRef@1000 : RecordRef;
+    BEGIN
+      Item.INSERT(TRUE);
+      RecRef.GETTABLE(Item);
+      ConfigTemplateMgt.UpdateRecord(ConfigTemplateHeader,RecRef);
+      RecRef.SETTABLE(Item);
+      IF Item."Base Unit of Measure" = '' THEN BEGIN
+        UnitOfMeasure.SETRANGE("International Standard Code",'EA'); // 'Each' ~= 'PCS'
+        IF NOT UnitOfMeasure.FINDFIRST THEN BEGIN
+          UnitOfMeasure.SETRANGE("International Standard Code");
+          IF UnitOfMeasure.FINDFIRST THEN;
+        END;
+        Item.VALIDATE("Base Unit of Measure",UnitOfMeasure.Code);
+      END;
+      DimensionsTemplate.InsertDimensionsFromTemplates(ConfigTemplateHeader,Item."No.",DATABASE::Item);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

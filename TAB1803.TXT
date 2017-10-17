@@ -1,0 +1,508 @@
+OBJECT Table 1803 Assisted Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=23/01/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.15052;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Assisted Setup;
+               ENG=Assisted Setup];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Page ID             ;Integer       ;CaptionML=[ENU=Page ID;
+                                                              ENG=Page ID] }
+    { 2   ;   ;Name                ;Text250       ;CaptionML=[ENU=Name;
+                                                              ENG=Name] }
+    { 3   ;   ;Order               ;Integer       ;CaptionML=[ENU=Order;
+                                                              ENG=Order] }
+    { 4   ;   ;Status              ;Option        ;CaptionML=[ENU=Status;
+                                                              ENG=Status];
+                                                   OptionCaptionML=[ENU="Not Completed,Completed,Not Started,Seen,Watched,Read, ";
+                                                                    ENG="Not Completed,Completed,Not Started,Seen,Watched,Read, "];
+                                                   OptionString=[Not Completed,Completed,Not Started,Seen,Watched,Read, ] }
+    { 5   ;   ;Visible             ;Boolean       ;CaptionML=[ENU=Visible;
+                                                              ENG=Visible] }
+    { 6   ;   ;Parent              ;Integer       ;CaptionML=[ENU=Parent;
+                                                              ENG=Parent] }
+    { 7   ;   ;Video Url           ;Text250       ;CaptionML=[ENU=Video Url;
+                                                              ENG=Video Url] }
+    { 8   ;   ;Icon                ;Media         ;CaptionML=[ENU=Icon;
+                                                              ENG=Icon] }
+    { 9   ;   ;Item Type           ;Option        ;InitValue=Setup and Help;
+                                                   CaptionML=[ENU=Item Type;
+                                                              ENG=Item Type];
+                                                   OptionCaptionML=[ENU=" ,Group,Setup and Help";
+                                                                    ENG=" ,Group,Setup and Help"];
+                                                   OptionString=[ ,Group,Setup and Help] }
+    { 10  ;   ;Featured            ;Boolean       ;CaptionML=[ENU=Featured;
+                                                              ENG=Featured] }
+    { 11  ;   ;Help Url            ;Text250       ;CaptionML=[ENU=Help Url;
+                                                              ENG=Help Url] }
+    { 12  ;   ;Assisted Setup Page ID;Integer     ;CaptionML=[ENU=Assisted Setup Page ID;
+                                                              ENG=Assisted Setup Page ID] }
+    { 13  ;   ;Tour Id             ;Integer       ;CaptionML=[ENU=Tour Id;
+                                                              ENG=Tour Id] }
+    { 14  ;   ;Video Status        ;Boolean       ;CaptionML=[ENU=Video Status;
+                                                              ENG=Video Status] }
+    { 15  ;   ;Help Status         ;Boolean       ;CaptionML=[ENU=Help Status;
+                                                              ENG=Help Status] }
+    { 16  ;   ;Tour Status         ;Boolean       ;CaptionML=[ENU=Tour Status;
+                                                              ENG=Tour Status] }
+  }
+  KEYS
+  {
+    {    ;Page ID                                 ;Clustered=Yes }
+    {    ;Order,Visible                            }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      RunSetupAgainQst@1005 : TextConst '@@@="%1 = Assisted Setup Name";ENU=You have already completed %1. Do you want to run Setup again?;ENG=You have already completed %1. Do you want to run Setup again?';
+      InitialCompanySetupTxt@1001 : TextConst 'ENU=Set up my company;ENG=Set up my company';
+      ApprovalWorkflowSetupTxt@1002 : TextConst 'ENU=Set up approval workflows;ENG=Set up approval workflows';
+      SMTPSetupTxt@1004 : TextConst 'ENU=Set up email;ENG=Set up email';
+      OfficeAddinSetupTxt@1006 : TextConst 'ENU=Set up Outlook for Financials;ENG=Set up Outlook for Financials';
+      ODataWizardTxt@1013 : TextConst 'ENU=Set up reporting;ENG=Set up reporting';
+      DataMigrationTxt@1007 : TextConst 'ENU=Migrate business data;ENG=Migrate business data';
+      SetupEmailLoggingTxt@1008 : TextConst 'ENU=Set up Email Logging;ENG=Set up Email Logging';
+      CustomerAppWorkflowTxt@1010 : TextConst 'ENU=Set up a customer approval workflow;ENG=Set up a customer approval workflow';
+      ItemAppWorkflowTxt@1009 : TextConst 'ENU=Set up an item approval workflow;ENG=Set up an item approval workflow';
+      PmtJnlAppWorkflowTxt@1011 : TextConst 'ENU=Set up a payment approval workflow;ENG=Set up a payment approval workflow';
+      CashFlowForecastTxt@1012 : TextConst 'ENU=Set up Cash Flow Forecast;ENG=Set up Cash Flow Forecast';
+      CompanyAlreadySetUpErr@1000 : TextConst 'ENU=This company has already been set up. To set up a new company, create a new company in the Companies window, and then choose the Enable Assisted Company Setup check box.;ENG=This company has already been set up. To set up a new company, create a new company in the Companies window, and then choose the Enable Assisted Company Setup check box.';
+      CRMConnectionSetupTxt@1003 : TextConst 'ENU=Set up Dynamics CRM connection;ENG=Set up Dynamics CRM connection';
+      AzureAdSetupTxt@1014 : TextConst 'ENU=Set up Azure Active Directory;ENG=Set up Azure Active Directory';
+      GenralLedgerGroupTxt@1018 : TextConst 'ENU=Work with journals;ENG=Work with journals';
+      ReportingAndForecastingGroupTxt@1048 : TextConst 'ENU=Get the most out of reports and forecasting;ENG=Get the most out of reports and forecasting';
+      ExtensionsGroupTxt@1050 : TextConst 'ENU=Install extensions to add features and integrations;ENG=Install extensions to add features and integrations';
+      SettingGroupTxt@1056 : TextConst 'ENU=Customize settings to fit your needs;ENG=Customise settings to fit your needs';
+      GettingStartedGroupTxt@1020 : TextConst 'ENU=Get started with Financials;ENG=Get started with Financials';
+      HelpWorkwithextensionsTxt@1021 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828706";ENG="https://go.microsoft.com/fwlink/?linkid=828706"';
+      HelpWorkwithExcelTxt@1022 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828705";ENG="https://go.microsoft.com/fwlink/?linkid=828705"';
+      HelpWorkwithPowerBITxt@1023 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828704";ENG="https://go.microsoft.com/fwlink/?linkid=828704"';
+      HelpIntroductiontoFinancialsTxt@1025 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828702";ENG="https://go.microsoft.com/fwlink/?linkid=828702"';
+      HelpWorkwithgeneraljournalsTxt@1026 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828701";ENG="https://go.microsoft.com/fwlink/?linkid=828701"';
+      HelpCortanaIntelligenceforFinancialsTxt@1027 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828700";ENG="https://go.microsoft.com/fwlink/?linkid=828700"';
+      HelpBankintegrationTxt@1028 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828698";ENG="https://go.microsoft.com/fwlink/?linkid=828698"';
+      HelpCreateasalesinvoiceTxt@1029 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828697";ENG="https://go.microsoft.com/fwlink/?linkid=828697"';
+      HelpAddacustomerTxt@1030 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828696";ENG="https://go.microsoft.com/fwlink/?linkid=828696"';
+      HelpAddanitemTxt@1031 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828695";ENG="https://go.microsoft.com/fwlink/?linkid=828695"';
+      HelpSetupCashFlowForecastTxt@1034 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828693";ENG="https://go.microsoft.com/fwlink/?linkid=828693"';
+      HelpSetupReportingTxt@1035 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828692";ENG="https://go.microsoft.com/fwlink/?linkid=828692"';
+      HelpSetupemailTxt@1037 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828689";ENG="https://go.microsoft.com/fwlink/?linkid=828689"';
+      HelpImportbusinessdataTxt@1039 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828687";ENG="https://go.microsoft.com/fwlink/?linkid=828687"';
+      VideoWorkwithextensionsTxt@1040 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828686";ENG="https://go.microsoft.com/fwlink/?linkid=828686"';
+      VideoWorkwithExcelTxt@1041 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828685";ENG="https://go.microsoft.com/fwlink/?linkid=828685"';
+      VideoWorkwithPowerBITxt@1042 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828684";ENG="https://go.microsoft.com/fwlink/?linkid=828684"';
+      VideoRunyourbusinesswithOffice365Txt@1043 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828683";ENG="https://go.microsoft.com/fwlink/?linkid=828683"';
+      VideoWorkwithgeneraljournalsTxt@1044 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828682";ENG="https://go.microsoft.com/fwlink/?linkid=828682"';
+      VideoIntrotoDynamics365forFinancialsTxt@1045 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828681";ENG="https://go.microsoft.com/fwlink/?linkid=828681"';
+      VideoCortanaIntelligenceforFinancialsTxt@1046 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828680";ENG="https://go.microsoft.com/fwlink/?linkid=828680"';
+      VideoBankintegrationTxt@1047 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828679";ENG="https://go.microsoft.com/fwlink/?linkid=828679"';
+      VideoImportbusinessdataTxt@1058 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828660";ENG="https://go.microsoft.com/fwlink/?linkid=828660"';
+      HelpSetuptheOfficeaddinTxt@1017 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?linkid=828690";ENG="https://go.microsoft.com/fwlink/?linkid=828690"';
+      HelpWorkwithPowerBINameTxt@1061 : TextConst 'ENU=Work with PowerBI;ENG=Work with PowerBI';
+      HelpCreateasalesinvoiceNameTxt@1067 : TextConst 'ENU=Create a sales invoice;ENG=Create a sales invoice';
+      HelpAddacustomerNameTxt@1068 : TextConst 'ENU=Add a customer;ENG=Add a customer';
+      HelpAddanitemNameTxt@1069 : TextConst 'ENU=Add an item;ENG=Add an item';
+      HelpSetupReportingNameTxt@1073 : TextConst 'ENU=Set up reporting;ENG=Set up reporting';
+      VideoWorkwithextensionsNameTxt@1078 : TextConst 'ENU=Install extensions to add features and integrations;ENG=Install extensions to add features and integrations';
+      VideoWorkwithExcelNameTxt@1079 : TextConst 'ENU=Work with Excel;ENG=Work with Excel';
+      VideoWorkwithgeneraljournalsNameTxt@1082 : TextConst 'ENU=Work with general journals;ENG=Work with general journals';
+      VideoIntrotoDynamics365forFinancialsNameTxt@1083 : TextConst 'ENU=Learn about Financials;ENG=Learn about Financials';
+      VideoCortanaIntelligenceforFinancialsNameTxt@1084 : TextConst 'ENU=Cortana with Financials;ENG=Cortana with Financials';
+      VideoBankintegrationNameTxt@1085 : TextConst 'ENU=Set up bank integration;ENG=Set up bank integration';
+
+    PROCEDURE SetStatus@1(EnteryId@1000 : Integer;ItemStatus@1001 : Option);
+    VAR
+      AssistedSetup@1002 : Record 1803;
+    BEGIN
+      AssistedSetup.GET(EnteryId);
+      AssistedSetup.Status := ItemStatus;
+      AssistedSetup.MODIFY;
+
+      IF
+         (AssistedSetup.Status = AssistedSetup.Status::Completed) AND
+         (AssistedSetup."Assisted Setup Page ID" <> 0)
+      THEN
+        OnAssistedSetupCompleted(EnteryId);
+    END;
+
+    PROCEDURE GetStatus@3(WizardPageID@1000 : Integer) : Integer;
+    VAR
+      AssistedSetup@1001 : Record 1803;
+    BEGIN
+      AssistedSetup.SETRANGE("Assisted Setup Page ID",WizardPageID);
+      AssistedSetup.FINDFIRST;
+      EXIT(AssistedSetup.Status);
+    END;
+
+    PROCEDURE Initialize@2();
+    VAR
+      O365GettingStartedMgt@1005 : Codeunit 1309;
+      PermissionManager@1010 : Codeunit 9002;
+      SortingOrder@1000 : Integer;
+      SettingGroupId@1001 : Integer;
+      ExtensionsGroupId@1002 : Integer;
+      LastId@1004 : Integer;
+      ReportingAndForecastingGroupId@1006 : Integer;
+      GettingStartedGroupId@1007 : Integer;
+      GenralLedgerGroupId@1008 : Integer;
+      GroupId@1011 : Integer;
+    BEGIN
+      IF NOT ISEMPTY THEN
+        UpdateStatus;
+
+      SortingOrder := 1;
+      LastId := 200000;
+      SettingGroupId := 100000;
+      ExtensionsGroupId := 100001;
+      ReportingAndForecastingGroupId := 100003;
+      GettingStartedGroupId := 100004;
+      GenralLedgerGroupId := 100005;
+
+      // Getting Started
+      GroupId := GettingStartedGroupId;
+      AddSetupAssistant(GroupId,GettingStartedGroupTxt,SortingOrder,TRUE,0,TRUE,"Item Type"::Group);
+      AddSetupAssistantResources(GroupId,VideoIntrotoDynamics365forFinancialsTxt,'',0,0,'learn01_overview_240px');
+
+      AddSetupAssistant(PAGE::"Data Migration Wizard",DataMigrationTxt,SortingOrder,TRUE,GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(PAGE::"Data Migration Wizard",VideoImportbusinessdataTxt,
+        HelpImportbusinessdataTxt,0,PAGE::"Data Migration Wizard",'');
+      LastId += 1;
+
+      AddSetupAssistant(LastId,VideoIntrotoDynamics365forFinancialsNameTxt,SortingOrder,TRUE,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(LastId,VideoIntrotoDynamics365forFinancialsTxt,HelpIntroductiontoFinancialsTxt,0,0,'');
+      LastId += 1;
+
+      AddSetupAssistant(PAGE::"Assisted Company Setup Wizard",InitialCompanySetupTxt,SortingOrder,AssistedCompanySetupIsVisible,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(PAGE::"Assisted Company Setup Wizard",'','',0,PAGE::"Assisted Company Setup Wizard",'');
+      LastId += 1;
+
+      AddSetupAssistant(LastId,VideoBankintegrationNameTxt,SortingOrder,TRUE,GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(LastId,VideoBankintegrationTxt,HelpBankintegrationTxt,0,0,'');
+      LastId += 1;
+
+      AddSetupAssistant(LastId,HelpAddacustomerNameTxt,SortingOrder,PermissionManager.SoftwareAsAService,GroupId,
+        FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(LastId,'',HelpAddacustomerTxt,O365GettingStartedMgt.GetAddCustomerTourID,0,'');
+      LastId += 1;
+
+      AddSetupAssistant(LastId,HelpAddanitemNameTxt,SortingOrder,PermissionManager.SoftwareAsAService,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(LastId,'',HelpAddanitemTxt,O365GettingStartedMgt.GetAddItemTourID,0,'');
+      LastId += 1;
+
+      AddSetupAssistant(LastId,HelpCreateasalesinvoiceNameTxt,SortingOrder,PermissionManager.SoftwareAsAService,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(LastId,'',HelpCreateasalesinvoiceTxt,O365GettingStartedMgt.GetCreateSalesInvoiceTourID,0,'');
+      LastId += 1;
+
+      // Genral Ledger
+      GroupId := GenralLedgerGroupId;
+      AddSetupAssistant(GroupId,GenralLedgerGroupTxt,SortingOrder,TRUE,0,TRUE,"Item Type"::Group);
+      AddSetupAssistantResources(GroupId,VideoWorkwithgeneraljournalsTxt,'',0,0,'learn07_journal_240px');
+
+      AddSetupAssistant(LastId,VideoWorkwithgeneraljournalsNameTxt,SortingOrder,TRUE,GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(LastId,VideoWorkwithgeneraljournalsTxt,HelpWorkwithgeneraljournalsTxt,0,0,'');
+      LastId += 1;
+      LastId += 1;
+
+      // Reporting And Forecasting
+      GroupId := ReportingAndForecastingGroupId;
+      AddSetupAssistant(GroupId,ReportingAndForecastingGroupTxt,SortingOrder,TRUE,0,TRUE,"Item Type"::Group);
+      AddSetupAssistantResources(GroupId,VideoWorkwithPowerBITxt,'',0,0,'setup06_forecast_240px');
+
+      AddSetupAssistant(LastId,VideoCortanaIntelligenceforFinancialsNameTxt,SortingOrder,TRUE,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(LastId,VideoCortanaIntelligenceforFinancialsTxt,
+        HelpCortanaIntelligenceforFinancialsTxt,0,0,'');
+      LastId += 1;
+
+      AddSetupAssistant(LastId,VideoWorkwithExcelNameTxt,SortingOrder,TRUE,GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(LastId,VideoWorkwithExcelTxt,HelpWorkwithExcelTxt,0,0,'');
+      LastId += 1;
+
+      AddSetupAssistant(LastId,HelpWorkwithPowerBINameTxt,SortingOrder,TRUE,GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(LastId,VideoWorkwithPowerBITxt,HelpWorkwithPowerBITxt,0,0,'');
+      LastId += 1;
+
+      AddSetupAssistant(PAGE::"Cash Flow Forecast Wizard",CashFlowForecastTxt,SortingOrder,TRUE,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(PAGE::"Cash Flow Forecast Wizard",'',HelpSetupCashFlowForecastTxt,0,
+        PAGE::"Cash Flow Forecast Wizard",'');
+
+      AddSetupAssistant(LastId,HelpSetupReportingNameTxt,SortingOrder,TRUE,GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(LastId,'',HelpSetupReportingTxt,0,0,'');
+      LastId += 1;
+
+      // Extensions
+      GroupId := ExtensionsGroupId;
+      AddSetupAssistant(GroupId,ExtensionsGroupTxt,SortingOrder,TRUE,0,TRUE,"Item Type"::Group);
+      AddSetupAssistantResources(GroupId,VideoWorkwithextensionsTxt,'',0,0,'learn02_item_240px');
+
+      AddSetupAssistant(LastId,VideoWorkwithextensionsNameTxt,SortingOrder,TRUE,GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(LastId,VideoWorkwithextensionsTxt,HelpWorkwithextensionsTxt,0,0,'');
+      LastId += 1;
+
+      // Customize for your need
+      GroupId := SettingGroupId;
+      AddSetupAssistant(GroupId,SettingGroupTxt,SortingOrder,TRUE,0,TRUE,"Item Type"::Group);
+      AddSetupAssistantResources(GroupId,VideoRunyourbusinesswithOffice365Txt,'',0,0,'learn12_extension_240px');
+
+      AddSetupAssistant(PAGE::"Approval Workflow Setup Wizard",ApprovalWorkflowSetupTxt,SortingOrder,TRUE,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(PAGE::"Approval Workflow Setup Wizard",'','',0,PAGE::"Approval Workflow Setup Wizard",'');
+
+      AddSetupAssistant(PAGE::"Cust. Approval WF Setup Wizard",CustomerAppWorkflowTxt,SortingOrder,TRUE,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(PAGE::"Cust. Approval WF Setup Wizard",'','',0,PAGE::"Cust. Approval WF Setup Wizard",'');
+
+      AddSetupAssistant(PAGE::"Email Setup Wizard",SMTPSetupTxt,SortingOrder,TRUE,GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(PAGE::"Email Setup Wizard",'',HelpSetupemailTxt,0,PAGE::"Email Setup Wizard",'');
+
+      AddSetupAssistant(PAGE::"Setup Email Logging",SetupEmailLoggingTxt,SortingOrder,TRUE,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(PAGE::"Setup Email Logging",'','',0,PAGE::"Setup Email Logging",'');
+      LastId += 1;
+
+      AddSetupAssistant(PAGE::"Exchange Setup Wizard",OfficeAddinSetupTxt,SortingOrder,TRUE,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(PAGE::"Exchange Setup Wizard",VideoRunyourbusinesswithOffice365Txt,HelpSetuptheOfficeaddinTxt,
+        0,PAGE::"Exchange Setup Wizard",'');
+
+      // Setup Group
+      AddSetupAssistant(PAGE::"OData Setup Wizard",ODataWizardTxt,SortingOrder,TRUE,GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(PAGE::"OData Setup Wizard",'','',0,PAGE::"OData Setup Wizard",'');
+
+      AddSetupAssistant(PAGE::"Item Approval WF Setup Wizard",ItemAppWorkflowTxt,SortingOrder,TRUE,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(PAGE::"Item Approval WF Setup Wizard",'','',0,PAGE::"Item Approval WF Setup Wizard",'');
+
+      AddSetupAssistant(PAGE::"Azure AD App Setup Wizard",AzureAdSetupTxt,SortingOrder,NOT PermissionManager.SoftwareAsAService,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(PAGE::"Azure AD App Setup Wizard",'','',0,PAGE::"Azure AD App Setup Wizard",'');
+      LastId += 1;
+
+      AddSetupAssistant(PAGE::"Pmt. App. Workflow Setup Wzrd.",PmtJnlAppWorkflowTxt,SortingOrder,TRUE,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(PAGE::"Pmt. App. Workflow Setup Wzrd.",'','',0,PAGE::"Pmt. App. Workflow Setup Wzrd.",'');
+
+      AddSetupAssistant(PAGE::"CRM Connection Setup Wizard",CRMConnectionSetupTxt,SortingOrder,TRUE,
+        GroupId,FALSE,"Item Type"::"Setup and Help");
+      AddSetupAssistantResources(PAGE::"CRM Connection Setup Wizard",'','',0,PAGE::"CRM Connection Setup Wizard",'');
+    END;
+
+    LOCAL PROCEDURE AssistedCompanySetupIsVisible@11() : Boolean;
+    VAR
+      AssistedCompanySetupStatus@1000 : Record 1802;
+    BEGIN
+      IF AssistedCompanySetupStatus.GET(COMPANYNAME) THEN
+        EXIT(AssistedCompanySetupStatus.Enabled);
+      EXIT(FALSE);
+    END;
+
+    PROCEDURE Run@4();
+    BEGIN
+      IF "Item Type" <> "Item Type"::"Setup and Help" THEN
+        EXIT;
+
+      IF Status = Status::Completed THEN
+        CASE "Page ID" OF
+          PAGE::"Assisted Company Setup Wizard":
+            ERROR(CompanyAlreadySetUpErr);
+          ELSE
+            IF NOT CONFIRM(RunSetupAgainQst,FALSE,Name) THEN
+              EXIT;
+        END;
+
+      PAGE.RUNMODAL("Assisted Setup Page ID");
+    END;
+
+    LOCAL PROCEDURE AddSetupAssistant@7(EnteryNo@1001 : Integer;AssistantName@1000 : Text[250];VAR SortingOrder@1003 : Integer;AssistantVisible@1002 : Boolean;ParentId@1004 : Integer;IsFeatured@1007 : Boolean;EnteryType@1005 : Option);
+    BEGIN
+      IF NOT GET(EnteryNo) THEN BEGIN
+        CLEAR(Rec);
+        "Page ID" := EnteryNo;
+        Visible := AssistantVisible;
+        IF EnteryType = "Item Type"::Group THEN
+          Status := Status::" ";
+        INSERT(TRUE);
+      END;
+
+      "Page ID" := EnteryNo;
+      Name := AssistantName;
+      Order := SortingOrder;
+      "Item Type" := EnteryType;
+      Featured := IsFeatured;
+      Parent := ParentId;
+      MODIFY(TRUE);
+      SortingOrder += 1;
+    END;
+
+    LOCAL PROCEDURE UpdateStatus@6();
+    BEGIN
+      UpdateSetUpEmail;
+      UpdateSetUpApprovalWorkflow;
+      UpdateSetUpPageVisibility(PAGE::"CRM Connection Setup Wizard");
+      UpdateSetUpPageVisibility(PAGE::"Setup Email Logging");
+      UpdateAzureAdSaasVisibility;
+      UpdateToursVisibility;
+    END;
+
+    LOCAL PROCEDURE UpdateSetUpEmail@8();
+    VAR
+      SMTPMailSetup@1000 : Record 409;
+      AssistedSetup@1001 : Record 1803;
+    BEGIN
+      IF AssistedSetup.GET(PAGE::"Email Setup Wizard") AND (AssistedSetup.Status <> Status::Completed) THEN
+        IF SMTPMailSetup.GET AND (SMTPMailSetup."SMTP Server" <> '') THEN BEGIN
+          AssistedSetup.Status := Status::Completed;
+          AssistedSetup.MODIFY;
+        END;
+    END;
+
+    LOCAL PROCEDURE UpdateSetUpApprovalWorkflow@9();
+    VAR
+      AssistedSetup@1000 : Record 1803;
+      ApprovalUserSetup@1002 : Record 91;
+      DummyApplicationAreaSetup@1001 : Record 9178;
+    BEGIN
+      IF AssistedSetup.GET(PAGE::"Approval Workflow Setup Wizard") THEN BEGIN
+        AssistedSetup.Visible := NOT DummyApplicationAreaSetup.IsBasicOnlyEnabled;
+        IF AssistedSetup.Status <> Status::Completed THEN BEGIN
+          ApprovalUserSetup.SETFILTER("Approver ID",'<>%1','');
+          IF NOT ApprovalUserSetup.ISEMPTY THEN
+            AssistedSetup.Status := Status::Completed;
+        END;
+        AssistedSetup.MODIFY;
+      END;
+    END;
+
+    LOCAL PROCEDURE UpdateSetUpPageVisibility@10(PageId@1002 : Integer);
+    VAR
+      AssistedSetup@1000 : Record 1803;
+      ApplicationAreaSetup@1001 : Record 9178;
+    BEGIN
+      IF AssistedSetup.GET(PageId) THEN BEGIN
+        AssistedSetup.Visible := NOT ApplicationAreaSetup.IsBasicOnlyEnabled;
+        AssistedSetup.MODIFY;
+      END;
+    END;
+
+    LOCAL PROCEDURE UpdateToursVisibility@19();
+    VAR
+      AssistedSetup@1000 : Record 1803;
+      PermissionManager@1001 : Codeunit 9002;
+    BEGIN
+      IF NOT PermissionManager.SoftwareAsAService THEN
+        EXIT;
+      AssistedSetup.SETFILTER("Tour Id",'>0');
+      AssistedSetup.MODIFYALL(Visible,PermissionManager.SoftwareAsAService);
+    END;
+
+    LOCAL PROCEDURE UpdateAzureAdSaasVisibility@1100();
+    VAR
+      AssistedSetup@1101 : Record 1803;
+      PermissionManager@1102 : Codeunit 9002;
+    BEGIN
+      IF AssistedSetup.GET(PAGE::"Azure AD App Setup Wizard") THEN BEGIN
+        AssistedSetup.Visible := NOT PermissionManager.SoftwareAsAService;
+        AssistedSetup.MODIFY;
+      END;
+    END;
+
+    [Integration]
+    PROCEDURE OnAssistedSetupCompleted@5(PageId@1000 : Integer);
+    BEGIN
+    END;
+
+    PROCEDURE Navigate@12();
+    VAR
+      SetupAndHelpResourceCard@1002 : Page 1819;
+    BEGIN
+      IF "Item Type" <> "Item Type"::Group THEN
+        EXIT;
+      SetStatus("Page ID",Status::Seen);
+      SetupAndHelpResourceCard.SetGroup("Page ID");
+      SetupAndHelpResourceCard.RUN;
+    END;
+
+    [TryFunction]
+    LOCAL PROCEDURE ImportIcon@15(IconCode@1001 : Code[50];VAR TempFile@1005 : Text);
+    VAR
+      AssistedSetupIcons@1003 : Record 1810;
+      FileManagement@1004 : Codeunit 419;
+    BEGIN
+      IF NOT AssistedSetupIcons.GET(IconCode) THEN
+        EXIT;
+
+      IF NOT AssistedSetupIcons.Image.HASVALUE THEN
+        EXIT;
+      TempFile := TEMPORARYPATH + FORMAT(CREATEGUID);
+      AssistedSetupIcons.Image.EXPORTFILE(TempFile);
+      IF NOT FileManagement.ClientFileExists(TempFile) THEN
+        TempFile := '';
+    END;
+
+    PROCEDURE NavigateHelpPage@14();
+    VAR
+      AssistedSetupLog@1003 : Record 1807;
+    BEGIN
+      IF "Help Url" = '' THEN
+        EXIT;
+
+      HYPERLINK("Help Url");
+
+      VALIDATE("Help Status",TRUE);
+      MODIFY(TRUE);
+      AssistedSetupLog.Log("Page ID",AssistedSetupLog."Invoked Action"::Help);
+    END;
+
+    PROCEDURE NavigateVideo@16();
+    VAR
+      AssistedSetupLog@1003 : Record 1807;
+      VideoLink@1001 : Page 1821;
+    BEGIN
+      IF "Video Url" = '' THEN
+        EXIT;
+
+      VideoLink.SetURL("Video Url");
+      VideoLink.RUNMODAL;
+
+      AssistedSetupLog.Log("Page ID",AssistedSetupLog."Invoked Action"::Video);
+      VALIDATE("Video Status",TRUE);
+      MODIFY(TRUE);
+    END;
+
+    LOCAL PROCEDURE AddSetupAssistantResources@18(EnteryNo@1004 : Integer;videoLink@1000 : Text[250];HelpLink@1001 : Text[250];TourId@1002 : Integer;AssistedPageId@1003 : Integer;IconCode@1005 : Code[50]);
+    VAR
+      TempFile@1006 : Text;
+    BEGIN
+      IF NOT GET(EnteryNo) THEN
+        EXIT;
+
+      "Video Url" := videoLink;
+      "Help Url" := HelpLink;
+      "Tour Id" := TourId;
+      "Assisted Setup Page ID" := AssistedPageId;
+      IF ImportIcon(IconCode,TempFile) THEN
+        IF TempFile <> '' THEN
+          Icon.IMPORTFILE(TempFile,'');
+      MODIFY(TRUE);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

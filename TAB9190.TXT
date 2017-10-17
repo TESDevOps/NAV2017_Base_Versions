@@ -1,0 +1,43 @@
+OBJECT Table 9190 Terms And Conditions
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Terms And Conditions;
+               ENG=Terms And Conditions];
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Code20        ;CaptionML=[ENU=No.;
+                                                              ENG=No.] }
+    { 2   ;   ;Description         ;Text250       ;CaptionML=[ENU=Description;
+                                                              ENG=Description] }
+    { 3   ;   ;Valid From          ;Date          ;CaptionML=[ENU=Valid From;
+                                                              ENG=Valid From] }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      This table could also provide the content of a set of terms and conditions,
+      which could be picked up by a generic page. For now, only a single static
+      page exists (page 9194 - "Madeira Rebranding").
+    }
+    END.
+  }
+}
+

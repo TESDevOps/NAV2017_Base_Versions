@@ -1,0 +1,75 @@
+OBJECT Page 5748 Transfer Route Specification
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Trans. Route Spec.;
+               ENG=Trans. Route Spec.];
+    SourceTable=Table5742;
+    PageType=Card;
+    OnInit=BEGIN
+             CurrPage.LOOKUPMODE := TRUE;
+           END;
+
+    OnClosePage=BEGIN
+                  IF GET("Transfer-from Code","Transfer-to Code") THEN BEGIN
+                    IF ("Shipping Agent Code" = '') AND
+                       ("Shipping Agent Service Code" = '') AND
+                       ("In-Transit Code" = '')
+                    THEN
+                      DELETE;
+                  END;
+                END;
+
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                CaptionML=[ENU=General;
+                           ENG=General] }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the location set up to be used as an in-transit location.;
+                           ENG=Specifies the code of the location set up to be used as an in-transit location.];
+                SourceExpr="In-Transit Code" }
+
+    { 9   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the shipping agent who you usually use for this transfer route.;
+                           ENG=Specifies the code for the shipping agent who you usually use for this transfer route.];
+                SourceExpr="Shipping Agent Code" }
+
+    { 11  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the shipping agent service you usually use for this transfer route.;
+                           ENG=Specifies the code for the shipping agent service you usually use for this transfer route.];
+                SourceExpr="Shipping Agent Service Code" }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

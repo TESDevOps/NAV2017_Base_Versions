@@ -1,0 +1,102 @@
+OBJECT Page 271 Res. Journal Template List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Res. Journal Template List;
+               ENG=Res. Journal Template List];
+    SourceTable=Table206;
+    PageType=List;
+    RefreshOnActivate=Yes;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of this journal.;
+                           ENG=Specifies the name of this journal.];
+                SourceExpr=Name }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description of the template for easy identification.;
+                           ENG=Specifies a description of the template for easy identification.];
+                SourceExpr=Description }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies if this journal will contain recurring entries.;
+                           ENG=Specifies if this journal will contain recurring entries.];
+                SourceExpr=Recurring;
+                Visible=FALSE }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the source code that is linked to the journal template.;
+                           ENG=Specifies the source code that is linked to the journal template.];
+                SourceExpr="Source Code";
+                Visible=FALSE }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a reason code that is inserted on the journal lines.;
+                           ENG=Specifies a reason code that is inserted on the journal lines.];
+                SourceExpr="Reason Code";
+                Visible=FALSE }
+
+    { 9   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the page that you want to be displayed when the user selects this journal.;
+                           ENG=Specifies the number of the page that you want to be displayed when the user selects this journal.];
+                SourceExpr="Page ID";
+                Visible=FALSE;
+                LookupPageID=Objects }
+
+    { 7   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the test report that is printed when, on the Actions tab in the Posting group, you choose Test Report.;
+                           ENG=Specifies the test report that is printed when, on the Actions tab in the Posting group, you choose Test Report.];
+                SourceExpr="Test Report ID";
+                Visible=FALSE;
+                LookupPageID=Objects }
+
+    { 11  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the posting report that you want associated with this journal.;
+                           ENG=Specifies the posting report that you want associated with this journal.];
+                SourceExpr="Posting Report ID";
+                Visible=FALSE;
+                LookupPageID=Objects }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies that an updated posting report is printed each time entries in this journal are posted.;
+                           ENG=Specifies that an updated posting report is printed each time entries in this journal are posted.];
+                SourceExpr="Force Posting Report";
+                Visible=FALSE }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

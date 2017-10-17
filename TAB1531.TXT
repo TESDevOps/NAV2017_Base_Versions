@@ -1,0 +1,108 @@
+OBJECT Table 1531 Workflow Step Argument Archive
+{
+  OBJECT-PROPERTIES
+  {
+    Date=30/03/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16177;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               ID := CREATEGUID;
+             END;
+
+    CaptionML=[ENU=Workflow Step Argument Archive;
+               ENG=Workflow Step Argument Archive];
+  }
+  FIELDS
+  {
+    { 1   ;   ;ID                  ;GUID          ;CaptionML=[ENU=ID;
+                                                              ENG=ID] }
+    { 2   ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ENG=Type];
+                                                   OptionCaptionML=[ENU=Event,Response;
+                                                                    ENG=Event,Response];
+                                                   OptionString=Event,Response }
+    { 3   ;   ;General Journal Template Name;Code10;
+                                                   CaptionML=[ENU=General Journal Template Name;
+                                                              ENG=General Journal Template Name] }
+    { 4   ;   ;General Journal Batch Name;Code10  ;CaptionML=[ENU=General Journal Batch Name;
+                                                              ENG=General Journal Batch Name] }
+    { 5   ;   ;Notification User ID;Code50        ;CaptionML=[ENU=Notification User ID;
+                                                              ENG=Notification User ID] }
+    { 6   ;   ;Notification User License Type;Option;
+                                                   FieldClass=FlowField;
+                                                   CalcFormula=Lookup(User."License Type" WHERE (User Name=FIELD(Notification User ID)));
+                                                   CaptionML=[ENU=Notification User License Type;
+                                                              ENG=Notification User Licence Type];
+                                                   OptionCaptionML=[ENU=Full User,Limited User,Device Only User,Windows Group,External User;
+                                                                    ENG=Full User,Limited User,Device Only User,Windows Group,External User];
+                                                   OptionString=Full User,Limited User,Device Only User,Windows Group,External User }
+    { 7   ;   ;Response Function Name;Code128     ;CaptionML=[ENU=Response Function Name;
+                                                              ENG=Response Function Name] }
+    { 9   ;   ;Link Target Page    ;Integer       ;CaptionML=[ENU=Link Target Page;
+                                                              ENG=Link Target Page] }
+    { 10  ;   ;Custom Link         ;Text250       ;ExtendedDatatype=URL;
+                                                   CaptionML=[ENU=Custom Link;
+                                                              ENG=Custom Link] }
+    { 11  ;   ;Event Conditions    ;BLOB          ;CaptionML=[ENU=Event Conditions;
+                                                              ENG=Event Conditions] }
+    { 12  ;   ;Approver Type       ;Option        ;CaptionML=[ENU=Approver Type;
+                                                              ENG=Approver Type];
+                                                   OptionCaptionML=[ENU=Salesperson/Purchaser,Approver,Workflow User Group;
+                                                                    ENG=Salesperson/Purchaser,Approver,Workflow User Group];
+                                                   OptionString=Salesperson/Purchaser,Approver,Workflow User Group }
+    { 13  ;   ;Approver Limit Type ;Option        ;CaptionML=[ENU=Approver Limit Type;
+                                                              ENG=Approver Limit Type];
+                                                   OptionCaptionML=[ENU=Approver Chain,Direct Approver,First Qualified Approver,Specific Approver;
+                                                                    ENG=Approver Chain,Direct Approver,First Qualified Approver,Specific Approver];
+                                                   OptionString=Approver Chain,Direct Approver,First Qualified Approver,Specific Approver }
+    { 14  ;   ;Workflow User Group Code;Code20    ;CaptionML=[ENU=Workflow User Group Code;
+                                                              ENG=Workflow User Group Code] }
+    { 15  ;   ;Due Date Formula    ;DateFormula   ;CaptionML=[ENU=Due Date Formula;
+                                                              ENG=Due Date Formula] }
+    { 16  ;   ;Message             ;Text250       ;CaptionML=[ENU=Message;
+                                                              ENG=Message] }
+    { 17  ;   ;Delegate After      ;Option        ;CaptionML=[ENU=Delegate After;
+                                                              ENG=Delegate After];
+                                                   OptionCaptionML=[ENU=Never,1 day,2 days,5 days;
+                                                                    ENG=Never,1 day,2 days,5 days];
+                                                   OptionString=Never,1 day,2 days,5 days }
+    { 18  ;   ;Show Confirmation Message;Boolean  ;CaptionML=[ENU=Show Confirmation Message;
+                                                              ENG=Show Confirmation Message] }
+    { 19  ;   ;Table No.           ;Integer       ;CaptionML=[ENU=Table No.;
+                                                              ENG=Table No.] }
+    { 20  ;   ;Field No.           ;Integer       ;CaptionML=[ENU=Field No.;
+                                                              ENG=Field No.] }
+    { 21  ;   ;Field Caption       ;Text80        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Field."Field Caption" WHERE (TableNo=FIELD(Table No.),
+                                                                                                   No.=FIELD(Field No.)));
+                                                   CaptionML=[ENU=Field Caption;
+                                                              ENG=Field Caption];
+                                                   Editable=No }
+    { 22  ;   ;Approver User ID    ;Code50        ;CaptionML=[ENU=Approver User ID;
+                                                              ENG=Approver User ID] }
+    { 100 ;   ;Response Option Group;Code20       ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("Workflow Response"."Response Option Group" WHERE (Function Name=FIELD(Response Function Name)));
+                                                   CaptionML=[ENU=Response Option Group;
+                                                              ENG=Response Option Group];
+                                                   Editable=No }
+    { 200 ;   ;Original Record ID  ;RecordID      ;CaptionML=[ENU=Original Record ID;
+                                                              ENG=Original Record ID] }
+  }
+  KEYS
+  {
+    {    ;ID                                      ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

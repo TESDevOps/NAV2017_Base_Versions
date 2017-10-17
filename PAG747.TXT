@@ -1,0 +1,88 @@
+OBJECT Page 747 VAT Clauses
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=VAT Clauses;
+               ENG=VAT Clauses];
+    SourceTable=Table560;
+    PageType=List;
+    ActionList=ACTIONS
+    {
+      { 8       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 9       ;1   ;Action    ;
+                      CaptionML=[ENU=&Setup;
+                                 ENG=&Setup];
+                      ToolTipML=[ENU=View or edit combinations of Tax business posting groups and Tax product posting groups.;
+                                 ENG=View or edit combinations of VAT business posting groups and VAT product posting groups.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 472;
+                      RunPageLink=VAT Clause Code=FIELD(Code);
+                      Promoted=Yes;
+                      Image=Setup;
+                      PromotedCategory=Process }
+      { 10      ;1   ;Action    ;
+                      CaptionML=[ENU=T&ranslation;
+                                 ENG=T&ranslation];
+                      ToolTipML=[ENU=View or edit translations for each Tax clause description in different languages.;
+                                 ENG=View or edit translations for each VAT clause description in different languages.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 748;
+                      RunPageLink=VAT Clause Code=FIELD(Code);
+                      Promoted=Yes;
+                      Image=Translation;
+                      PromotedCategory=Process }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for a VAT clause, which is used to provide a VAT description associated with a sales line on a sales invoice, credit memo, or other sales document.;
+                           ENG=Specifies the code for a VAT clause, which is used to provide a VAT description associated with a sales line on a sales invoice, credit memo, or other sales document.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Code }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the descriptive text that is associated with a VAT clause.;
+                           ENG=Specifies the descriptive text that is associated with a VAT clause.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Description }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies an additional description of a VAT clause.;
+                           ENG=Specifies an additional description of a VAT clause.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Description 2" }
+
+    { 6   ;1   ;Part      ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 7   ;1   ;Part      ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

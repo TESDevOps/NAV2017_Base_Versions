@@ -1,0 +1,67 @@
+OBJECT Table 318 Tax Area
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Code,Description;
+    CaptionML=[ENU=Tax Area;
+               ENG=VAT Area];
+    LookupPageID=Page469;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code20        ;CaptionML=[ENU=Code;
+                                                              ENG=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ENG=Description] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE CreateTaxArea@1(NewTaxAreaCode@1000 : Code[20];City@1001 : Text[50];State@1002 : Text[50]);
+    BEGIN
+      INIT;
+      Code := NewTaxAreaCode;
+      Description := NewTaxAreaCode;
+      INSERT;
+
+      IF City <> '' THEN
+        CreateTaxAreaLine(Code,COPYSTR(City,1,10));
+      IF State <> '' THEN
+        CreateTaxAreaLine(Code,COPYSTR(State,1,10));
+      IF (City = '') AND (State = '') THEN
+        CreateTaxAreaLine(Code,COPYSTR(NewTaxAreaCode,1,10));
+    END;
+
+    LOCAL PROCEDURE CreateTaxAreaLine@4(NewTaxArea@1000 : Code[20];NewJurisdictionCode@1001 : Code[10]);
+    VAR
+      TaxAreaLine@1002 : Record 319;
+      TaxJurisdiction@1003 : Record 320;
+    BEGIN
+      IF TaxAreaLine.GET(NewTaxArea,NewJurisdictionCode) THEN
+        EXIT;
+      TaxAreaLine.INIT;
+      TaxAreaLine."Tax Area" := NewTaxArea;
+      TaxAreaLine."Tax Jurisdiction Code" := NewJurisdictionCode;
+      TaxAreaLine.INSERT;
+      TaxJurisdiction.CreateTaxJurisdiction(NewJurisdictionCode);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

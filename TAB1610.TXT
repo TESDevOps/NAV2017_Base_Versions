@@ -1,0 +1,60 @@
+OBJECT Table 1610 Office Add-in
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Office Add-in;
+               ENG=Office Add-in];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Application ID      ;GUID          ;CaptionML=[ENU=Application ID;
+                                                              ENG=Application ID] }
+    { 2   ;   ;Name                ;Text50        ;CaptionML=[ENU=Name;
+                                                              ENG=Name] }
+    { 3   ;   ;Description         ;Text250       ;CaptionML=[ENU=Description;
+                                                              ENG=Description] }
+    { 5   ;   ;Version             ;Text20        ;CaptionML=[ENU=Version;
+                                                              ENG=Version] }
+    { 6   ;   ;Manifest Codeunit   ;Integer       ;CaptionML=[ENU=Manifest Codeunit;
+                                                              ENG=Manifest Codeunit] }
+    { 10  ;   ;Deployment Date     ;Date          ;CaptionML=[ENU=Deployment Date;
+                                                              ENG=Deployment Date] }
+    { 12  ;   ;Default Manifest    ;BLOB          ;CaptionML=[ENU=Default Manifest;
+                                                              ENG=Default Manifest] }
+    { 13  ;   ;Manifest            ;BLOB          ;CaptionML=[ENU=Manifest;
+                                                              ENG=Manifest] }
+    { 14  ;   ;Breaking            ;Boolean       ;CaptionML=[ENU=Breaking;
+                                                              ENG=Breaking] }
+  }
+  KEYS
+  {
+    {    ;Application ID                          ;Clustered=Yes }
+    { No ;                                         }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE Initialize@1();
+    BEGIN
+    END;
+
+    PROCEDURE IsAdminDeployed@2() : Boolean;
+    BEGIN
+      EXIT(FORMAT("Deployment Date") <> '');
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

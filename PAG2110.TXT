@@ -1,0 +1,375 @@
+OBJECT Page 2110 O365 Sales Invoice
+{
+  OBJECT-PROPERTIES
+  {
+    Date=28/04/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16585;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Draft Invoice;
+               ENG=Draft Invoice];
+    SourceTable=Table36;
+    SourceTableView=WHERE(Document Type=CONST(Invoice));
+    PageType=Document;
+    RefreshOnActivate=Yes;
+    OnInit=BEGIN
+             KeepInvoice := "No." <> '';
+           END;
+
+    OnNewRecord=BEGIN
+                  CustomerName := '';
+                  CustomerEmail := '';
+                  WorkDescription := '';
+
+                  SetDefaultPaymentServices;
+                END;
+
+    OnInsertRecord=BEGIN
+                     "Document Type" := "Document Type"::Invoice;
+                   END;
+
+    OnQueryClosePage=BEGIN
+                       // If the invoice has just been created, or no customer is specified
+                       IF GUIALLOWED AND
+                          ("No." <> '') AND
+                          (NOT (KeepInvoice AND CustomerExists))
+                       THEN
+                         EXIT(ProcessDraftInvoiceOnCreate);
+                     END;
+
+    OnAfterGetCurrRecord=BEGIN
+                           CustomerName := "Sell-to Customer Name";
+                           CustomerEmail := GetCustomerEmail;
+                           WorkDescription := GetWorkDescription;
+                           CurrPageEditable := CurrPage.EDITABLE;
+                           CustomerExists := "Sell-to Customer No." <> '';
+                         END;
+
+    ActionList=ACTIONS
+    {
+      { 22      ;    ;ActionContainer;
+                      CaptionML=[ENU=Invoice;
+                                 ENG=Invoice];
+                      ActionContainerType=ActionItems }
+      { 23      ;1   ;Action    ;
+                      Name=Post;
+                      ShortCutKey=Ctrl+Right;
+                      CaptionML=[ENU=Send the invoice;
+                                 ENG=Send the invoice];
+                      ToolTipML=[ENU=Finalize and send the invoice.;
+                                 ENG=Finalise and send the invoice.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=PostSendTo;
+                      PromotedCategory=Process;
+                      PromotedOnly=Yes;
+                      OnAction=VAR
+                                 AssistedSetup@1001 : Record 1803;
+                                 MailManagement@1000 : Codeunit 9520;
+                               BEGIN
+                                 IF AssistedSetup.GetStatus(PAGE::"Email Setup Wizard") = AssistedSetup.Status::"Not Completed" THEN BEGIN
+                                   PAGE.RUNMODAL(PAGE::"Email Setup Wizard");
+                                   IF AssistedSetup.GetStatus(PAGE::"Email Setup Wizard") = AssistedSetup.Status::"Not Completed" THEN
+                                     ERROR(MailNotConfiguredErr);
+                                 END;
+
+                                 SendToPosting(CODEUNIT::"Sales-Post + Email");
+
+                                 IF (CustomerEmail <> '') AND MailManagement.IsSMTPEnabled THEN
+                                   MESSAGE(InvoiceSentMsg);
+
+                                 KeepInvoice := TRUE;
+                               END;
+                                }
+      { 3       ;1   ;Action    ;
+                      Name=ViewPdf;
+                      CaptionML=[ENU=Preview Invoice;
+                                 ENG=Preview Invoice];
+                      ToolTipML=[ENU=View the preview of the invoice before sending.;
+                                 ENG=View the preview of the invoice before sending.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=View;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 ReportSelections@1001 : Record 77;
+                                 ReportViewer@1000 : Page 2115;
+                               BEGIN
+                                 SETRECFILTER;
+                                 LOCKTABLE;
+                                 FIND;
+                                 ReportViewer.SetDocument(Rec,ReportSelections.Usage::"S.Invoice Draft","Sell-to Customer No.");
+                                 ReportViewer.RUN;
+                                 FIND;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Invoice;
+                CaptionML=[ENU=Invoice;
+                           ENG=Invoice];
+                GroupType=Group }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the record.;
+                           ENG=Specifies the number of the record.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="No.";
+                Importance=Additional;
+                Editable=FALSE }
+
+    { 9   ;2   ;Field     ;
+                Lookup=Yes;
+                CaptionML=[ENU=Customer Name;
+                           ENG=Customer Name];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=CustomerName;
+                Importance=Promoted;
+                Editable=CurrPageEditable;
+                OnValidate=VAR
+                             Customer@1000 : Record 18;
+                           BEGIN
+                             IF NOT Customer.GET(Customer.GetCustNoOpenCard(CustomerName,FALSE)) THEN BEGIN
+                               IF Customer.IsLookupRequested THEN
+                                 IF LookupCustomerName(CustomerName) THEN
+                                   EXIT;
+                               ERROR('');
+                             END;
+
+                             SetHideValidationDialog(TRUE);
+                             VALIDATE("Sell-to Customer Name",CustomerName);
+                             CustomerName := "Sell-to Customer Name";
+                             CustomerEmail := GetCustomerEmail;
+                             IF CustomerName <> '' THEN
+                               CustomerExists := TRUE;
+                           END;
+
+                OnLookup=BEGIN
+                           IF LookupCustomerName(Text) THEN
+                             CustomerEmail := GetCustomerEmail;
+                         END;
+
+                ShowMandatory=TRUE }
+
+    { 18  ;2   ;Field     ;
+                ExtendedDatatype=E-Mail;
+                CaptionML=[ENU=E-mail;
+                           ENG=E-mail];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=CustomerEmail;
+                Editable=CurrPageEditable AND CustomerExists;
+                OnValidate=VAR
+                             Customer@1000 : Record 18;
+                           BEGIN
+                             IF (CustomerEmail <> '') AND ("Sell-to Customer No." <> '') AND Customer.WRITEPERMISSION THEN
+                               IF Customer.GET("Sell-to Customer No.") THEN
+                                 IF CustomerEmail <> Customer."E-Mail" THEN BEGIN
+                                   Customer."E-Mail" := CustomerEmail;
+                                   Customer.MODIFY;
+                                 END;
+                           END;
+                            }
+
+    { 10  ;2   ;Field     ;
+                CaptionML=[ENU=Address;
+                           ENG=Address];
+                ToolTipML=[ENU=Specifies the customer's sell-to address.;
+                           ENG=Specifies the customer's sell-to address.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Address";
+                Importance=Additional;
+                Editable=CustomerExists }
+
+    { 11  ;2   ;Field     ;
+                CaptionML=[ENU=Address 2;
+                           ENG=Address 2];
+                ToolTipML=[ENU=Specifies an additional part of the customer's sell-to address.;
+                           ENG=Specifies an additional part of the customer's sell-to address.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Address 2";
+                Importance=Additional;
+                Editable=CustomerExists }
+
+    { 12  ;2   ;Field     ;
+                CaptionML=[ENU=City;
+                           ENG=City];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to City";
+                Importance=Additional;
+                Editable=CustomerExists }
+
+    { 14  ;2   ;Field     ;
+                CaptionML=[ENU=Post Code;
+                           ENG=Postcode];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Post Code";
+                Importance=Additional;
+                Editable=CustomerExists }
+
+    { 15  ;2   ;Field     ;
+                CaptionML=[ENU=County;
+                           ENG=County];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to County";
+                Importance=Additional;
+                Editable=CustomerExists }
+
+    { 16  ;2   ;Field     ;
+                CaptionML=[ENU=Country/Region;
+                           ENG=Country/Region];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Country/Region Code";
+                Importance=Additional;
+                Editable=CustomerExists }
+
+    { 17  ;2   ;Field     ;
+                CaptionML=[ENU=Invoice Date;
+                           ENG=Invoice Date];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Document Date";
+                Importance=Additional;
+                Editable=CustomerExists }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies when the sales invoice must be paid.;
+                           ENG=Specifies when the sales invoice must be paid.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Due Date";
+                Importance=Additional;
+                Editable=CustomerExists }
+
+    { 20  ;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Tax Liable";
+                Importance=Additional;
+                Editable=CustomerExists }
+
+    { 19  ;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Tax Area Code";
+                Importance=Additional;
+                Editable=CustomerExists }
+
+    { 5   ;2   ;Field     ;
+                CaptionML=[ENU=Work Description;
+                           ENG=Work Description];
+                ToolTipML=[ENU=Specifies the products or service being offered;
+                           ENG=Specifies the products or service being offered];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=WorkDescription;
+                Importance=Additional;
+                Editable=CurrPageEditable AND CustomerExists;
+                MultiLine=Yes;
+                OnValidate=BEGIN
+                             SetWorkDescription(WorkDescription);
+                           END;
+
+                ShowCaption=No }
+
+    { 21  ;1   ;Part      ;
+                CaptionML=[ENU=Lines;
+                           ENG=Lines];
+                ApplicationArea=#Basic,#Suite;
+                SubPageLink=Document Type=FIELD(Document Type),
+                            Document No.=FIELD(No.);
+                PagePartID=Page2111;
+                Editable=CustomerExists;
+                PartType=Page;
+                UpdatePropagation=Both }
+
+    { 7   ;1   ;Field     ;
+                CaptionML=[ENU=Net Total;
+                           ENG=Net Total];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amount;
+                Importance=Additional;
+                Visible=FALSE }
+
+    { 8   ;1   ;Field     ;
+                Lookup=No;
+                DrillDown=No;
+                CaptionML=[ENU=Total Including Tax;
+                           ENG=Total Including VAT];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Amount Including VAT";
+                Importance=Promoted }
+
+  }
+  CODE
+  {
+    VAR
+      CustomerName@1000 : Text[50];
+      InvoiceSentMsg@1001 : TextConst 'ENU=Your invoice is sent.;ENG=Your invoice is sent.';
+      CustomerEmail@1004 : Text[80];
+      WorkDescription@1002 : Text;
+      CurrPageEditable@1003 : Boolean;
+      CustomerExists@1005 : Boolean;
+      ProcessDraftInvoiceOptionQst@1007 : TextConst 'ENU=Keep,Discard;ENG=Keep,Discard';
+      ProcessDraftInvoiceInstructionTxt@1008 : TextConst 'ENU=Do you want to keep new invoice?;ENG=Do you want to keep new invoice?';
+      KeepInvoice@1009 : Boolean;
+      MailNotConfiguredErr@1006 : TextConst 'ENU=An email account must be configured to send an invoice.;ENG=An email account must be configured to send an invoice.';
+
+    LOCAL PROCEDURE LookupCustomerName@1(Text@1000 : Text) : Boolean;
+    VAR
+      Customer@1002 : Record 18;
+      O365CustomerLookup@1001 : Page 2116;
+    BEGIN
+      IF Text <> '' THEN BEGIN
+        Customer.SETRANGE(Name,Text);
+        IF Customer.FINDFIRST THEN;
+        Customer.SETRANGE(Name);
+      END;
+
+      O365CustomerLookup.LOOKUPMODE(TRUE);
+      O365CustomerLookup.SETRECORD(Customer);
+
+      IF O365CustomerLookup.RUNMODAL = ACTION::LookupOK THEN BEGIN
+        O365CustomerLookup.GETRECORD(Customer);
+        SetHideValidationDialog(TRUE);
+        CustomerName := Customer.Name;
+        VALIDATE("Sell-to Customer Name",CustomerName);
+        IF CustomerName <> '' THEN
+          CustomerExists := TRUE;
+        EXIT(TRUE);
+      END;
+
+      EXIT(FALSE);
+    END;
+
+    LOCAL PROCEDURE GetCustomerEmail@2() : Text[80];
+    VAR
+      Customer@1000 : Record 18;
+    BEGIN
+      IF "Sell-to Customer No." <> '' THEN
+        IF Customer.GET("Sell-to Customer No.") THEN
+          EXIT(Customer."E-Mail");
+      EXIT('');
+    END;
+
+    LOCAL PROCEDURE ProcessDraftInvoiceOnCreate@3() : Boolean;
+    VAR
+      OptionNumber@1000 : Integer;
+    BEGIN
+      OptionNumber := STRMENU(ProcessDraftInvoiceOptionQst,1,ProcessDraftInvoiceInstructionTxt);
+
+      IF OptionNumber = 1 THEN
+        EXIT(TRUE);
+
+      IF OptionNumber = 2 THEN
+        EXIT(DELETE(TRUE)); // Delete all invoice lines and invoice header
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

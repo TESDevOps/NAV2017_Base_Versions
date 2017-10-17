@@ -1,0 +1,552 @@
+OBJECT Page 16 Chart of Accounts
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00,NAVGB10.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Chart of Accounts;
+               ENG=Chart of Accounts];
+    SourceTable=Table15;
+    PageType=List;
+    CardPageID=G/L Account Card;
+    RefreshOnActivate=Yes;
+    PromotedActionCategoriesML=[ENU=New,Process,Report,Periodic Activities;
+                                ENG=New,Process,Report,Periodic Activities];
+    OnAfterGetRecord=BEGIN
+                       NoEmphasize := "Account Type" <> "Account Type"::Posting;
+                       NameIndent := Indentation;
+                       NameEmphasize := "Account Type" <> "Account Type"::Posting;
+                     END;
+
+    OnNewRecord=BEGIN
+                  SetupNewGLAcc(xRec,BelowxRec);
+                END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 22      ;1   ;ActionGroup;
+                      CaptionML=[ENU=A&ccount;
+                                 ENG=A&ccount];
+                      Image=ChartOfAccounts }
+      { 28      ;2   ;Action    ;
+                      ShortCutKey=Ctrl+F7;
+                      CaptionML=[ENU=Ledger E&ntries;
+                                 ENG=Ledger E&ntries];
+                      ToolTipML=[ENU=View the history of transactions that have been posted for the selected record.;
+                                 ENG=View the history of transactions that have been posted for the selected record.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 20;
+                      RunPageView=SORTING(G/L Account No.);
+                      RunPageLink=G/L Account No.=FIELD(No.);
+                      Promoted=No;
+                      Image=GLRegisters;
+                      PromotedCategory=Process }
+      { 25      ;2   ;Action    ;
+                      CaptionML=[ENU=Co&mments;
+                                 ENG=Co&mments];
+                      ToolTipML=[ENU=Show or add comments.;
+                                 ENG=Show or add comments.];
+                      RunObject=Page 124;
+                      RunPageLink=Table Name=CONST(G/L Account),
+                                  No.=FIELD(No.);
+                      Image=ViewComments }
+      { 34      ;2   ;ActionGroup;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      Image=Dimensions }
+      { 84      ;3   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions-Single;
+                                 ENG=Dimensions-Single];
+                      ToolTipML=[ENU=View or edit the single set of dimensions that are set up for the selected record.;
+                                 ENG=View or edit the single set of dimensions that are set up for the selected record.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 540;
+                      RunPageLink=Table ID=CONST(15),
+                                  No.=FIELD(No.);
+                      Image=Dimensions }
+      { 33      ;3   ;Action    ;
+                      AccessByPermission=TableData 348=R;
+                      CaptionML=[ENU=Dimensions-&Multiple;
+                                 ENG=Dimensions-&Multiple];
+                      ToolTipML=[ENU=View or edit dimensions for a group of records. You can assign dimension codes to transactions to distribute costs and analyze historical information.;
+                                 ENG=View or edit dimensions for a group of records. You can assign dimension codes to transactions to distribute costs and analyse historical information.];
+                      ApplicationArea=#Suite;
+                      Image=DimensionSets;
+                      OnAction=VAR
+                                 GLAcc@1001 : Record 15;
+                                 DefaultDimMultiple@1002 : Page 542;
+                               BEGIN
+                                 CurrPage.SETSELECTIONFILTER(GLAcc);
+                                 DefaultDimMultiple.SetMultiGLAcc(GLAcc);
+                                 DefaultDimMultiple.RUNMODAL;
+                               END;
+                                }
+      { 23      ;2   ;Action    ;
+                      CaptionML=[ENU=E&xtended Texts;
+                                 ENG=E&xtended Texts];
+                      ToolTipML=[ENU=View additional information that has been added to the description for the current account.;
+                                 ENG=View additional information that has been added to the description for the current account.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 391;
+                      RunPageView=SORTING(Table Name,No.,Language Code,All Language Codes,Starting Date,Ending Date);
+                      RunPageLink=Table Name=CONST(G/L Account),
+                                  No.=FIELD(No.);
+                      Image=Text }
+      { 27      ;2   ;Action    ;
+                      CaptionML=[ENU=Receivables-Payables;
+                                 ENG=Receivables-Payables];
+                      ToolTipML=[ENU=Show a summary of receivables and payables.;
+                                 ENG=Show a summary of receivables and payables.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 159;
+                      Image=ReceivablesPayables }
+      { 54      ;2   ;Action    ;
+                      CaptionML=[ENU=Where-Used List;
+                                 ENG=Where-Used List];
+                      ToolTipML=[ENU=Show setup tables where the current account is used.;
+                                 ENG=Show setup tables where the current account is used.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Track;
+                      OnAction=VAR
+                                 CalcGLAccWhereUsed@1000 : Codeunit 100;
+                               BEGIN
+                                 CalcGLAccWhereUsed.CheckGLAcc("No.");
+                               END;
+                                }
+      { 123     ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Balance;
+                                 ENG=&Balance];
+                      Image=Balance }
+      { 36      ;2   ;Action    ;
+                      CaptionML=[ENU=G/L &Account Balance;
+                                 ENG=G/L &Account Balance];
+                      ToolTipML=[ENU=View a summary of the debit and credit balances for different time periods for the current account.;
+                                 ENG=View a summary of the debit and credit balances for different time periods for the current account.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 415;
+                      RunPageLink=No.=FIELD(No.),
+                                  Global Dimension 1 Filter=FIELD(Global Dimension 1 Filter),
+                                  Global Dimension 2 Filter=FIELD(Global Dimension 2 Filter),
+                                  Business Unit Filter=FIELD(Business Unit Filter);
+                      Image=GLAccountBalance }
+      { 132     ;2   ;Action    ;
+                      CaptionML=[ENU=G/L &Balance;
+                                 ENG=G/L &Balance];
+                      ToolTipML=[ENU=View a summary of the debit and credit balances for different time periods for all accounts.;
+                                 ENG=View a summary of the debit and credit balances for different time periods for all accounts.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 414;
+                      RunPageOnRec=Yes;
+                      RunPageLink=Global Dimension 1 Filter=FIELD(Global Dimension 1 Filter),
+                                  Global Dimension 2 Filter=FIELD(Global Dimension 2 Filter),
+                                  Business Unit Filter=FIELD(Business Unit Filter);
+                      Image=GLBalance }
+      { 126     ;2   ;Action    ;
+                      CaptionML=[ENU=G/L Balance by &Dimension;
+                                 ENG=G/L Balance by &Dimension];
+                      ToolTipML=[ENU=View a summary of the debit and credit balances by dimensions for all accounts.;
+                                 ENG=View a summary of the debit and credit balances by dimensions for all accounts.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 408;
+                      Image=GLBalanceDimension }
+      { 52      ;2   ;Separator ;
+                      CaptionML=[ENU="";
+                                 ENG=""] }
+      { 53      ;2   ;Action    ;
+                      CaptionML=[ENU=G/L Account Balance/Bud&get;
+                                 ENG=G/L Account Balance/Bud&get];
+                      ToolTipML=[ENU=View a summary of the debit and credit balances and the budgeted amounts for different time periods for the current account.;
+                                 ENG=View a summary of the debit and credit balances and the budgeted amounts for different time periods for the current account.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 154;
+                      RunPageLink=No.=FIELD(No.),
+                                  Global Dimension 1 Filter=FIELD(Global Dimension 1 Filter),
+                                  Global Dimension 2 Filter=FIELD(Global Dimension 2 Filter),
+                                  Business Unit Filter=FIELD(Business Unit Filter),
+                                  Budget Filter=FIELD(Budget Filter);
+                      Image=Period }
+      { 35      ;2   ;Action    ;
+                      CaptionML=[ENU=G/L Balance/B&udget;
+                                 ENG=G/L Balance/B&udget];
+                      ToolTipML=[ENU=View a summary of the debit and credit balances and the budgeted amounts for different time periods for the current account.;
+                                 ENG=View a summary of the debit and credit balances and the budgeted amounts for different time periods for the current account.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 422;
+                      RunPageOnRec=Yes;
+                      RunPageLink=Global Dimension 1 Filter=FIELD(Global Dimension 1 Filter),
+                                  Global Dimension 2 Filter=FIELD(Global Dimension 2 Filter),
+                                  Business Unit Filter=FIELD(Business Unit Filter),
+                                  Budget Filter=FIELD(Budget Filter);
+                      Image=ChartOfAccounts }
+      { 55      ;2   ;Separator  }
+      { 56      ;2   ;Action    ;
+                      CaptionML=[ENU=Chart of Accounts &Overview;
+                                 ENG=Chart of Accounts &Overview];
+                      ToolTipML=[ENU=View the chart of accounts with different levels of detail where you can expand or collapse a section of the chart of accounts.;
+                                 ENG=View the chart of accounts with different levels of detail where you can expand or collapse a section of the chart of accounts.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 634;
+                      Image=Accounts }
+      { 1900210203;1 ;Action    ;
+                      CaptionML=[ENU=G/L Register;
+                                 ENG=G/L Register];
+                      ToolTipML=[ENU=View posted G/L entries.;
+                                 ENG=View posted G/L entries.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 116;
+                      Promoted=Yes;
+                      Image=GLRegisters;
+                      PromotedCategory=Process;
+                      PromotedOnly=Yes }
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 122     ;1   ;ActionGroup;
+                      CaptionML=[ENU=F&unctions;
+                                 ENG=F&unctions];
+                      Image=Action }
+      { 30      ;2   ;Action    ;
+                      Name=IndentChartOfAccounts;
+                      CaptionML=[ENU=Indent Chart of Accounts;
+                                 ENG=Indent Chart of Accounts];
+                      ToolTipML=[ENU=Indent accounts between a Begin-Total and the matching End-Total one level to make the chart of accounts easier to read.;
+                                 ENG=Indent accounts between a Begin-Total and the matching End-Total one level to make the chart of accounts easier to read.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Codeunit 3;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=IndentChartOfAccounts;
+                      PromotedCategory=Process;
+                      PromotedOnly=Yes }
+      { 40      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Periodic Activities;
+                                 ENG=Periodic Activities] }
+      { 70      ;2   ;Action    ;
+                      CaptionML=[ENU=General Journal;
+                                 ENG=General Journal];
+                      ToolTipML=[ENU=Open the general journal, for example, to record or post a payment that has no related document.;
+                                 ENG=Open the general journal, for example, to record or post a payment that has no related document.];
+                      RunObject=Page 39;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Journal;
+                      PromotedCategory=Process;
+                      PromotedOnly=Yes }
+      { 20      ;2   ;Action    ;
+                      CaptionML=[ENU=Close Income Statement;
+                                 ENG=Close Income Statement];
+                      ToolTipML=[ENU=Start the transfer of the year's result to an account in the balance sheet and close the income statement accounts.;
+                                 ENG=Start the transfer of the year's result to an account in the balance sheet and close the income statement accounts.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Report 94;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=CloseYear;
+                      PromotedCategory=Process;
+                      PromotedOnly=Yes }
+      { 5       ;2   ;Action    ;
+                      Name=DocsWithoutIC;
+                      CaptionML=[ENU=Posted Documents without Incoming Document;
+                                 ENG=Posted Documents without Incoming Document];
+                      ToolTipML=[ENU=Show a list of posted purchase and sales documents under the G/L account that do not have related incoming document records.;
+                                 ENG=Show a list of posted purchase and sales documents under the G/L account that do not have related incoming document records.];
+                      Image=Documents;
+                      OnAction=VAR
+                                 PostedDocsWithNoIncBuf@1001 : Record 134;
+                               BEGIN
+                                 IF "Account Type" = "Account Type"::Posting THEN
+                                   PostedDocsWithNoIncBuf.SETRANGE("G/L Account No. Filter","No.")
+                                 ELSE
+                                   IF Totaling <> '' THEN
+                                     PostedDocsWithNoIncBuf.SETFILTER("G/L Account No. Filter",Totaling)
+                                   ELSE
+                                     EXIT;
+                                 PAGE.RUN(PAGE::"Posted Docs. With No Inc. Doc.",PostedDocsWithNoIncBuf);
+                               END;
+                                }
+      { 1900000006;  ;ActionContainer;
+                      ActionContainerType=Reports }
+      { 1900670506;1 ;Action    ;
+                      CaptionML=[ENU=Detail Trial Balance;
+                                 ENG=Detail Trial Balance];
+                      ToolTipML=[ENU=View a detail trial balance for the general ledger accounts that you specify.;
+                                 ENG=View a detail trial balance for the general ledger accounts that you specify.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Report 4;
+                      Promoted=Yes;
+                      Image=Report;
+                      PromotedCategory=Report;
+                      PromotedOnly=Yes }
+      { 1904082706;1 ;Action    ;
+                      CaptionML=[ENU=Trial Balance;
+                                 ENG=Trial Balance];
+                      ToolTipML=[ENU=View the chart of accounts that have balances and net changes.;
+                                 ENG=View the chart of accounts that have balances and net changes.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Report 6;
+                      Promoted=Yes;
+                      Image=Report;
+                      PromotedCategory=Report;
+                      PromotedOnly=Yes }
+      { 1902174606;1 ;Action    ;
+                      CaptionML=[ENU=Trial Balance by Period;
+                                 ENG=Trial Balance by Period];
+                      ToolTipML=[ENU=View the opening balance by general ledger account, the movements in the selected period of month, quarter, or year, and the resulting closing balance.;
+                                 ENG=View the opening balance by general ledger account, the movements in the selected period of month, quarter, or year, and the resulting closing balance.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Report 38;
+                      Image=Report;
+                      PromotedCategory=Report }
+      { 1900210206;1 ;Action    ;
+                      CaptionML=[ENU=G/L Register;
+                                 ENG=G/L Register];
+                      ToolTipML=[ENU=View posted G/L entries.;
+                                 ENG=View posted G/L entries.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Report 3;
+                      Promoted=Yes;
+                      Image=Report;
+                      PromotedCategory=Report;
+                      PromotedOnly=Yes }
+      { 1905290306;1 ;Action    ;
+                      CaptionML=[ENU=Direct Sales Details;
+                                 ENG=Direct Sales Details];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Report 10527;
+                      Promoted=Yes;
+                      Image=Sales;
+                      PromotedCategory=Report }
+      { 1905774006;1 ;Action    ;
+                      CaptionML=[ENU=Direct Purchase Details;
+                                 ENG=Direct Purchase Details];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Report 10537;
+                      Promoted=Yes;
+                      Image=Purchase;
+                      PromotedCategory=Report }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                IndentationColumnName=NameIndent;
+                IndentationControls=Name;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the No. of the G/L Account you are setting up.;
+                           ENG=Specifies the No. of the G/L Account you are setting up.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="No.";
+                Style=Strong;
+                StyleExpr=NoEmphasize }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the general ledger account.;
+                           ENG=Specifies the name of the general ledger account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Name;
+                Style=Strong;
+                StyleExpr=NameEmphasize }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether a general ledger account is an income statement account or a balance sheet account.;
+                           ENG=Specifies whether a general ledger account is an income statement account or a balance sheet account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Income/Balance" }
+
+    { 9   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the category of the G/L account.;
+                           ENG=Specifies the category of the G/L account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Account Category";
+                Visible=FALSE }
+
+    { 11  ;2   ;Field     ;
+                CaptionML=[ENU=Account Subcategory;
+                           ENG=Account Subcategory];
+                ToolTipML=[ENU=Specifies the subcategory of the account category of the G/L account.;
+                           ENG=Specifies the subcategory of the account category of the G/L account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Account Subcategory Descript." }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the purpose of the account. Newly created accounts are automatically assigned the Posting account type, but you can change this.;
+                           ENG=Specifies the purpose of the account. Newly created accounts are automatically assigned the Posting account type, but you can change this.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Account Type" }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether you will be able to post directly or only indirectly to this general ledger account.;
+                           ENG=Specifies whether you will be able to post directly or only indirectly to this general ledger account.];
+                SourceExpr="Direct Posting";
+                Visible=FALSE }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies an account interval or a list of account numbers.;
+                           ENG=Specifies an account interval or a list of account numbers.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Totaling;
+                OnLookup=VAR
+                           GLaccList@1000 : Page 18;
+                         BEGIN
+                           GLaccList.LOOKUPMODE(TRUE);
+                           IF NOT (GLaccList.RUNMODAL = ACTION::LookupOK) THEN
+                             EXIT(FALSE);
+
+                           Text := GLaccList.GetSelectionFilter;
+                           EXIT(TRUE);
+                         END;
+                          }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general posting type to use when posting to this account.;
+                           ENG=Specifies the general posting type to use when posting to this account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Gen. Posting Type" }
+
+    { 37  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general business posting group that applies to the entry.;
+                           ENG=Specifies the general business posting group that applies to the entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Gen. Bus. Posting Group" }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a general product posting group code.;
+                           ENG=Specifies a general product posting group code.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Gen. Prod. Posting Group" }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a VAT Bus. Posting Group.;
+                           ENG=Specifies a VAT Bus. Posting Group.];
+                SourceExpr="VAT Bus. Posting Group";
+                Visible=FALSE }
+
+    { 44  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a VAT Prod. Posting Group code.;
+                           ENG=Specifies a VAT Prod. Posting Group code.];
+                SourceExpr="VAT Prod. Posting Group";
+                Visible=FALSE }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the net change in the account balance during the time period in the Date Filter field.;
+                           ENG=Specifies the net change in the account balance during the time period in the Date Filter field.];
+                ApplicationArea=#Basic,#Suite;
+                BlankZero=Yes;
+                SourceExpr="Net Change" }
+
+    { 59  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the G/L account balance on the last date included in the Date Filter field.;
+                           ENG=Specifies the G/L account balance on the last date included in the Date Filter field.];
+                BlankZero=Yes;
+                SourceExpr="Balance at Date";
+                Visible=FALSE }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the balance on this account.;
+                           ENG=Specifies the balance on this account.];
+                ApplicationArea=#Basic,#Suite;
+                BlankZero=Yes;
+                SourceExpr=Balance }
+
+    { 46  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the net change in the account balance.;
+                           ENG=Specifies the net change in the account balance.];
+                BlankZero=Yes;
+                SourceExpr="Additional-Currency Net Change";
+                Visible=FALSE }
+
+    { 48  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the G/L account balance (in the additional reporting currency) on the last date included in the Date Filter field.;
+                           ENG=Specifies the G/L account balance (in the additional reporting currency) on the last date included in the Date Filter field.];
+                BlankZero=Yes;
+                SourceExpr="Add.-Currency Balance at Date";
+                Visible=FALSE }
+
+    { 50  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the balance on this account, in the additional reporting currency.;
+                           ENG=Specifies the balance on this account, in the additional reporting currency.];
+                BlankZero=Yes;
+                SourceExpr="Additional-Currency Balance";
+                Visible=FALSE }
+
+    { 39  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the account number in a consolidated company to transfer credit balances.;
+                           ENG=Specifies the account number in a consolidated company to transfer credit balances.];
+                SourceExpr="Consol. Debit Acc.";
+                Visible=FALSE }
+
+    { 41  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies if amounts without any payment tolerance amount from the customer and vendor ledger entries are used.;
+                           ENG=Specifies if amounts without any payment tolerance amount from the customer and vendor ledger entries are used.];
+                SourceExpr="Consol. Credit Acc.";
+                Visible=FALSE }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a cost type number to establish which cost type a general ledger account belongs to.;
+                           ENG=Specifies a cost type number to establish which cost type a general ledger account belongs to.];
+                SourceExpr="Cost Type No." }
+
+    { 61  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the consolidation translation method that will be used for the account.;
+                           ENG=Specifies the consolidation translation method that will be used for the account.];
+                SourceExpr="Consol. Translation Method";
+                Visible=FALSE }
+
+    { 57  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies accounts that you often enter in the Bal. Account No. field on intercompany journal or document lines.;
+                           ENG=Specifies accounts that you often enter in the Bal. Account No. field on intercompany journal or document lines.];
+                SourceExpr="Default IC Partner G/L Acc. No";
+                Visible=FALSE }
+
+    { 7   ;2   ;Field     ;
+                CaptionML=[ENU=Default Deferral Template;
+                           ENG=Default Deferral Template];
+                ToolTipML=[ENU=Specifies the default deferral template that governs how to defer revenues and expenses to the periods when they occurred.;
+                           ENG=Specifies the default deferral template that governs how to defer revenues and expenses to the periods when they occurred.];
+                ApplicationArea=#Suite;
+                SourceExpr="Default Deferral Template Code" }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1905532107;1;Part   ;
+                SubPageLink=Table ID=CONST(15),
+                            No.=FIELD(No.);
+                PagePartID=Page9083;
+                Visible=FALSE;
+                PartType=Page }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=TRUE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      NoEmphasize@1000 : Boolean INDATASET;
+      NameEmphasize@1001 : Boolean INDATASET;
+      NameIndent@1002 : Integer INDATASET;
+
+    BEGIN
+    END.
+  }
+}
+

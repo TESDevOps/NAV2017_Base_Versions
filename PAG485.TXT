@@ -1,0 +1,69 @@
+OBJECT Page 485 Tax Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Tax Setup;
+               ENG=Tax Setup];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    LinksAllowed=No;
+    SourceTable=Table326;
+    PageType=Card;
+    ShowFilter=No;
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=General;
+                CaptionML=[ENU=General;
+                           ENG=General];
+                GroupType=Group }
+
+    { 3   ;2   ;Field     ;
+                SourceExpr="Auto. Create Tax Details" }
+
+    { 4   ;2   ;Field     ;
+                SourceExpr="Non-Taxable Tax Group Code" }
+
+    { 5   ;1   ;Group     ;
+                Name=Default Accounts;
+                CaptionML=[ENU=Default Accounts;
+                           ENG=Default Accounts];
+                GroupType=Group }
+
+    { 6   ;2   ;Field     ;
+                SourceExpr="Tax Account (Sales)" }
+
+    { 7   ;2   ;Field     ;
+                SourceExpr="Tax Account (Purchases)" }
+
+    { 8   ;2   ;Field     ;
+                SourceExpr="Unreal. Tax Acc. (Sales)" }
+
+    { 9   ;2   ;Field     ;
+                SourceExpr="Unreal. Tax Acc. (Purchases)" }
+
+    { 10  ;2   ;Field     ;
+                SourceExpr="Reverse Charge (Purchases)" }
+
+    { 11  ;2   ;Field     ;
+                SourceExpr="Unreal. Rev. Charge (Purch.)" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

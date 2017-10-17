@@ -1,0 +1,105 @@
+OBJECT Page 5749 Transfer Lines
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Transfer Lines;
+               ENG=Transfer Lines];
+    SourceTable=Table5741;
+    PageType=List;
+    ActionList=ACTIONS
+    {
+      { 3       ;    ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 5       ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Line;
+                                 ENG=&Line];
+                      Image=Line }
+      { 7       ;2   ;Action    ;
+                      ShortCutKey=Shift+F7;
+                      CaptionML=[ENU=Show Document;
+                                 ENG=Show Document];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=View;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 TransferHeader@1000 : Record 5740;
+                               BEGIN
+                                 TransferHeader.GET("Document No.");
+                                 PAGE.RUN(PAGE::"Transfer Order",TransferHeader);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document number associated with the line or entry.;
+                           ENG=Specifies the document number associated with the line or entry.];
+                SourceExpr="Document No." }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the item that will be transferred.;
+                           ENG=Specifies the number of the item that will be transferred.];
+                SourceExpr="Item No." }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description of the entry.;
+                           ENG=Specifies a description of the entry.];
+                SourceExpr=Description }
+
+    { 17  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the shipment date of the transfer order.;
+                           ENG=Specifies the shipment date of the transfer order.];
+                SourceExpr="Shipment Date" }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity of the item that is in transit.;
+                           ENG=Specifies the quantity of the item that is in transit.];
+                SourceExpr="Qty. in Transit" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Indicates the quantity of the items that remains to be shipped.;
+                           ENG=Indicates the quantity of the items that remains to be shipped.];
+                SourceExpr="Outstanding Quantity" }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit of measure code of the item.;
+                           ENG=Specifies the unit of measure code of the item.];
+                SourceExpr="Unit of Measure" }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

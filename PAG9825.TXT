@@ -1,0 +1,42 @@
+OBJECT Page 9825 Plans FactBox
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Plans FactBox;
+               ENG=Plans FactBox];
+    LinksAllowed=No;
+    SourceTable=Table9004;
+    PageType=ListPart;
+    ShowFilter=No;
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the record.;
+                           ENG=Specifies the name of the record.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Name }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

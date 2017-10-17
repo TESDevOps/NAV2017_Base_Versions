@@ -1,0 +1,46 @@
+OBJECT Page 1269 Auto. Bank Stmt. Import Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Automatic Bank Statement Import Setup;
+               ENG=Automatic Bank Statement Import Setup];
+    SourceTable=Table270;
+    PageType=StandardDialog;
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                Name=Container;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Field     ;
+                CaptionML=[ENU=Number of Days Included;
+                           ENG=Number of Days Included];
+                ToolTipML=[ENU=Specifies how far back in time to get new bank transactions for.;
+                           ENG=Specifies how far back in time to get new bank transactions for.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Transaction Import Timespan" }
+
+    { 6   ;1   ;Field     ;
+                CaptionML=[ENU=Enabled;
+                           ENG=Enabled];
+                ToolTipML=[ENU=Specifies that the service is enabled.;
+                           ENG=Specifies that the service is enabled.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Automatic Stmt. Import Enabled" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

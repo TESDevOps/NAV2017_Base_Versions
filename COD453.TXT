@@ -1,0 +1,72 @@
+OBJECT Codeunit 453 Job Queue - Enqueue
+{
+  OBJECT-PROPERTIES
+  {
+    Date=24/08/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.18197;
+  }
+  PROPERTIES
+  {
+    TableNo=472;
+    Permissions=TableData 472=rimd;
+    OnRun=BEGIN
+            EnqueueJobQueueEntry(Rec);
+          END;
+
+  }
+  CODE
+  {
+
+    PROCEDURE EnqueueJobQueueEntry@4(VAR JobQueueEntry@1000 : Record 472);
+    VAR
+      DoNotScheduleTask@1001 : Boolean;
+    BEGIN
+      RemoveFailedJobs(JobQueueEntry);
+      JobQueueEntry.Status := JobQueueEntry.Status::"On Hold";
+      JobQueueEntry."User Language ID" := GLOBALLANGUAGE;
+      IF NOT JobQueueEntry.INSERT(TRUE) THEN
+        JobQueueEntry.MODIFY(TRUE);
+
+      OnBeforeJobQueueScheduleTask(DoNotScheduleTask);
+
+      IF DoNotScheduleTask THEN
+        EXIT;
+
+      JobQueueEntry."System Task ID" :=
+        TASKSCHEDULER.CREATETASK(
+          CODEUNIT::"Job Queue Dispatcher",
+          CODEUNIT::"Job Queue Error Handler",
+          TRUE,
+          COMPANYNAME,
+          JobQueueEntry."Earliest Start Date/Time",
+          JobQueueEntry.RECORDID);
+      JobQueueEntry.Status := JobQueueEntry.Status::Ready;
+      JobQueueEntry.MODIFY;
+      COMMIT;
+    END;
+
+    PROCEDURE RemoveFailedJobs@1(VAR JobQueueEntry@1000 : Record 472);
+    VAR
+      JobQueueEntry2@1001 : Record 472;
+    BEGIN
+      JobQueueEntry2.SETRANGE("Object Type to Run",JobQueueEntry."Object Type to Run");
+      JobQueueEntry2.SETRANGE("Object ID to Run",JobQueueEntry."Object ID to Run");
+      JobQueueEntry2.SETRANGE("Record ID to Process",JobQueueEntry."Record ID to Process");
+      JobQueueEntry2.SETRANGE(Status,JobQueueEntry2.Status::Error);
+      JobQueueEntry2.SETFILTER(ID,'<>%1',JobQueueEntry.ID);
+      JobQueueEntry2.SETRANGE("Recurring Job",FALSE);
+      IF NOT JobQueueEntry2.ISEMPTY THEN
+        JobQueueEntry2.DELETEALL;
+    END;
+
+    [Integration]
+    LOCAL PROCEDURE OnBeforeJobQueueScheduleTask@2(VAR DoNotScheduleTask@1000 : Boolean);
+    BEGIN
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

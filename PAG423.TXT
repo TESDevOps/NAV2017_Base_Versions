@@ -1,0 +1,193 @@
+OBJECT Page 423 Customer Bank Account Card
+{
+  OBJECT-PROPERTIES
+  {
+    Date=28/04/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16585,NAVGB10.00.00.16585;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Customer Bank Account Card;
+               ENG=Customer Bank Account Card];
+    SourceTable=Table287;
+    PageType=Card;
+    ActionList=ACTIONS
+    {
+      { 3       ;    ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 5       ;1   ;Action    ;
+                      CaptionML=[ENU=Direct Debit Mandates;
+                                 ENG=Direct Debit Mandates];
+                      ToolTipML=[ENU=View or edit direct-debit mandates that you set up to reflect agreements with customers to collect invoice payments from their bank account.;
+                                 ENG=View or edit direct-debit mandates that you set up to reflect agreements with customers to collect invoice payments from their bank account.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 1230;
+                      RunPageLink=Customer No.=FIELD(Customer No.),
+                                  Customer Bank Account Code=FIELD(Code);
+                      Promoted=Yes;
+                      Image=MakeAgreement;
+                      PromotedCategory=Process }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                CaptionML=[ENU=General;
+                           ENG=General] }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a code to identify this customer bank account.;
+                           ENG=Specifies a code to identify this customer bank account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Code }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the bank where the customer has the bank account.;
+                           ENG=Specifies the name of the bank where the customer has the bank account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Name }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the address of the bank where the customer has the bank account.;
+                           ENG=Specifies the address of the bank where the customer has the bank account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Address }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies additional address information.;
+                           ENG=Specifies additional address information.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Address 2" }
+
+    { 1040000;2;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=City }
+
+    { 1040002;2;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=County }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the country/region of the address.;
+                           ENG=Specifies the country/region of the address.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Country/Region Code" }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the telephone number of the bank where the customer has the bank account.;
+                           ENG=Specifies the telephone number of the bank where the customer has the bank account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Phone No." }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the bank employee regularly contacted in connection with this bank account.;
+                           ENG=Specifies the name of the bank employee regularly contacted in connection with this bank account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Contact }
+
+    { 11  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code.;
+                           ENG=Specifies the postcode.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Post Code" }
+
+    { 34  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the relevant currency code for the bank account.;
+                           ENG=Specifies the relevant currency code for the bank account.];
+                ApplicationArea=#Suite;
+                SourceExpr="Currency Code" }
+
+    { 64  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the bank branch.;
+                           ENG=Specifies the number of the bank branch.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Bank Branch No." }
+
+    { 36  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number used by the bank for the bank account.;
+                           ENG=Specifies the number used by the bank for the bank account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Bank Account No." }
+
+    { 50  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a bank identification number of your own choice.;
+                           ENG=Specifies a bank identification number of your own choice.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Transit No." }
+
+    { 1902768601;1;Group  ;
+                CaptionML=[ENU=Communication;
+                           ENG=Communication] }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the fax number of the bank where the customer has the bank account.;
+                           ENG=Specifies the fax number of the bank where the customer has the bank account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Fax No." }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the email address associated with the bank account.;
+                           ENG=Specifies the email address associated with the bank account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="E-Mail" }
+
+    { 28  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the home page address associated with the bank account.;
+                           ENG=Specifies the home page address associated with the bank account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Home Page" }
+
+    { 1905090301;1;Group  ;
+                CaptionML=[ENU=Transfer;
+                           ENG=Transfer] }
+
+    { 42  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the SWIFT code (international bank identifier code) of the bank where the customer has the account.;
+                           ENG=Specifies the SWIFT code (international bank identifier code) of the bank where the customer has the account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="SWIFT Code" }
+
+    { 30  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the bank account's international bank account number.;
+                           ENG=Specifies the bank account's international bank account number.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=IBAN }
+
+    { 13  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the format standard to be used in bank transfers if you use the Bank Clearing Code field to identify you as the sender.;
+                           ENG=Specifies the format standard to be used in bank transfers if you use the Bank Clearing Code field to identify you as the sender.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Bank Clearing Standard" }
+
+    { 9   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for bank clearing that is required according to the format standard you selected in the Bank Clearing Standard field.;
+                           ENG=Specifies the code for bank clearing that is required according to the format standard you selected in the Bank Clearing Standard field.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Bank Clearing Code" }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

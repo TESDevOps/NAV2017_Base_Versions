@@ -1,0 +1,76 @@
+OBJECT Page 1327 Adjust Inventory
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Adjust Inventory;
+               ENG=Adjust Inventory];
+    SourceTable=Table27;
+    PageType=StandardDialog;
+    OnQueryClosePage=VAR
+                       AdjustItemInventory@1001 : Codeunit 1327;
+                       ErrorText@1002 : Text;
+                     BEGIN
+                       IF CloseAction IN [ACTION::OK,ACTION::LookupOK] THEN BEGIN
+                         ErrorText := AdjustItemInventory.PostAdjustmentToItemLedger(Rec,NewInventory);
+                         IF ErrorText <> '' THEN
+                           MESSAGE(ErrorText);
+                       END;
+                     END;
+
+    OnAfterGetCurrRecord=BEGIN
+                           NewInventory := Inventory
+                         END;
+
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=General;
+                CaptionML=[ENU=General;
+                           ENG=General];
+                GroupType=Group }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit in which the item is held in inventory. The base unit of measure also serves as the conversion basis for alternate units of measure.;
+                           ENG=Specifies the unit in which the item is held in inventory. The base unit of measure also serves as the conversion basis for alternate units of measure.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Base Unit of Measure";
+                Editable=FALSE }
+
+    { 12  ;2   ;Field     ;
+                CaptionML=[ENU=Current Inventory;
+                           ENG=Current Inventory];
+                ToolTipML=[ENU=Specifies how many units, such as pieces, boxes, or cans, of the item are in inventory.;
+                           ENG=Specifies how many units, such as pieces, boxes, or cans, of the item are in inventory.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Inventory }
+
+    { 4   ;2   ;Field     ;
+                CaptionML=[ENU=New Inventory;
+                           ENG=New Inventory];
+                ToolTipML=[ENU=Specifies the inventory quantity that will be recorded for the item when you choose the OK button.;
+                           ENG=Specifies the inventory quantity that will be recorded for the item when you choose the OK button.];
+                ApplicationArea=#Basic,#Suite;
+                DecimalPlaces=0:5;
+                SourceExpr=NewInventory }
+
+  }
+  CODE
+  {
+    VAR
+      NewInventory@1002 : Decimal;
+
+    BEGIN
+    END.
+  }
+}
+

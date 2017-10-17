@@ -1,0 +1,52 @@
+OBJECT Table 2000000185 Tenant Media Thumbnails
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/09/17;
+    Time=12:00:00;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Tenant Media Thumbnails;
+               ENG=Tenant Media Thumbnails];
+  }
+  FIELDS
+  {
+    { 1   ;   ;ID                  ;GUID          ;CaptionML=[ENU=ID;
+                                                              ENG=ID] }
+    { 2   ;   ;Media ID            ;GUID          ;TableRelation="Tenant Media".ID WHERE (ID=FIELD(Media ID));
+                                                   CaptionML=[ENU=Media ID;
+                                                              ENG=Media ID] }
+    { 3   ;   ;Content             ;BLOB          ;CaptionML=[ENU=Content;
+                                                              ENG=Content];
+                                                   SubType=Bitmap }
+    { 4   ;   ;Mime Type           ;Text100       ;CaptionML=[ENU=Mime Type;
+                                                              ENG=Mime Type] }
+    { 5   ;   ;Height              ;Integer       ;CaptionML=[ENU=Height;
+                                                              ENG=Height] }
+    { 6   ;   ;Width               ;Integer       ;CaptionML=[ENU=Width;
+                                                              ENG=Width] }
+    { 7   ;   ;Company Name        ;Text30        ;TableRelation=Company.Name;
+                                                   CaptionML=[ENU=Company Name;
+                                                              ENG=Company Name] }
+    { 8   ;   ;Embedded            ;Boolean       ;CaptionML=[ENU=Embedded;
+                                                              ENG=Embedded] }
+  }
+  KEYS
+  {
+    {    ;ID                                      ;Clustered=Yes }
+    {    ;Media ID                                 }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

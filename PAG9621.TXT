@@ -1,0 +1,265 @@
+OBJECT Page 9621 Add Page Fields
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=New Field;
+               ENG=New Field];
+    DeleteAllowed=No;
+    LinksAllowed=No;
+    SourceTable=Table2000000171;
+    PageType=NavigatePage;
+    SourceTableTemporary=Yes;
+    OnOpenPage=VAR
+                 DesignerPageId@1000 : Codeunit 9621;
+               BEGIN
+                 IsSelectTypeVisible := TRUE;
+                 IsStepOneVisible := FALSE;
+                 IsStepTwoVisible := FALSE;
+                 IsNextVisible := FALSE;
+                 IsBackVisible := FALSE;
+                 IsCreateBtnVisible := TRUE;
+                 NewFieldAllowClearing := TRUE;
+                 PageId := DesignerPageId.GetPageId;
+               END;
+
+    ActionList=ACTIONS
+    {
+      { 20      ;    ;ActionContainer;
+                      Name=ActionItems;
+                      CaptionML=[ENU=ActionItems;
+                                 ENG=ActionItems];
+                      ActionContainerType=ActionItems }
+      { 21      ;1   ;Action    ;
+                      Name=Next;
+                      CaptionML=[ENU=Next;
+                                 ENG=Next];
+                      ApplicationArea=#Basic,#Suite;
+                      Visible=IsNextVisible;
+                      InFooterBar=Yes;
+                      Image=NextRecord;
+                      OnAction=BEGIN
+                                 IsStepOneVisible := FALSE;
+                                 IsStepTwoVisible := TRUE;
+                                 IsBackVisible := TRUE;
+                                 IsNextVisible := FALSE;
+                                 IsFinishBtnVisible := TRUE;
+                                 IsCreateBtnVisible := FALSE;
+                               END;
+                                }
+      { 22      ;1   ;Action    ;
+                      Name=Previous;
+                      CaptionML=[ENU=Previous;
+                                 ENG=Previous];
+                      ApplicationArea=#Basic,#Suite;
+                      Visible=IsBackVisible;
+                      InFooterBar=Yes;
+                      Image=PreviousRecord;
+                      OnAction=BEGIN
+                                 IF IsStepTwoVisible THEN BEGIN
+                                   IsStepTwoVisible := FALSE;
+                                   IsStepOneVisible := TRUE;
+                                   IsBackVisible := TRUE;
+                                   IsNextVisible := TRUE;
+                                   IsFinishBtnVisible := FALSE;
+                                   IsCreateBtnVisible := FALSE;
+                                 END ELSE
+                                   IF IsStepOneVisible THEN BEGIN
+                                     IsStepOneVisible := FALSE;
+                                     IsSelectTypeVisible := TRUE;
+                                     IsCreateBtnVisible := TRUE;
+                                     IsBackVisible := FALSE;
+                                     IsNextVisible := FALSE;
+                                     IsFinishBtnVisible := FALSE;
+                                   END;
+                               END;
+                                }
+      { 23      ;1   ;Action    ;
+                      Name=Create;
+                      CaptionML=[ENU=Create;
+                                 ENG=Create];
+                      ApplicationArea=#Basic,#Suite;
+                      Visible=IsCreateBtnVisible;
+                      InFooterBar=Yes;
+                      Image=NextRecord;
+                      OnAction=BEGIN
+                                 IsSelectTypeVisible := FALSE;
+                                 IsStepOneVisible := TRUE;
+                                 IsStepTwoVisible := FALSE;
+                                 IsBackVisible := TRUE;
+                                 IsNextVisible := TRUE;
+                                 IsCreateBtnVisible := FALSE;
+                                 IsFinishBtnVisible := FALSE;
+                               END;
+                                }
+      { 24      ;1   ;Action    ;
+                      Name=Finish;
+                      CaptionML=[ENU=Finish;
+                                 ENG=Finish];
+                      ApplicationArea=#Basic,#Suite;
+                      Visible=IsFinishBtnVisible;
+                      InFooterBar=Yes;
+                      Image=Approve;
+                      OnAction=BEGIN
+                                 SaveNewFieldDefinition;
+                                 CurrPage.CLOSE;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                Name=PageControl;
+                CaptionML=[ENU=Page Control;
+                           ENG=Page Control];
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                CaptionML=[ENU=Select Type;
+                           ENG=Select Type];
+                Visible=IsSelectTypeVisible;
+                GroupType=Group }
+
+    { 3   ;2   ;Field     ;
+                Name=NewFieldDescription;
+                CaptionML=[ENU=By adding a new field to the table you can store and display additional information about a data entry.;
+                           ENG=By adding a new field to the table you can store and display additional information about a data entry.];
+                ApplicationArea=#Basic,#Suite }
+
+    { 4   ;2   ;Part      ;
+                Name=FieldTypes;
+                CaptionML=[ENU=Choose type of field;
+                           ENG=Choose type of field];
+                ApplicationArea=#Basic,#Suite;
+                Description=Choose type of field';
+                PagePartID=Page9622;
+                Editable=FALSE;
+                PartType=Page }
+
+    { 7   ;1   ;Group     ;
+                CaptionML=[ENU=Step 1;
+                           ENG=Step 1];
+                Visible=IsStepOneVisible;
+                GroupType=Group }
+
+    { 8   ;2   ;Group     ;
+                CaptionML=[ENU=Step 1 of 2;
+                           ENG=Step 1 of 2];
+                GroupType=Group }
+
+    { 9   ;3   ;Group     ;
+                Name=Step1Header;
+                CaptionML=[ENU=OPTION FIELD DEFINITION;
+                           ENG=OPTION FIELD DEFINITION];
+                GroupType=Group;
+                InstructionalTextML=[ENU=Fill in information about the new field, and choose Next. You can change the field information later if you need to.;
+                                     ENG=Fill in information about the new field, and choose Next. You can change the field information later if you need to.] }
+
+    { 10  ;4   ;Field     ;
+                Name=NewFieldName;
+                CaptionML=[ENU=Name;
+                           ENG=Name];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=NewFieldName;
+                ShowMandatory=True }
+
+    { 11  ;4   ;Field     ;
+                Name=NewFieldCaption;
+                CaptionML=[ENU=Caption;
+                           ENG=Caption];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=NewFieldCaption }
+
+    { 12  ;4   ;Field     ;
+                Name=NewDescription;
+                CaptionML=[ENU=Description;
+                           ENG=Description];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=NewFieldDescr;
+                MultiLine=Yes }
+
+    { 13  ;1   ;Group     ;
+                CaptionML=[ENU=Step 2;
+                           ENG=Step 2];
+                Visible=IsStepTwoVisible;
+                GroupType=Group }
+
+    { 14  ;2   ;Group     ;
+                CaptionML=[ENU=Step 2 of 2;
+                           ENG=Step 2 of 2];
+                GroupType=Group }
+
+    { 15  ;3   ;Group     ;
+                Name=Step2Description;
+                CaptionML=[ENU=FIELD VALUES AND VALIDATION;
+                           ENG=FIELD VALUES AND VALIDATION];
+                Editable=FALSE;
+                GroupType=Group;
+                InstructionalTextML=[ENU=Choose how the system initializes and validates the text that is typed or pasted into the field.;
+                                     ENG=Choose how the system initialises and validates the text that is typed or pasted into the field.] }
+
+    { 16  ;3   ;Field     ;
+                Name=OptionsValue;
+                CaptionML=[ENU=Options Value;
+                           ENG=Options Value];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=NewFieldOptionsValue }
+
+    { 17  ;3   ;Field     ;
+                Name=InitialValue;
+                CaptionML=[ENU=Initial Value;
+                           ENG=Initial Value];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=NewFieldInitialValue }
+
+    { 18  ;3   ;Field     ;
+                Name=AllowClearing;
+                CaptionML=[ENU=Allow Clearing;
+                           ENG=Allow Clearing];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=NewFieldAllowClearing }
+
+  }
+  CODE
+  {
+    VAR
+      NavDesigner@1000 : DotNet "'Microsoft.Dynamics.Nav.Ncl, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.Runtime.Designer.NavDesignerALFunctions";
+      IsNextVisible@1001 : Boolean;
+      IsStepOneVisible@1002 : Boolean;
+      IsStepTwoVisible@1003 : Boolean;
+      IsBackVisible@1004 : Boolean;
+      IsCreateBtnVisible@1005 : Boolean;
+      IsSelectTypeVisible@1006 : Boolean;
+      IsFinishBtnVisible@1007 : Boolean;
+      NewFieldName@1008 : Text;
+      NewFieldDescr@1009 : Text;
+      NewFieldCaption@1010 : Text;
+      NewFieldOptionsValue@1011 : Text;
+      NewFieldInitialValue@1012 : Text;
+      NewFieldAllowClearing@1013 : Boolean;
+      PageId@1014 : Integer;
+      NewFieldId@1015 : Integer;
+
+    LOCAL PROCEDURE SaveNewFieldDefinition@2();
+    BEGIN
+      NewFieldId := NavDesigner.CreateTableField(PageId,NewFieldName,'Option',35,NewFieldDescr);
+      IF NewFieldId > 0 THEN BEGIN
+        NavDesigner.SetFieldProperty(NewFieldId,'Caption',NewFieldCaption);
+        NavDesigner.SetFieldProperty(NewFieldId,'OptionString',NewFieldOptionsValue);
+      END;
+
+      IF NewFieldId = 0 THEN
+        ERROR('');
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

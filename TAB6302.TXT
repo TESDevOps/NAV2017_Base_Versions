@@ -1,0 +1,39 @@
+OBJECT Table 6302 Power BI Report Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Power BI Report Buffer;
+               ENG=Power BI Report Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;ReportID            ;GUID          ;CaptionML=[ENU=ReportID;
+                                                              ENG=ReportID] }
+    { 2   ;   ;ReportName          ;Text100       ;CaptionML=[ENU=ReportName;
+                                                              ENG=ReportName] }
+    { 3   ;   ;EmbedUrl            ;Text250       ;CaptionML=[ENU=EmbedUrl;
+                                                              ENG=EmbedUrl] }
+    { 4   ;   ;Enabled             ;Boolean       ;CaptionML=[ENU=Enabled;
+                                                              ENG=Enabled] }
+  }
+  KEYS
+  {
+    {    ;ReportID                                ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

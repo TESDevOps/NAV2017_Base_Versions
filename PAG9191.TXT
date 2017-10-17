@@ -1,0 +1,82 @@
+OBJECT Page 9191 Delete User Personalization
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Delete User Personalization;
+               ENG=Delete User Personalisation];
+    InsertAllowed=No;
+    ModifyAllowed=No;
+    SourceTable=Table2000000075;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1106000000;1;Group  ;
+                GroupType=Repeater }
+
+    { 1106000001;2;Field  ;
+                CaptionML=[ENU=User SID;
+                           ENG=User SID];
+                ToolTipML=[ENU=Specifies the security identifier (SID) of the user who performed the personalization.;
+                           ENG=Specifies the security identifier (SID) of the user who performed the personalisation.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="User SID" }
+
+    { 1106000003;2;Field  ;
+                CaptionML=[ENU=User ID;
+                           ENG=User ID];
+                ToolTipML=[ENU=Specifies the user ID of the user who performed the personalization.;
+                           ENG=Specifies the user ID of the user who performed the personalisation.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="User ID" }
+
+    { 1106000005;2;Field  ;
+                CaptionML=[ENU=Page ID;
+                           ENG=Page ID];
+                ToolTipML=[ENU=Specifies the number of the page object that has been personalized.;
+                           ENG=Specifies the number of the page object that has been personalised.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Page ID" }
+
+    { 1106000007;2;Field  ;
+                CaptionML=[ENU=Description;
+                           ENG=Description];
+                ToolTipML=[ENU=Specifies a description of the personalization.;
+                           ENG=Specifies a description of the personalisation.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Description }
+
+    { 1106000009;2;Field  ;
+                CaptionML=[ENU=Date;
+                           ENG=Date];
+                ToolTipML=[ENU=Specifies the date of the personalization.;
+                           ENG=Specifies the date of the personalisation.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Date }
+
+    { 1106000011;2;Field  ;
+                CaptionML=[ENU=Time;
+                           ENG=Time];
+                ToolTipML=[ENU=Specifies the timestamp for the personalization.;
+                           ENG=Specifies the timestamp for the personalisation.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Time }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

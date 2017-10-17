@@ -1,0 +1,581 @@
+OBJECT Codeunit 1652 Add-in Manifest Management
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      RuleCollectionXPathTxt@1014 : TextConst '@@@={Locked};ENU="x:Rule[@xsi:type=""RuleCollection"" and @Mode=""And""]/x:Rule[@xsi:type=""RuleCollection"" and @Mode=""Or""]";ENG="x:Rule[@xsi:type=""RuleCollection"" and @Mode=""And""]/x:Rule[@xsi:type=""RuleCollection"" and @Mode=""Or""]"';
+      MissingNodeErr@1013 : TextConst '@@@="%1=XML node name";ENU=Cannot find an XML node that matches %1.;ENG=Cannot find an XML node that matches %1.';
+      UnsupportedNodeTypeErr@1012 : TextConst '@@@="%1 = The type of XML node.";ENU=You have specified a node of type %1. This type is not supported.;ENG=You have specified a node of type %1. This type is not supported.';
+      RuleXPathTxt@1005 : TextConst '@@@={Locked};ENU="x:Rule[@xsi:type=""RuleCollection"" and @Mode=""Or""]/x:Rule[@xsi:type=""RuleCollection"" and @Mode=""And""]/x:Rule[@xsi:type=""ItemHasRegularExpressionMatch""]";ENG="x:Rule[@xsi:type=""RuleCollection"" and @Mode=""Or""]/x:Rule[@xsi:type=""RuleCollection"" and @Mode=""And""]/x:Rule[@xsi:type=""ItemHasRegularExpressionMatch""]"';
+      WebClientHttpsErr@1004 : TextConst '@@@="%1=product name";ENU=Cannot set up the add-in because the %1 Server instance is not configured to use Secure Sockets Layer (SSL).;ENG=Cannot set up the add-in because the %1 Server instance is not configured to use Secure Sockets Layer (SSL).';
+      MicrosoftTxt@1003 : TextConst 'ENU=Microsoft;ENG=Microsoft';
+      PermissionManager@1007 : Codeunit 9002;
+      NodeType@1021 : 'Version,ProviderName,DefaultLocale,DisplayName,Description,DesktopSourceLoc,TabletSourceLoc,PhoneSourceLoc,AppDomain,IconUrl,HighResolutionIconUrl';
+      TestMode@1017 : Boolean;
+      IntelligentInfoAddinNameTxt@1006 : TextConst 'ENU=Contact Insights;ENG=Contact Insights';
+      IntelligentInfoDescriptionTxt@1002 : TextConst 'ENU=Provides customer/vendor information in Outlook mail and enables creating and sending documents to the contact.;ENG=Provides customer/vendor information in Outlook mail and enables creating and sending documents to the contact.';
+      HyperlinkAddinNameTxt@1001 : TextConst 'ENU=Document View;ENG=Document View';
+      HyperlinkAddinDescriptionTxt@1000 : TextConst 'ENU=Provides a link directly to a business document when the document number is included in the text of the email message.;ENG=Provides a link directly to a business document when the document number is included in the text of the email message.';
+      BrandingFolderTxt@1008 : TextConst '@@@={Locked};ENU=ProjectMadeira/;ENG=ProjectMadeira/';
+
+    PROCEDURE DownloadManifestToClient@122(VAR NewOfficeAddin@1003 : Record 1610;FileName@1000 : Text) : Boolean;
+    VAR
+      FileManagement@1002 : Codeunit 419;
+      ServerLocation@1001 : Text;
+    BEGIN
+      ServerLocation := SaveManifestToServer(NewOfficeAddin);
+
+      IF TestMode THEN BEGIN
+        FileManagement.CopyServerFile(ServerLocation,FileName,TRUE);
+        EXIT(TRUE);
+      END;
+
+      EXIT(FileManagement.DownloadHandler(ServerLocation,'','','',FileName));
+    END;
+
+    PROCEDURE SaveManifestToServer@21(VAR NewOfficeAddin@1004 : Record 1610) : Text;
+    VAR
+      TempBlob@1000 : TEMPORARY Record 99008535;
+      FileManagement@1005 : Codeunit 419;
+      FileOutStream@1001 : OutStream;
+      ManifestInStream@1003 : InStream;
+      TempFileName@1002 : Text;
+    BEGIN
+      GenerateManifest(NewOfficeAddin);
+      NewOfficeAddin.CALCFIELDS(Manifest);
+
+      TempBlob.Blob.CREATEOUTSTREAM(FileOutStream,TEXTENCODING::UTF8);
+      NewOfficeAddin.Manifest.CREATEINSTREAM(ManifestInStream,TEXTENCODING::UTF8);
+      COPYSTREAM(FileOutStream,ManifestInStream);
+
+      TempFileName := FileManagement.ServerTempFileName('xml');
+      FileManagement.BLOBExportToServerFile(TempBlob,TempFileName);
+      EXIT(TempFileName);
+    END;
+
+    PROCEDURE UploadDefaultManifest@5(VAR OfficeAddin@1005 : Record 1610;ManifestLocation@1000 : Text);
+    VAR
+      TempBlob@1003 : TEMPORARY Record 99008535;
+      FileManagement@1004 : Codeunit 419;
+      TempInStream@1001 : InStream;
+      ManifestText@1006 : Text;
+    BEGIN
+      TempBlob.INIT;
+      FileManagement.BLOBImportFromServerFile(TempBlob,ManifestLocation);
+
+      TempBlob.Blob.CREATEINSTREAM(TempInStream,TEXTENCODING::UTF8);
+      TempInStream.READ(ManifestText);
+      UploadDefaultManifestText(OfficeAddin,ManifestText);
+    END;
+
+    PROCEDURE UploadDefaultManifestText@6(VAR OfficeAddin@1005 : Record 1610;ManifestText@1000 : Text);
+    VAR
+      ManifestOutStream@1002 : OutStream;
+    BEGIN
+      WITH OfficeAddin DO BEGIN
+        CLEAR("Default Manifest");
+        "Default Manifest".CREATEOUTSTREAM(ManifestOutStream,TEXTENCODING::UTF8);
+        ManifestOutStream.WRITETEXT(ManifestText);
+
+        // Set the AppID from the manifest
+        "Application ID" := GetAppID(OfficeAddin);
+
+        IF ISNULLGUID("Application ID") THEN
+          "Application ID" := CREATEGUID;
+
+        Version := GetAppVersion(OfficeAddin);
+
+        IF NOT MODIFY THEN
+          INSERT;
+      END;
+    END;
+
+    PROCEDURE CreateDefaultAddins@14();
+    VAR
+      IntelligentInfoManifest@1000 : Codeunit 1642;
+      HyperlinkManifest@1001 : Codeunit 1643;
+    BEGIN
+      CreateAddin(IntelligentInfoManifest.ManifestText,IntelligentInfoAddinNameTxt,
+        IntelligentInfoDescriptionTxt,CODEUNIT::"Intelligent Info Manifest");
+      CreateAddin(HyperlinkManifest.ManifestText,HyperlinkAddinNameTxt,
+        HyperlinkAddinDescriptionTxt,CODEUNIT::"Hyperlink Manifest");
+    END;
+
+    LOCAL PROCEDURE CreateAddin@16(ManifestText@1000 : Text;AddinName@1004 : Text[50];AddinDescription@1005 : Text[250];ManifestCodeunit@1003 : Integer);
+    VAR
+      OfficeAddin@1001 : Record 1610;
+    BEGIN
+      OfficeAddin.INIT;
+      UploadDefaultManifestText(OfficeAddin,ManifestText);
+      OfficeAddin."Manifest Codeunit" := ManifestCodeunit;
+      OfficeAddin.Name := AddinName;
+      OfficeAddin.Description := AddinDescription;
+      OfficeAddin.MODIFY;
+    END;
+
+    PROCEDURE GenerateManifest@23(VAR OfficeAddin@1000 : Record 1610);
+    BEGIN
+      // Uses the current value of Manifest and updates XML nodes to reflect the current values
+      VerifyHttps;
+      IF OfficeAddin."Manifest Codeunit" <> 0 THEN
+        CODEUNIT.RUN(OfficeAddin."Manifest Codeunit",OfficeAddin)
+      ELSE
+        SetCommonManifestItems(OfficeAddin);
+    END;
+
+    PROCEDURE SetCommonManifestItems@11(VAR OfficeAddin@1000 : Record 1610);
+    VAR
+      Thread@1003 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Threading.Thread";
+    BEGIN
+      WITH OfficeAddin DO BEGIN
+        CALCFIELDS(Manifest,"Default Manifest");
+        CopyDefaultManifestToManifest(OfficeAddin); // Reset the manifest by overwriting with the default
+
+        // Set general metadata
+        SetNodeValue(OfficeAddin,Thread.CurrentThread.CurrentCulture.Name,NodeType::DefaultLocale,0);
+        SetNodeValue(OfficeAddin,MicrosoftTxt,NodeType::ProviderName,0);
+        SetNodeValue(OfficeAddin,GETURL(CLIENTTYPE::Web),NodeType::AppDomain,0);
+        SetNodeValue(OfficeAddin,GetAppName(OfficeAddin),NodeType::DisplayName,0);
+        SetNodeValue(OfficeAddin,XMLEncode(Description),NodeType::Description,0);
+        IF PermissionManager.SoftwareAsAService THEN BEGIN
+          SetNodeValue(OfficeAddin,GetImageUrl(BrandingFolderTxt + 'Dyn365_64x.png'),NodeType::IconUrl,0);
+          SetNodeValue(OfficeAddin,GetImageUrl(BrandingFolderTxt + 'Dyn365_80x.png'),NodeType::HighResolutionIconUrl,0);
+        END ELSE BEGIN
+          SetNodeValue(OfficeAddin,GetImageUrl('OfficeAddinLogo.png'),NodeType::IconUrl,0);
+          SetNodeValue(OfficeAddin,GetImageUrl('OfficeAddinLogoHigh.png'),NodeType::HighResolutionIconUrl,0);
+        END;
+
+        MODIFY;
+      END;
+    END;
+
+    LOCAL PROCEDURE GetManifestNamespaceManager@20(XMLRootNode@1001 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNode";VAR XMLNamespaceManager@1000 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNamespaceManager");
+    VAR
+      XMLDomManagement@1002 : Codeunit 6224;
+    BEGIN
+      XMLDomManagement.AddNamespaces(XMLNamespaceManager,XMLRootNode.OwnerDocument);
+
+      // Need to explicitly add the default namespace to a namespace
+      XMLNamespaceManager.AddNamespace('x',XMLNamespaceManager.DefaultNamespace);
+      XMLNamespaceManager.AddNamespace('vOverrides','http://schemas.microsoft.com/office/mailappversionoverrides');
+    END;
+
+    PROCEDURE SetNodeValue@19(VAR OfficeAddIn@1000 : Record 1610;Value@1009 : Variant;Node@1008 : Option;FormType@1007 : 'ItemRead,ItemEdit');
+    VAR
+      XMLDomManagement@1006 : Codeunit 6224;
+      ManifestInStream@1005 : InStream;
+      ManifestOutStream@1010 : OutStream;
+      XMLRootNode@1004 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNode";
+      XMLFoundNodes@1003 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNodeList";
+      XMLNamespaceMgr@1002 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNamespaceManager";
+    BEGIN
+      WITH OfficeAddIn DO BEGIN
+        CALCFIELDS(Manifest);
+        Manifest.CREATEINSTREAM(ManifestInStream,TEXTENCODING::UTF8);
+
+        XMLDomManagement.LoadXMLNodeFromInStream(ManifestInStream,XMLRootNode);
+        GetManifestNamespaceManager(XMLRootNode,XMLNamespaceMgr);
+
+        CASE Node OF
+          NodeType::DefaultLocale:
+            BEGIN
+              IF NOT XMLDomManagement.FindNodesWithNamespaceManager(XMLRootNode,'x:DefaultLocale',XMLNamespaceMgr,XMLFoundNodes) THEN
+                ERROR(MissingNodeErr,FORMAT(Node));
+              XMLFoundNodes.Item(0).InnerText := FORMAT(Value);
+            END;
+          NodeType::Description:
+            BEGIN
+              IF NOT XMLDomManagement.FindNodesWithNamespaceManager(XMLRootNode,'x:Description',XMLNamespaceMgr,XMLFoundNodes) THEN
+                ERROR(MissingNodeErr,FORMAT(Node));
+              XMLFoundNodes.Item(0).Attributes.ItemOf('DefaultValue').Value := FORMAT(Value);
+            END;
+          NodeType::DisplayName:
+            BEGIN
+              IF NOT XMLDomManagement.FindNodesWithNamespaceManager(XMLRootNode,'x:DisplayName',XMLNamespaceMgr,XMLFoundNodes) THEN
+                ERROR(MissingNodeErr,FORMAT(Node));
+              XMLFoundNodes.Item(0).Attributes.ItemOf('DefaultValue').Value := FORMAT(Value);
+            END;
+          NodeType::IconUrl:
+            BEGIN
+              IF NOT XMLDomManagement.FindNodesWithNamespaceManager(XMLRootNode,'x:IconUrl',XMLNamespaceMgr,XMLFoundNodes) THEN
+                ERROR(MissingNodeErr,FORMAT(Node));
+              XMLFoundNodes.Item(0).Attributes.ItemOf('DefaultValue').Value := FORMAT(Value);
+            END;
+          NodeType::HighResolutionIconUrl:
+            BEGIN
+              IF NOT XMLDomManagement.FindNodesWithNamespaceManager(XMLRootNode,'x:HighResolutionIconUrl',XMLNamespaceMgr,XMLFoundNodes) THEN
+                ERROR(MissingNodeErr,FORMAT(Node));
+              XMLFoundNodes.Item(0).Attributes.ItemOf('DefaultValue').Value := FORMAT(Value);
+            END;
+          NodeType::ProviderName:
+            BEGIN
+              IF NOT XMLDomManagement.FindNodesWithNamespaceManager(XMLRootNode,'x:ProviderName',XMLNamespaceMgr,XMLFoundNodes) THEN
+                ERROR(MissingNodeErr,FORMAT(Node));
+              XMLFoundNodes.Item(0).InnerText := FORMAT(Value);
+            END;
+          NodeType::Version:
+            BEGIN
+              IF NOT XMLDomManagement.FindNodesWithNamespaceManager(XMLRootNode,'x:Version',XMLNamespaceMgr,XMLFoundNodes) THEN
+                ERROR(MissingNodeErr,FORMAT(Node));
+              XMLFoundNodes.Item(0).InnerText := FORMAT(Value);
+            END;
+          NodeType::DesktopSourceLoc:
+            BEGIN
+              IF NOT XMLDomManagement.FindNodesWithNamespaceManager(
+                   XMLRootNode,STRSUBSTNO('x:FormSettings/x:Form[@xsi:type="%1"]/x:DesktopSettings/x:SourceLocation',FormType),
+                   XMLNamespaceMgr,XMLFoundNodes)
+              THEN
+                ERROR(MissingNodeErr,FORMAT(Node));
+              XMLFoundNodes.Item(0).Attributes.ItemOf('DefaultValue').Value := FORMAT(Value);
+            END;
+          NodeType::PhoneSourceLoc:
+            BEGIN
+              IF NOT XMLDomManagement.FindNodesWithNamespaceManager(
+                   XMLRootNode,STRSUBSTNO('x:FormSettings/x:Form[@xsi:type="%1"]/x:PhoneSettings/x:SourceLocation',FormType),
+                   XMLNamespaceMgr,XMLFoundNodes)
+              THEN
+                ERROR(MissingNodeErr,FORMAT(Node));
+              XMLFoundNodes.Item(0).Attributes.ItemOf('DefaultValue').Value := STRSUBSTNO('%1&isphone=1',FORMAT(Value));
+            END;
+          NodeType::TabletSourceLoc:
+            BEGIN
+              IF NOT XMLDomManagement.FindNodesWithNamespaceManager(
+                   XMLRootNode,STRSUBSTNO('x:FormSettings/x:Form[@xsi:type="%1"]/x:TabletSettings/x:SourceLocation',FormType),
+                   XMLNamespaceMgr,XMLFoundNodes)
+              THEN
+                ERROR(MissingNodeErr,FORMAT(Node));
+              XMLFoundNodes.Item(0).Attributes.ItemOf('DefaultValue').Value := FORMAT(Value);
+            END;
+          NodeType::AppDomain:
+            BEGIN
+              IF NOT XMLDomManagement.FindNodesWithNamespaceManager(
+                   XMLRootNode,'x:AppDomains/x:AppDomain',XMLNamespaceMgr,XMLFoundNodes)
+              THEN
+                ERROR(MissingNodeErr,FORMAT(Node));
+              XMLFoundNodes.Item(0).InnerText := FORMAT(Value);
+            END;
+          ELSE
+            ERROR(STRSUBSTNO(UnsupportedNodeTypeErr,Node));
+        END;
+
+        // Need to clear the blob here, otherwise the OutStream may have extra data at the end.
+        CLEAR(Manifest);
+        Manifest.CREATEOUTSTREAM(ManifestOutStream,TEXTENCODING::UTF8);
+        XMLDomManagement.SaveXMLDocumentToOutStream(ManifestOutStream,XMLRootNode);
+        MODIFY;
+      END;
+    END;
+
+    PROCEDURE SetNodeResource@8(VAR OfficeAddIn@1000 : Record 1610;Id@1001 : Text[32];Value@1009 : Text;Type@1007 : 'Image,Url,ShortString,LongString');
+    VAR
+      XMLDomManagement@1006 : Codeunit 6224;
+      ManifestInStream@1005 : InStream;
+      ManifestOutStream@1010 : OutStream;
+      XMLRootNode@1004 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNode";
+      XMLFoundNodes@1003 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNodeList";
+      XMLNamespaceMgr@1002 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNamespaceManager";
+      OfficeHostType@1011 : DotNet "'Microsoft.Dynamics.Nav.ClientExtensions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.Client.Hosts.OfficeHostType";
+      NodeLocation@1008 : Text;
+    BEGIN
+      WITH OfficeAddIn DO BEGIN
+        CALCFIELDS(Manifest);
+        Manifest.CREATEINSTREAM(ManifestInStream,TEXTENCODING::UTF8);
+
+        XMLDomManagement.LoadXMLNodeFromInStream(ManifestInStream,XMLRootNode);
+        GetManifestNamespaceManager(XMLRootNode,XMLNamespaceMgr);
+        NodeLocation := 'vOverrides:VersionOverrides/x:Resources/%1[@id="%2"]';
+        CASE Type OF
+          Type::Image:
+            BEGIN
+              NodeLocation := STRSUBSTNO(NodeLocation,'bt:Images/bt:Image',Id);
+              Value := GetImageUrl(Value);
+            END;
+          Type::Url:
+            BEGIN
+              NodeLocation := STRSUBSTNO(NodeLocation,'bt:Urls/bt:Url',Id);
+              Value := ConstructURL(OfficeHostType.OutlookTaskPane,Value,Version);
+            END;
+          Type::ShortString:
+            BEGIN
+              NodeLocation := STRSUBSTNO(NodeLocation,'bt:ShortStrings/bt:String',Id);
+              Value := XMLEncode(Value);
+            END;
+          Type::LongString:
+            BEGIN
+              NodeLocation := STRSUBSTNO(NodeLocation,'bt:LongStrings/bt:String',Id);
+              Value := XMLEncode(Value);
+            END;
+          ELSE
+            ERROR(STRSUBSTNO(UnsupportedNodeTypeErr,Type));
+        END;
+
+        IF NOT XMLDomManagement.FindNodesWithNamespaceManager(XMLRootNode,NodeLocation,XMLNamespaceMgr,XMLFoundNodes) THEN
+          ERROR(MissingNodeErr,NodeLocation);
+
+        XMLFoundNodes.Item(0).Attributes.ItemOf('DefaultValue').Value := Value;
+
+        // Need to clear the blob here, otherwise the OutStream may have extra data at the end.
+        CLEAR(Manifest);
+        Manifest.CREATEOUTSTREAM(ManifestOutStream,TEXTENCODING::UTF8);
+        XMLDomManagement.SaveXMLDocumentToOutStream(ManifestOutStream,XMLRootNode);
+        MODIFY;
+      END;
+    END;
+
+    PROCEDURE RemovePrefix@17(VAR OfficeAddin@1000 : Record 1610);
+    VAR
+      XMLDomManagement@1006 : Codeunit 6224;
+      ManifestInStream@1005 : InStream;
+      ManifestOutStream@1010 : OutStream;
+      XMLRootNode@1004 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNode";
+      InnerText@1001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.String";
+      ManifestText@1002 : Text;
+    BEGIN
+      WITH OfficeAddin DO BEGIN
+        CALCFIELDS(Manifest);
+        Manifest.CREATEINSTREAM(ManifestInStream,TEXTENCODING::UTF8);
+        XMLDomManagement.LoadXMLNodeFromInStream(ManifestInStream,XMLRootNode);
+
+        InnerText := XMLRootNode.OwnerDocument.InnerXml;
+        InnerText := InnerText.Replace('vOverrides:','');
+        InnerText := InnerText.Replace(':vOverrides','');
+        ManifestText := InnerText;
+
+        CLEAR(Manifest);
+        Manifest.CREATEOUTSTREAM(ManifestOutStream,TEXTENCODING::UTF8);
+        ManifestOutStream.WRITETEXT(ManifestText);
+        MODIFY;
+      END;
+
+      RestructureManifest(OfficeAddin);
+    END;
+
+    PROCEDURE RemoveAddInTriggersFromManifest@44(VAR OfficeAddin@1001 : Record 1610);
+    VAR
+      XMLDomManagement@1008 : Codeunit 6224;
+      ManifestInStream@1007 : InStream;
+      ManifestOutStream@1006 : OutStream;
+      XMLNode@1000 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNode";
+      XMLRootNode@1005 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNode";
+      XMLFoundNodes@1004 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNodeList";
+      XMLNamespaceMgr@1003 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNamespaceManager";
+    BEGIN
+      WITH OfficeAddin DO BEGIN
+        CALCFIELDS(Manifest);
+        Manifest.CREATEINSTREAM(ManifestInStream,TEXTENCODING::UTF8);
+
+        XMLDomManagement.LoadXMLNodeFromInStream(ManifestInStream,XMLRootNode);
+        GetManifestNamespaceManager(XMLRootNode,XMLNamespaceMgr);
+
+        // Find the nodes that trigger the add-in and remove them all
+        XMLDomManagement.FindNodesWithNamespaceManager(
+          XMLRootNode,
+          RuleXPathTxt,
+          XMLNamespaceMgr,XMLFoundNodes);
+
+        FOREACH XMLNode IN XMLFoundNodes DO
+          XMLNode.ParentNode.RemoveChild(XMLNode);
+
+        // Need to clear the blob here, otherwise the OutStream may have extra data at the end.
+        CLEAR(Manifest);
+        Manifest.CREATEOUTSTREAM(ManifestOutStream,TEXTENCODING::UTF8);
+        XMLDomManagement.SaveXMLDocumentToOutStream(ManifestOutStream,XMLRootNode);
+        MODIFY;
+      END;
+    END;
+
+    LOCAL PROCEDURE CopyDefaultManifestToManifest@2(VAR OfficeAddIn@1002 : Record 1610);
+    VAR
+      DefaultManifestInStream@1000 : InStream;
+      ManifestOutStream@1001 : OutStream;
+    BEGIN
+      WITH OfficeAddIn DO BEGIN
+        CALCFIELDS(Manifest,"Default Manifest");
+        "Default Manifest".CREATEINSTREAM(DefaultManifestInStream,TEXTENCODING::UTF8);
+        CLEAR(Manifest);
+        Manifest.CREATEOUTSTREAM(ManifestOutStream,TEXTENCODING::UTF8);
+        COPYSTREAM(ManifestOutStream,DefaultManifestInStream);
+        MODIFY;
+      END;
+    END;
+
+    PROCEDURE SetSourceLocationNodes@18(VAR OfficeAddin@1001 : Record 1610;URL@1000 : Text;FormType@1002 : 'ItemRead,ItemEdit');
+    BEGIN
+      SetNodeValue(OfficeAddin,URL,NodeType::DesktopSourceLoc,FormType);
+      SetNodeValue(OfficeAddin,URL,NodeType::PhoneSourceLoc,FormType);
+      SetNodeValue(OfficeAddin,URL,NodeType::TabletSourceLoc,FormType);
+    END;
+
+    PROCEDURE ConstructURL@1(HostType@1001 : Text;Command@1003 : Text;Version@1000 : Text) BaseURL : Text;
+    VAR
+      CompanyQueryPos@1002 : Integer;
+    BEGIN
+      BaseURL := GETURL(CLIENTTYPE::Web);
+
+      CompanyQueryPos := STRPOS(LOWERCASE(BaseURL),'?');
+      IF CompanyQueryPos > 0 THEN
+        BaseURL := INSSTR(BaseURL,'/OfficeAddin.aspx',CompanyQueryPos) + '&'
+      ELSE
+        BaseURL := BaseURL + '/OfficeAddin.aspx?';
+
+      BaseURL := BaseURL + 'OfficeContext=' + HostType;
+      IF Command <> '' THEN
+        BaseURL := BaseURL + '&Command=' + Command;
+
+      IF Version <> '' THEN
+        BaseURL := BaseURL + '&Version=' + Version;
+    END;
+
+    PROCEDURE AddRegExRuleNode@46(VAR OfficeAddin@1002 : Record 1610;RegExName@1000 : Text;RegExText@1001 : Text);
+    VAR
+      XMLDomManagement@1010 : Codeunit 6224;
+      ManifestInStream@1009 : InStream;
+      ManifestOutStream@1008 : OutStream;
+      XMLRootNode@1007 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNode";
+      XMLRuleNode@1006 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNode";
+      XMLFoundNodes@1005 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNodeList";
+      XMLNamespaceMgr@1004 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNamespaceManager";
+    BEGIN
+      OfficeAddin.CALCFIELDS(Manifest);
+      OfficeAddin.Manifest.CREATEINSTREAM(ManifestInStream,TEXTENCODING::UTF8);
+
+      XMLDomManagement.LoadXMLNodeFromInStream(ManifestInStream,XMLRootNode);
+      GetManifestNamespaceManager(XMLRootNode,XMLNamespaceMgr);
+
+      XMLDomManagement.FindNodesWithNamespaceManager(
+        XMLRootNode,RuleCollectionXPathTxt,
+        XMLNamespaceMgr,XMLFoundNodes);
+
+      XMLRuleNode := XMLRootNode.OwnerDocument.CreateNode('element','Rule',
+          'http://schemas.microsoft.com/office/appforoffice/1.1');
+      XMLDomManagement.AddAttributeWithPrefix(
+        XMLRuleNode,'type','xsi','http://www.w3.org/2001/XMLSchema-instance','ItemHasRegularExpressionMatch');
+      XMLDomManagement.AddAttribute(XMLRuleNode,'RegExName',RegExName);
+      XMLDomManagement.AddAttribute(XMLRuleNode,'RegExValue',RegExText);
+      XMLDomManagement.AddAttribute(XMLRuleNode,'PropertyName','BodyAsPlaintext');
+      XMLDomManagement.AddAttribute(XMLRuleNode,'IgnoreCase','true');
+      XMLFoundNodes.Item(0).AppendChild(XMLRuleNode);
+
+      // Need to clear the blob here, otherwise the OutStream may have extra data at the end.
+      CLEAR(OfficeAddin.Manifest);
+      OfficeAddin.Manifest.CREATEOUTSTREAM(ManifestOutStream,TEXTENCODING::UTF8);
+      XMLDomManagement.SaveXMLDocumentToOutStream(ManifestOutStream,XMLRootNode);
+      OfficeAddin.MODIFY;
+    END;
+
+    PROCEDURE GetImageUrl@13(ImageName@1001 : Text) : Text;
+    VAR
+      BaseUrl@1000 : Text;
+    BEGIN
+      BaseUrl := GETURL(CLIENTTYPE::Web);
+      IF STRPOS(BaseUrl,'?') > 0 THEN
+        BaseUrl := COPYSTR(BaseUrl,1,STRPOS(BaseUrl,'?') - 1);
+
+      EXIT(STRSUBSTNO('%1/Resources/Images/%2',BaseUrl,ImageName));
+    END;
+
+    PROCEDURE GetAppID@36(OfficeAddIn@1005 : Record 1610) : Text;
+    VAR
+      XMLFoundNodes@1001 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNodeList";
+    BEGIN
+      GetXmlNodes(OfficeAddIn,XMLFoundNodes,'x:Id');
+      EXIT(XMLFoundNodes.Item(0).InnerText)
+    END;
+
+    PROCEDURE GetAppName@39(OfficeAddIn@1005 : Record 1610) : Text[50];
+    VAR
+      XMLFoundNodes@1001 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNodeList";
+    BEGIN
+      GetXmlNodes(OfficeAddIn,XMLFoundNodes,'x:DisplayName');
+      EXIT(XMLFoundNodes.Item(0).Attributes.ItemOf('DefaultValue').Value)
+    END;
+
+    PROCEDURE GetAppDescription@40(OfficeAddIn@1005 : Record 1610) : Text[250];
+    VAR
+      XMLFoundNodes@1001 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNodeList";
+    BEGIN
+      GetXmlNodes(OfficeAddIn,XMLFoundNodes,'x:Description');
+      EXIT(XMLFoundNodes.Item(0).Attributes.ItemOf('DefaultValue').Value)
+    END;
+
+    PROCEDURE GetAppVersion@3(OfficeAddIn@1005 : Record 1610) : Text[20];
+    VAR
+      XMLFoundNodes@1001 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNodeList";
+    BEGIN
+      GetXmlNodes(OfficeAddIn,XMLFoundNodes,'x:Version');
+      EXIT(XMLFoundNodes.Item(0).InnerText)
+    END;
+
+    LOCAL PROCEDURE GetXmlNodes@4(OfficeAddin@1006 : Record 1610;VAR XMLFoundNodes@1002 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNodeList";NodeName@1000 : Text);
+    VAR
+      XMLDomManagement@1005 : Codeunit 6224;
+      ManifestInStream@1004 : InStream;
+      XMLRootNode@1003 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNode";
+      XMLNamespaceMgr@1001 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNamespaceManager";
+    BEGIN
+      WITH OfficeAddin DO BEGIN
+        "Default Manifest".CREATEINSTREAM(ManifestInStream,TEXTENCODING::UTF8);
+
+        XMLDomManagement.LoadXMLNodeFromInStream(ManifestInStream,XMLRootNode);
+        GetManifestNamespaceManager(XMLRootNode,XMLNamespaceMgr);
+
+        IF NOT XMLDomManagement.FindNodesWithNamespaceManager(XMLRootNode,NodeName,XMLNamespaceMgr,XMLFoundNodes) THEN
+          ERROR(MissingNodeErr,NodeName);
+      END;
+    END;
+
+    LOCAL PROCEDURE VerifyHttps@9();
+    VAR
+      WebClientUrl@1000 : Text;
+    BEGIN
+      WebClientUrl := ConstructURL('','','');
+      IF (NOT TestMode) AND (LOWERCASE(COPYSTR(WebClientUrl,1,5)) <> 'https') THEN
+        ERROR(STRSUBSTNO(WebClientHttpsErr,PRODUCTNAME.SHORT));
+    END;
+
+    LOCAL PROCEDURE RestructureManifest@12(VAR OfficeAddin@1000 : Record 1610);
+    VAR
+      XMLDomManagement@1002 : Codeunit 6224;
+      XMLRootNode@1001 : DotNet "'System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Xml.XmlNode";
+      ManifestInStream@1003 : InStream;
+      ManifestOutStream@1004 : OutStream;
+    BEGIN
+      OfficeAddin.CALCFIELDS(Manifest);
+      OfficeAddin.Manifest.CREATEINSTREAM(ManifestInStream,TEXTENCODING::UTF8);
+      OfficeAddin.Manifest.CREATEOUTSTREAM(ManifestOutStream,TEXTENCODING::UTF8);
+      XMLDomManagement.LoadXMLNodeFromInStream(ManifestInStream,XMLRootNode);
+      CLEAR(OfficeAddin.Manifest);
+      XMLDomManagement.SaveXMLDocumentToOutStream(ManifestOutStream,XMLRootNode);
+      OfficeAddin.MODIFY;
+    END;
+
+    PROCEDURE SetTestMode@10(NewTestMode@1000 : Boolean);
+    BEGIN
+      TestMode := NewTestMode;
+    END;
+
+    PROCEDURE XMLEncode@7(Value@1000 : Text) Encoded : Text;
+    VAR
+      SystemWebHttpUtility@1001 : DotNet "'System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.System.Web.HttpUtility";
+    BEGIN
+      SystemWebHttpUtility := SystemWebHttpUtility.HttpUtility;
+      Encoded := SystemWebHttpUtility.HtmlEncode(Value);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

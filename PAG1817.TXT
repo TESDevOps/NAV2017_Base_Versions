@@ -1,0 +1,423 @@
+OBJECT Page 1817 CRM Connection Setup Wizard
+{
+  OBJECT-PROPERTIES
+  {
+    Date=28/04/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16585;
+  }
+  PROPERTIES
+  {
+    Permissions=TableData 1261=rimd;
+    CaptionML=[ENU=Dynamics CRM Connection Setup;
+               ENG=Dynamics CRM Connection Setup];
+    SourceTable=Table5330;
+    PageType=NavigatePage;
+    SourceTableTemporary=Yes;
+    OnInit=BEGIN
+             LoadTopBanners;
+           END;
+
+    OnOpenPage=VAR
+                 CRMConnectionSetup@1000 : Record 5330;
+               BEGIN
+                 INIT;
+                 IF CRMConnectionSetup.GET THEN BEGIN
+                   "Server Address" := CRMConnectionSetup."Server Address";
+                   "User Name" := CRMConnectionSetup."User Name";
+                 END;
+                 INSERT;
+                 Step := Step::Start;
+                 EnableControls;
+               END;
+
+    OnQueryClosePage=VAR
+                       AssistedSetup@1000 : Record 1803;
+                     BEGIN
+                       IF CloseAction = ACTION::OK THEN
+                         IF AssistedSetup.GetStatus(PAGE::"CRM Connection Setup Wizard") = AssistedSetup.Status::"Not Completed" THEN
+                           IF NOT CONFIRM(NAVNotSetUpQst,FALSE) THEN
+                             ERROR('');
+                     END;
+
+    ActionList=ACTIONS
+    {
+      { 2       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 3       ;1   ;Action    ;
+                      Name=ActionBack;
+                      CaptionML=[ENU=Back;
+                                 ENG=Back];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=BackActionEnabled;
+                      InFooterBar=Yes;
+                      Image=PreviousRecord;
+                      OnAction=BEGIN
+                                 NextStep(TRUE);
+                               END;
+                                }
+      { 4       ;1   ;Action    ;
+                      Name=ActionNext;
+                      CaptionML=[ENU=Next;
+                                 ENG=Next];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=NextActionEnabled;
+                      InFooterBar=Yes;
+                      Image=NextRecord;
+                      OnAction=BEGIN
+                                 NextStep(FALSE);
+                               END;
+                                }
+      { 5       ;1   ;Action    ;
+                      Name=ActionFinish;
+                      CaptionML=[ENU=Finish;
+                                 ENG=Finish];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=FinishActionEnabled;
+                      InFooterBar=Yes;
+                      Image=Approve;
+                      OnAction=VAR
+                                 AssistedSetup@1000 : Record 1803;
+                               BEGIN
+                                 FinalizeSetup;
+                                 AssistedSetup.SetStatus(PAGE::"CRM Connection Setup Wizard",AssistedSetup.Status::Completed);
+                                 COMMIT;
+                                 CurrPage.CLOSE;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                Name=ContentArea;
+                ContainerType=ContentArea }
+
+    { 18  ;1   ;Group     ;
+                Name=BannerStandard;
+                CaptionML=[ENU="";
+                           ENG=""];
+                Visible=TopBannerVisible AND NOT FinalStepVisible;
+                Editable=FALSE;
+                GroupType=Group }
+
+    { 17  ;2   ;Field     ;
+                ApplicationArea=#Suite;
+                SourceExpr=MediaRepositoryStandard.Image;
+                Editable=FALSE;
+                ShowCaption=No }
+
+    { 16  ;1   ;Group     ;
+                Name=BannerDone;
+                CaptionML=[ENU="";
+                           ENG=""];
+                Visible=TopBannerVisible AND FinalStepVisible;
+                Editable=FALSE;
+                GroupType=Group }
+
+    { 15  ;2   ;Field     ;
+                ApplicationArea=#Suite;
+                SourceExpr=MediaRepositoryDone.Image;
+                Editable=FALSE;
+                ShowCaption=No }
+
+    { 6   ;1   ;Group     ;
+                Name=Step1;
+                CaptionML=[ENU="";
+                           ENG=""];
+                Visible=FirstStepVisible;
+                GroupType=Group;
+                InstructionalTextML=[ENU=Welcome to Dynamics CRM Connection Setup.;
+                                     ENG=Welcome to Dynamics CRM Connection Setup.] }
+
+    { 23  ;2   ;Group     ;
+                GroupType=Group;
+                InstructionalTextML=[ENU=You can set up a Dynamics CRM connection to enable seamless coupling of data.;
+                                     ENG=You can set up a Dynamics CRM connection to enable seamless coupling of data.] }
+
+    { 24  ;2   ;Group     ;
+                GroupType=Group;
+                InstructionalTextML=[ENU=Once coupled, you can access Dynamics CRM records here and, for some entities, access records from Dynamics CRM. You can also synchronize data between records so that data is the same in both systems.;
+                                     ENG=Once coupled, you can access Dynamics CRM records here and, for some entities, access records from Dynamics CRM. You can also synchronise data between records so that data is the same in both systems.] }
+
+    { 25  ;2   ;Group     ;
+                GroupType=Group;
+                InstructionalTextML=[ENU=Let's go!;
+                                     ENG=Let's go!] }
+
+    { 26  ;2   ;Group     ;
+                GroupType=Group;
+                InstructionalTextML=[ENU=Choose Next to set up a Dynamics CRM connection.;
+                                     ENG=Choose Next to set up a Dynamics CRM connection.] }
+
+    { 7   ;1   ;Group     ;
+                Name=Step2;
+                CaptionML=[ENU="";
+                           ENG=""];
+                Visible=SrvAdrStepVisible;
+                GroupType=Group;
+                InstructionalTextML=[ENU=Enter the URL of the Dynamics CRM server that hosts the solution that you want to connect to.;
+                                     ENG=Enter the URL of the Dynamics CRM server that hosts the solution that you want to connect to.] }
+
+    { 10  ;2   ;Field     ;
+                Name=ServerAddress;
+                ToolTipML=[ENU=Specifies the URL of the Dynamics CRM server that hosts the Dynamics CRM solution that you want to connect to.;
+                           ENG=Specifies the URL of the Dynamics CRM server that hosts the Dynamics CRM solution that you want to connect to.];
+                ApplicationArea=#Suite;
+                SourceExpr="Server Address";
+                OnValidate=VAR
+                             CRMIntegrationManagement@1000 : Codeunit 5330;
+                           BEGIN
+                             CRMIntegrationManagement.CheckModifyCRMConnectionURL("Server Address");
+                           END;
+                            }
+
+    { 8   ;1   ;Group     ;
+                Name=Step3;
+                CaptionML=[ENU="";
+                           ENG=""];
+                Visible=CredentialsStepVisible;
+                GroupType=Group }
+
+    { 19  ;2   ;Group     ;
+                Name=Step3.1;
+                CaptionML=[ENU="";
+                           ENG=""];
+                GroupType=Group;
+                InstructionalTextML=[ENU=Enter the credentials for the Dynamics CRM account that will be used for the integration.;
+                                     ENG=Enter the credentials for the Dynamics CRM account that will be used for the integration.] }
+
+    { 11  ;3   ;Field     ;
+                Name=Email;
+                CaptionML=[ENU=Email;
+                           ENG=Email];
+                ApplicationArea=#Suite;
+                SourceExpr="User Name" }
+
+    { 12  ;3   ;Field     ;
+                Name=Password;
+                ExtendedDatatype=Masked;
+                CaptionML=[ENU=Password;
+                           ENG=Password];
+                ApplicationArea=#Suite;
+                SourceExpr=Password }
+
+    { 20  ;2   ;Group     ;
+                Name=Step3.2;
+                CaptionML=[ENU="";
+                           ENG=""];
+                GroupType=Group;
+                InstructionalTextML=[ENU=Enter the credentials for the Dynamics CRM administrator account that will be used to import the Dynamics CRM solution.;
+                                     ENG=Enter the credentials for the Dynamics CRM administrator account that will be used to import the Dynamics CRM solution.] }
+
+    { 22  ;3   ;Field     ;
+                Name=AdminEmail;
+                CaptionML=[ENU=Email;
+                           ENG=Email];
+                ApplicationArea=#Suite;
+                SourceExpr=AdminEmail }
+
+    { 21  ;3   ;Field     ;
+                Name=AdminPassword;
+                ExtendedDatatype=Masked;
+                CaptionML=[ENU=Password;
+                           ENG=Password];
+                ApplicationArea=#Suite;
+                SourceExpr=AdminPassword }
+
+    { 9   ;1   ;Group     ;
+                Name=Step4;
+                CaptionML=[ENU="";
+                           ENG=""];
+                Visible=FinalStepVisible;
+                GroupType=Group;
+                InstructionalTextML=[ENU=Select the check box if you want to import the Dynamics CRM solution, publish Item Availability webservice and enable the Dynamics CRM connection.;
+                                     ENG=Select the check box if you want to import the Dynamics CRM solution, publish Item Availability webservice and enable the Dynamics CRM connection.] }
+
+    { 14  ;2   ;Field     ;
+                Name=ImportCRMSolution;
+                CaptionML=[ENU=Import Dynamics CRM Solution;
+                           ENG=Import Dynamics CRM Solution];
+                ApplicationArea=#Suite;
+                SourceExpr=ImportSolution;
+                Enabled=ImportCRMSolutionEnabled;
+                OnValidate=BEGIN
+                             OnImportSolutionChange;
+                           END;
+                            }
+
+    { 30  ;2   ;Field     ;
+                Name=PublishItemAvailabilityService;
+                CaptionML=[ENU=Publish Item Availability Webservice;
+                           ENG=Publish Item Availability Webservice];
+                ApplicationArea=#Suite;
+                SourceExpr=PublishItemAvailabilityService;
+                Enabled=PublishItemAvailabilityServiceEnabled }
+
+    { 13  ;2   ;Field     ;
+                Name=EnableCRMConnection;
+                CaptionML=[ENU=Enable Dynamics CRM Connection;
+                           ENG=Enable Dynamics CRM Connection];
+                ApplicationArea=#Suite;
+                SourceExpr=EnableCRMConnection;
+                Enabled=EnableCRMConnectionEnabled }
+
+    { 27  ;1   ;Group     ;
+                Visible=FinalStepVisible;
+                GroupType=Group }
+
+    { 28  ;2   ;Group     ;
+                GroupType=Group;
+                InstructionalTextML=[ENU=That's it!;
+                                     ENG=That's it!] }
+
+    { 29  ;2   ;Group     ;
+                GroupType=Group;
+                InstructionalTextML=[ENU=To enable the Dynamics CRM connection, choose Finish.;
+                                     ENG=To enable the Dynamics CRM connection, choose Finish.] }
+
+  }
+  CODE
+  {
+    VAR
+      MediaRepositoryStandard@1015 : Record 9400;
+      MediaRepositoryDone@1014 : Record 9400;
+      Step@1000 : 'Start,ServerAddress,Credentials,Finish';
+      TopBannerVisible@1013 : Boolean;
+      BackActionEnabled@1001 : Boolean;
+      NextActionEnabled@1002 : Boolean;
+      FinishActionEnabled@1003 : Boolean;
+      FirstStepVisible@1004 : Boolean;
+      SrvAdrStepVisible@1005 : Boolean;
+      CredentialsStepVisible@1006 : Boolean;
+      FinalStepVisible@1007 : Boolean;
+      EnableCRMConnection@1009 : Boolean;
+      ImportSolution@1010 : Boolean;
+      PublishItemAvailabilityService@1019 : Boolean;
+      EnableCRMConnectionEnabled@1012 : Boolean;
+      ImportCRMSolutionEnabled@1011 : Boolean;
+      PublishItemAvailabilityServiceEnabled@1020 : Boolean;
+      Password@1008 : Text;
+      NAVNotSetUpQst@1016 : TextConst 'ENU=The Dynamics CRM connection has not been set up.\\Are you sure you want to exit?;ENG=The Dynamics CRM connection has not been set up.\\Are you sure you want to exit?';
+      AdminEmail@1017 : Text;
+      AdminPassword@1018 : Text;
+
+    LOCAL PROCEDURE LoadTopBanners@40();
+    BEGIN
+      IF MediaRepositoryStandard.GET('AssistedSetup-NoText-400px.png',FORMAT(CURRENTCLIENTTYPE)) AND
+         MediaRepositoryDone.GET('AssistedSetupDone-NoText-400px.png',FORMAT(CURRENTCLIENTTYPE))
+      THEN
+        TopBannerVisible := MediaRepositoryDone.Image.HASVALUE;
+    END;
+
+    LOCAL PROCEDURE NextStep@4(Backward@1000 : Boolean);
+    BEGIN
+      IF Backward THEN
+        Step := Step - 1
+      ELSE
+        Step := Step + 1;
+
+      EnableControls;
+    END;
+
+    LOCAL PROCEDURE ResetControls@11();
+    BEGIN
+      BackActionEnabled := FALSE;
+      NextActionEnabled := FALSE;
+      FinishActionEnabled := FALSE;
+
+      FirstStepVisible := FALSE;
+      SrvAdrStepVisible := FALSE;
+      CredentialsStepVisible := FALSE;
+      FinalStepVisible := FALSE;
+
+      ImportCRMSolutionEnabled := TRUE;
+      PublishItemAvailabilityServiceEnabled := ImportSolution;
+      EnableCRMConnectionEnabled := TRUE;
+    END;
+
+    LOCAL PROCEDURE EnableControls@18();
+    BEGIN
+      ResetControls;
+
+      CASE Step OF
+        Step::Start:
+          ShowStartStep;
+        Step::ServerAddress:
+          ShowSrvAdrStep;
+        Step::Credentials:
+          ShowCredentialsStep;
+        Step::Finish:
+          ShowFinishStep;
+      END;
+    END;
+
+    LOCAL PROCEDURE ShowStartStep@46();
+    BEGIN
+      BackActionEnabled := FALSE;
+      NextActionEnabled := TRUE;
+      FinishActionEnabled := FALSE;
+
+      FirstStepVisible := TRUE;
+    END;
+
+    LOCAL PROCEDURE ShowSrvAdrStep@48();
+    BEGIN
+      BackActionEnabled := TRUE;
+      NextActionEnabled := TRUE;
+
+      SrvAdrStepVisible := TRUE;
+    END;
+
+    LOCAL PROCEDURE ShowCredentialsStep@52();
+    BEGIN
+      BackActionEnabled := TRUE;
+      NextActionEnabled := TRUE;
+
+      CredentialsStepVisible := TRUE;
+      "Authentication Type" := "Authentication Type"::Office365;
+    END;
+
+    LOCAL PROCEDURE ShowFinishStep@54();
+    BEGIN
+      BackActionEnabled := TRUE;
+      NextActionEnabled := FALSE;
+      FinishActionEnabled := ("Server Address" <> '') OR ("User Name" <> '');
+
+      ImportCRMSolutionEnabled :=
+        ("Server Address" <> '') AND ("User Name" <> '') AND (AdminEmail <> '') AND (AdminPassword <> '');
+      EnableCRMConnectionEnabled := ("Server Address" <> '') AND ("User Name" <> '') AND (Password <> '');
+      IF ImportCRMSolutionEnabled THEN
+        ImportSolution := TRUE;
+      OnImportSolutionChange;
+      IF EnableCRMConnectionEnabled THEN
+        EnableCRMConnection := TRUE;
+
+      FinalStepVisible := TRUE;
+    END;
+
+    LOCAL PROCEDURE FinalizeSetup@1();
+    VAR
+      CRMConnectionSetup@1002 : Record 5330;
+      CRMIntegrationManagement@1000 : Codeunit 5330;
+    BEGIN
+      IF PublishItemAvailabilityService THEN
+        CRMIntegrationManagement.SetupItemAvailabilityService;
+      IF ImportSolution THEN
+        CRMIntegrationManagement.ImportCRMSolution("Server Address","User Name",AdminEmail,AdminPassword);
+      CRMConnectionSetup.UpdateFromWizard(Rec,Password);
+      IF EnableCRMConnection THEN
+        CRMConnectionSetup.EnableCRMConnectionFromWizard;
+    END;
+
+    LOCAL PROCEDURE OnImportSolutionChange@3();
+    BEGIN
+      PublishItemAvailabilityServiceEnabled := ImportSolution;
+      PublishItemAvailabilityService := ImportSolution;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,135 @@
+OBJECT Page 2100 O365 Sales Year Summary
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Year to Date;
+               ENG=Year to Date];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    SourceTable=Table823;
+    PageType=Document;
+    SourceTableTemporary=Yes;
+    CardPageID=O365 Sales Month Summary;
+    OnOpenPage=VAR
+                 O365SalesStatistics@1000 : Codeunit 2100;
+               BEGIN
+                 O365SalesStatistics.GenerateMonthlyOverview(Rec);
+               END;
+
+    ActionList=ACTIONS
+    {
+      { 1       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 6       ;1   ;Action    ;
+                      ShortCutKey=Return;
+                      CaptionML=[ENU=Show Weekly Summary;
+                                 ENG=Show Weekly Summary];
+                      ToolTipML=[ENU=Displays a weekly overview of the selected month.;
+                                 ENG=Displays a weekly overview of the selected month.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 2102;
+                      RunPageOnRec=Yes;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      PromotedCategory=Process;
+                      Scope=Repeater }
+    }
+  }
+  CONTROLS
+  {
+    { 8   ;    ;Container ;
+                ContainerType=ContentArea }
+
+    { 7   ;1   ;Group     ;
+                Name=MonthyInfo;
+                CaptionML=[ENU="";
+                           ENG=""];
+                GroupType=Group;
+                InstructionalTextML=[ENU=Tap a month to see a weekly overview;
+                                     ENG=Tap a month to see a weekly overview] }
+
+    { 5   ;1   ;Field     ;
+                Name=Chart;
+                ToolTipML=[ENU=Specifies a chart showing a summarized view of invoices.;
+                           ENG=Specifies a chart showing a summarised view of invoices.];
+                ApplicationArea=#Basic,#Suite;
+                ControlAddIn=[Microsoft.Dynamics.Nav.Client.BusinessChart;PublicKeyToken=31bf3856ad364e35] }
+
+    { 2   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                Name=Date;
+                ToolTipML=[ENU=Specifies the summarized date.;
+                           ENG=Specifies the summarised date.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Name;
+                Editable=FALSE }
+
+    { 4   ;2   ;Field     ;
+                Name=Amount (LCY);
+                ToolTipML=[ENU=Specifies the summarized amount in LCY.;
+                           ENG=Specifies the summarised amount in LCY.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Value;
+                Editable=FALSE }
+
+  }
+  CODE
+  {
+    VAR
+      MonthTxt@1001 : TextConst 'ENU=Month;ENG=Month';
+      AmountTxt@1003 : TextConst '@@@="%1=Currency Symbol (e.g. $)";ENU=Amount (%1);ENG=Amount (%1)';
+
+    LOCAL PROCEDURE ShowMonth@1(Month@1000 : Text);
+    VAR
+      TempNameValueBuffer@1002 : TEMPORARY Record 823;
+      TypeHelper@1001 : Codeunit 10;
+    BEGIN
+      GET(TypeHelper.GetLocalizedMonthToInt(Month));
+      TempNameValueBuffer.COPY(Rec);
+
+      PAGE.RUN(PAGE::"O365 Sales Month Summary",TempNameValueBuffer);
+    END;
+
+    EVENT Chart@-5::DataPointClicked@1(point@1000 : DotNet "'Microsoft.Dynamics.Nav.Client.BusinessChart.Model, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.Client.BusinessChart.BusinessChartDataPoint");
+    BEGIN
+      ShowMonth(point.XValueString);
+    END;
+
+    EVENT Chart@-5::DataPointDoubleClicked@2(point@1000 : DotNet "'Microsoft.Dynamics.Nav.Client.BusinessChart.Model, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.Client.BusinessChart.BusinessChartDataPoint");
+    BEGIN
+    END;
+
+    EVENT Chart@-5::AddInReady@3();
+    VAR
+      GLSetup@1001 : Record 98;
+      O365SalesStatistics@1000 : Codeunit 2100;
+    BEGIN
+      GLSetup.GET;
+
+      O365SalesStatistics.GenerateChart(CurrPage.Chart,Rec,MonthTxt,STRSUBSTNO(AmountTxt,GLSetup.GetCurrencySymbol))
+    END;
+
+    EVENT Chart@-5::Refresh@4();
+    VAR
+      GLSetup@1001 : Record 98;
+      O365SalesStatistics@1000 : Codeunit 2100;
+    BEGIN
+      GLSetup.GET;
+
+      O365SalesStatistics.GenerateChart(CurrPage.Chart,Rec,MonthTxt,STRSUBSTNO(AmountTxt,GLSetup.GetCurrencySymbol))
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

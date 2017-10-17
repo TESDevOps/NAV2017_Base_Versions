@@ -1,0 +1,45 @@
+OBJECT Page 9178 Available Role Centers
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Available Role Centers;
+               ENG=Available Role Centres];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    LinksAllowed=No;
+    SourceTable=Table2000000072;
+    PageType=List;
+    ShowFilter=Yes;
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description of the Role Center.;
+                           ENG=Specifies a description of the Role Centre.];
+                ApplicationArea=#All;
+                SourceExpr=Description }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

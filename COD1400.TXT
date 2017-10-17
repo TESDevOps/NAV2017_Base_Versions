@@ -1,0 +1,252 @@
+OBJECT Codeunit 1400 DocumentNoVisibility
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+
+    PROCEDURE SalesDocumentNoIsVisible@2(DocType@1000 : 'Quote,Order,Invoice,Credit Memo,Blanket Order,Return Order,Reminder,FinChMemo';DocNo@1003 : Code[20]) : Boolean;
+    VAR
+      NoSeries@1002 : Record 308;
+      SalesNoSeriesSetup@1001 : Page 1401;
+      DocNoSeries@1004 : Code[10];
+    BEGIN
+      IF DocNo <> '' THEN
+        EXIT(FALSE);
+
+      DocNoSeries := DetermineSalesSeriesNo(DocType);
+
+      IF NOT NoSeries.GET(DocNoSeries) THEN BEGIN
+        SalesNoSeriesSetup.SetFieldsVisibility(DocType);
+        SalesNoSeriesSetup.RUNMODAL;
+        DocNoSeries := DetermineSalesSeriesNo(DocType);
+        IF NOT NoSeries.GET(DocNoSeries) THEN
+          EXIT(TRUE);
+      END;
+
+      EXIT(ForceShowNoSeriesForDocNo(DocNoSeries));
+    END;
+
+    PROCEDURE PurchaseDocumentNoIsVisible@6(DocType@1000 : 'Quote,Order,Invoice,Credit Memo,Blanket Order,Return Order';DocNo@1003 : Code[20]) : Boolean;
+    VAR
+      NoSeries@1002 : Record 308;
+      PurchaseNoSeriesSetup@1001 : Page 1402;
+      DocNoSeries@1004 : Code[10];
+    BEGIN
+      IF DocNo <> '' THEN
+        EXIT(FALSE);
+
+      DocNoSeries := DeterminePurchaseSeriesNo(DocType);
+
+      IF NOT NoSeries.GET(DocNoSeries) THEN BEGIN
+        PurchaseNoSeriesSetup.SetFieldsVisibility(DocType);
+        PurchaseNoSeriesSetup.RUNMODAL;
+        DocNoSeries := DeterminePurchaseSeriesNo(DocType);
+        IF NOT NoSeries.GET(DocNoSeries) THEN
+          EXIT(TRUE);
+      END;
+
+      EXIT(ForceShowNoSeriesForDocNo(DocNoSeries));
+    END;
+
+    PROCEDURE CustomerNoIsVisible@4() : Boolean;
+    VAR
+      NoSeries@1002 : Record 308;
+      NoSeriesCode@1004 : Code[10];
+    BEGIN
+      NoSeriesCode := DetermineCustomerSeriesNo;
+
+      IF NOT NoSeries.GET(NoSeriesCode) THEN
+        EXIT(TRUE);
+
+      EXIT(ForceShowNoSeriesForDocNo(NoSeriesCode));
+    END;
+
+    PROCEDURE VendorNoIsVisible@21() : Boolean;
+    VAR
+      NoSeries@1002 : Record 308;
+      NoSeriesCode@1004 : Code[10];
+    BEGIN
+      NoSeriesCode := DetermineVendorSeriesNo;
+
+      IF NOT NoSeries.GET(NoSeriesCode) THEN
+        EXIT(TRUE);
+
+      EXIT(ForceShowNoSeriesForDocNo(NoSeriesCode));
+    END;
+
+    PROCEDURE ItemNoIsVisible@22() : Boolean;
+    VAR
+      NoSeries@1002 : Record 308;
+      NoSeriesCode@1004 : Code[10];
+    BEGIN
+      NoSeriesCode := DetermineItemSeriesNo;
+
+      IF NOT NoSeries.GET(NoSeriesCode) THEN
+        EXIT(TRUE);
+
+      EXIT(ForceShowNoSeriesForDocNo(NoSeriesCode));
+    END;
+
+    PROCEDURE FixedAssetNoIsVisible@8() : Boolean;
+    VAR
+      NoSeries@1002 : Record 308;
+      NoSeriesCode@1004 : Code[10];
+    BEGIN
+      NoSeriesCode := DetermineFixedAssetSeriesNo;
+
+      IF NOT NoSeries.GET(NoSeriesCode) THEN
+        EXIT(TRUE);
+
+      EXIT(ForceShowNoSeriesForDocNo(NoSeriesCode));
+    END;
+
+    PROCEDURE CustomerNoSeriesIsDefault@10() : Boolean;
+    VAR
+      NoSeries@1000 : Record 308;
+    BEGIN
+      IF NoSeries.GET(DetermineCustomerSeriesNo) THEN
+        EXIT(NoSeries."Default Nos.");
+
+      EXIT(FALSE);
+    END;
+
+    PROCEDURE VendorNoSeriesIsDefault@15() : Boolean;
+    VAR
+      NoSeries@1000 : Record 308;
+    BEGIN
+      IF NoSeries.GET(DetermineVendorSeriesNo) THEN
+        EXIT(NoSeries."Default Nos.");
+
+      EXIT(FALSE);
+    END;
+
+    PROCEDURE ItemNoSeriesIsDefault@16() : Boolean;
+    VAR
+      NoSeries@1000 : Record 308;
+    BEGIN
+      IF NoSeries.GET(DetermineItemSeriesNo) THEN
+        EXIT(NoSeries."Default Nos.");
+    END;
+
+    PROCEDURE FixedAssetNoSeriesIsDefault@11() : Boolean;
+    VAR
+      NoSeries@1000 : Record 308;
+    BEGIN
+      IF NoSeries.GET(DetermineFixedAssetSeriesNo) THEN
+        EXIT(NoSeries."Default Nos.");
+    END;
+
+    LOCAL PROCEDURE DetermineSalesSeriesNo@5(DocType@1000 : 'Quote,Order,Invoice,Credit Memo,Blanket Order,Return Order,Reminder,FinChMemo') : Code[10];
+    VAR
+      SalesReceivablesSetup@1001 : Record 311;
+    BEGIN
+      SalesReceivablesSetup.GET;
+      CASE DocType OF
+        DocType::Quote:
+          EXIT(SalesReceivablesSetup."Quote Nos.");
+        DocType::Order:
+          EXIT(SalesReceivablesSetup."Order Nos.");
+        DocType::Invoice:
+          EXIT(SalesReceivablesSetup."Invoice Nos.");
+        DocType::"Credit Memo":
+          EXIT(SalesReceivablesSetup."Credit Memo Nos.");
+        DocType::"Blanket Order":
+          EXIT(SalesReceivablesSetup."Blanket Order Nos.");
+        DocType::"Return Order":
+          EXIT(SalesReceivablesSetup."Return Order Nos.");
+        DocType::Reminder:
+          EXIT(SalesReceivablesSetup."Reminder Nos.");
+        DocType::FinChMemo:
+          EXIT(SalesReceivablesSetup."Fin. Chrg. Memo Nos.");
+      END;
+    END;
+
+    LOCAL PROCEDURE DeterminePurchaseSeriesNo@1(DocType@1000 : 'Quote,Order,Invoice,Credit Memo,Blanket Order,Return Order') : Code[10];
+    VAR
+      PurchasesPayablesSetup@1001 : Record 312;
+    BEGIN
+      PurchasesPayablesSetup.GET;
+      CASE DocType OF
+        DocType::Quote:
+          EXIT(PurchasesPayablesSetup."Quote Nos.");
+        DocType::Order:
+          EXIT(PurchasesPayablesSetup."Order Nos.");
+        DocType::Invoice:
+          EXIT(PurchasesPayablesSetup."Invoice Nos.");
+        DocType::"Credit Memo":
+          EXIT(PurchasesPayablesSetup."Credit Memo Nos.");
+        DocType::"Blanket Order":
+          EXIT(PurchasesPayablesSetup."Blanket Order Nos.");
+        DocType::"Return Order":
+          EXIT(PurchasesPayablesSetup."Return Order Nos.");
+      END;
+    END;
+
+    LOCAL PROCEDURE DetermineCustomerSeriesNo@7() : Code[10];
+    VAR
+      SalesReceivablesSetup@1001 : Record 311;
+    BEGIN
+      SalesReceivablesSetup.GET;
+      EXIT(SalesReceivablesSetup."Customer Nos.");
+    END;
+
+    LOCAL PROCEDURE DetermineVendorSeriesNo@12() : Code[10];
+    VAR
+      PurchasesPayablesSetup@1001 : Record 312;
+    BEGIN
+      PurchasesPayablesSetup.GET;
+      EXIT(PurchasesPayablesSetup."Vendor Nos.");
+    END;
+
+    LOCAL PROCEDURE DetermineItemSeriesNo@17() : Code[10];
+    VAR
+      InventorySetup@1001 : Record 313;
+    BEGIN
+      InventorySetup.GET;
+      EXIT(InventorySetup."Item Nos.");
+    END;
+
+    LOCAL PROCEDURE DetermineFixedAssetSeriesNo@9() : Code[10];
+    VAR
+      FASetup@1001 : Record 5603;
+    BEGIN
+      FASetup.GET;
+      EXIT(FASetup."Fixed Asset Nos.");
+    END;
+
+    LOCAL PROCEDURE ForceShowNoSeriesForDocNo@3(NoSeriesCode@1004 : Code[10]) : Boolean;
+    VAR
+      NoSeries@1005 : Record 308;
+      NoSeriesRelationship@1001 : Record 310;
+      NoSeriesMgt@1000 : Codeunit 396;
+      SeriesDate@1002 : Date;
+    BEGIN
+      SeriesDate := WORKDATE;
+      NoSeries.GET(NoSeriesCode);
+
+      NoSeriesRelationship.SETRANGE(Code,NoSeriesCode);
+      IF NOT NoSeriesRelationship.ISEMPTY THEN
+        EXIT(TRUE);
+
+      IF NoSeries."Manual Nos." OR (NoSeries."Default Nos." = FALSE) THEN
+        EXIT(TRUE);
+
+      EXIT(NoSeriesMgt.GetNextNo3(NoSeriesCode,SeriesDate,FALSE,TRUE) = '');
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

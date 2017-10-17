@@ -1,0 +1,140 @@
+OBJECT Table 9000 User Group
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    OnInsert=BEGIN
+               TESTFIELD(Code);
+             END;
+
+    OnDelete=VAR
+               UserGroupMember@1000 : Record 9001;
+               UserGroupPermissionSet@1001 : Record 9003;
+             BEGIN
+               UserGroupMember.SETRANGE("User Group Code",Code);
+               IF NOT UserGroupMember.ISEMPTY THEN
+                 ERROR(HasMembersErr);
+               UserGroupPermissionSet.SETRANGE("User Group Code",Code);
+               UserGroupPermissionSet.DELETEALL(TRUE);
+             END;
+
+    CaptionML=[ENU=User Group;
+               ENG=User Group];
+    LookupPageID=Page9830;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code20        ;CaptionML=[ENU=Code;
+                                                              ENG=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Name                ;Text50        ;CaptionML=[ENU=Name;
+                                                              ENG=Name] }
+    { 3   ;   ;Default Profile ID  ;Code30        ;TableRelation=Profile;
+                                                   CaptionML=[ENU=Default Profile ID;
+                                                              ENG=Default Profile ID] }
+    { 4   ;   ;Assign to All New Users;Boolean    ;OnValidate=VAR
+                                                                UserGroup@1000 : Record 9000;
+                                                                PermissionManager@1001 : Codeunit 9002;
+                                                              BEGIN
+                                                                IF NOT PermissionManager.SoftwareAsAService THEN
+                                                                  EXIT;
+
+                                                                IF "Assign to All New Users" = TRUE THEN
+                                                                  EXIT;
+
+                                                                // When deselecting this option, if the last auto-assign user group is deselected,
+                                                                // it means that new users will get no permissions
+                                                                // and therefore they will not be able to login.
+                                                                UserGroup.SETRANGE("Assign to All New Users",TRUE);
+                                                                UserGroup.SETFILTER(Code,'<>%1',Code);
+                                                                IF UserGroup.COUNT = 0 THEN
+                                                                  IF NOT CONFIRM(NewUsersCannotLoginQst) THEN
+                                                                    ERROR('');
+                                                              END;
+
+                                                   CaptionML=[ENU=Assign to All New Users;
+                                                              ENG=Assign to All New Users] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      HasMembersErr@1002 : TextConst 'ENU=You cannot delete this user group because it has members.;ENG=You cannot delete this user group because it has members.';
+      NewUsersCannotLoginQst@1000 : TextConst 'ENU=You have not specified a user group that will be assigned automatically to new users. If users are not assigned a user group, they cannot sign in. \\Do you want to continue?;ENG=You have not specified a user group that will be assigned automatically to new users. If users are not assigned a user group, they cannot sign in. \\Do you want to continue?';
+
+    PROCEDURE IsUserMember@14(VAR User@1001 : Record 2000000120;SelectedCompany@1000 : Text[30]) : Boolean;
+    VAR
+      UserGroupMember@1002 : Record 9001;
+    BEGIN
+      UserGroupMember.SETRANGE("User Group Code",Code);
+      UserGroupMember.SETRANGE("User Security ID",User."User Security ID");
+      UserGroupMember.SETRANGE("Company Name",SelectedCompany);
+      EXIT(NOT UserGroupMember.ISEMPTY);
+    END;
+
+    PROCEDURE SetUserGroupMembership@7(VAR User@1001 : Record 2000000120;NewUserGroupMembership@1003 : Boolean;SelectedCompany@1000 : Text[30]);
+    VAR
+      UserGroupMember@1002 : Record 9001;
+    BEGIN
+      IF UserGroupMember.GET(Code,User."User Security ID",SelectedCompany) THEN BEGIN
+        IF NOT NewUserGroupMembership THEN
+          UserGroupMember.DELETE(TRUE);
+        EXIT;
+      END;
+      IF NOT NewUserGroupMembership THEN
+        EXIT;
+      UserGroupMember.INIT;
+      UserGroupMember."User Group Code" := Code;
+      UserGroupMember."User Security ID" := User."User Security ID";
+      UserGroupMember."Company Name" := SelectedCompany;
+      UserGroupMember.INSERT(TRUE);
+    END;
+
+    PROCEDURE ExportUserGroups@1(FileName@1000 : Text) : Text;
+    VAR
+      TempBlob@1004 : Record 99008535;
+      FileManagement@1003 : Codeunit 419;
+      ExportImportUserGroups@1002 : XMLport 9000;
+      OutStr@1001 : OutStream;
+    BEGIN
+      TempBlob.INIT;
+      TempBlob.Blob.CREATEOUTSTREAM(OutStr);
+      ExportImportUserGroups.SETDESTINATION(OutStr);
+      ExportImportUserGroups.EXPORT;
+      IF FileName = '' THEN
+        EXIT(FileManagement.BLOBExport(TempBlob,TABLECAPTION + '.xml',TRUE));
+      EXIT(FileManagement.BLOBExport(TempBlob,FileName,FALSE));
+    END;
+
+    PROCEDURE ImportUserGroups@2(FileName@1000 : Text);
+    VAR
+      TempBlob@1004 : Record 99008535;
+      FileManagement@1003 : Codeunit 419;
+      ExportImportUserGroups@1002 : XMLport 9000;
+      InStr@1001 : InStream;
+    BEGIN
+      TempBlob.INIT;
+      IF FileManagement.BLOBImport(TempBlob,FileName) = '' THEN
+        EXIT;
+      TempBlob.Blob.CREATEINSTREAM(InStr);
+      ExportImportUserGroups.SETSOURCE(InStr);
+      ExportImportUserGroups.IMPORT;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,196 @@
+OBJECT Page 36 Assembly BOM
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Assembly BOM;
+               ENG=Assembly BOM];
+    SourceTable=Table90;
+    DataCaptionFields=Parent Item No.;
+    PageType=List;
+    AutoSplitKey=Yes;
+    OnAfterGetRecord=BEGIN
+                       IsEmptyOrItem := Type IN [Type::" ",Type::Item];
+                     END;
+
+    OnInsertRecord=BEGIN
+                     IsEmptyOrItem := Type IN [Type::" ",Type::Item];
+                   END;
+
+    OnAfterGetCurrRecord=BEGIN
+                           IsEmptyOrItem := Type IN [Type::" ",Type::Item];
+                         END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 19      ;1   ;Action    ;
+                      CaptionML=[ENU=E&xplode BOM;
+                                 ENG=E&xplode BOM];
+                      RunObject=Codeunit 51;
+                      Promoted=Yes;
+                      Image=ExplodeBOM;
+                      PromotedCategory=Process }
+      { 5       ;1   ;Action    ;
+                      Name=CalcStandardCost;
+                      CaptionML=[ENU=Calc. Standard Cost;
+                                 ENG=Calc. Standard Cost];
+                      Promoted=Yes;
+                      Image=CalculateCost;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 CalcStdCost@1000 : Codeunit 5812;
+                               BEGIN
+                                 CalcStdCost.CalcItem("Parent Item No.",TRUE)
+                               END;
+                                }
+      { 15      ;1   ;Action    ;
+                      Name=CalcUnitPrice;
+                      CaptionML=[ENU=Calc. Unit Price;
+                                 ENG=Calc. Unit Price];
+                      Promoted=Yes;
+                      Image=SuggestItemPrice;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 CalcStdCost@1000 : Codeunit 5812;
+                               BEGIN
+                                 CalcStdCost.CalcAssemblyItemPrice("Parent Item No.")
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether the assembly BOM component is an item or a resource.;
+                           ENG=Specifies whether the assembly BOM component is an item or a resource.];
+                SourceExpr=Type;
+                OnValidate=BEGIN
+                             IsEmptyOrItem := Type IN [Type::" ",Type::Item];
+                           END;
+                            }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the item or resource that is part of the assembly BOM.;
+                           ENG=Specifies the number of the item or resource that is part of the assembly BOM.];
+                SourceExpr="No." }
+
+    { 28  ;2   ;Field     ;
+                ToolTipML=[ENU=Inserts a variant code in this field if the BOM component is an item variant.;
+                           ENG=Inserts a variant code in this field if the BOM component is an item variant.];
+                SourceExpr="Variant Code";
+                Visible=FALSE }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description of the assembly BOM component.;
+                           ENG=Specifies a description of the assembly BOM component.];
+                SourceExpr=Description }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies Yes if the assembly BOM component is an assembly BOM.;
+                           ENG=Specifies Yes if the assembly BOM component is an assembly BOM.];
+                SourceExpr="Assembly BOM" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how many units of the assembly BOM component are required in the assembly BOM.;
+                           ENG=Specifies how many units of the assembly BOM component are required in the assembly BOM.];
+                SourceExpr="Quantity per" }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the assembly BOM component's unit of measure.;
+                           ENG=Specifies the assembly BOM component's unit of measure.];
+                SourceExpr="Unit of Measure Code" }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies which service item the component on the line is used in.;
+                           ENG=Specifies which service item the component on the line is used in.];
+                SourceExpr="Installed in Item No." }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the component's position in the assembly BOM structure.;
+                           ENG=Specifies the component's position in the assembly BOM structure.];
+                SourceExpr=Position }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the component's position in the assembly BOM structure.;
+                           ENG=Specifies the component's position in the assembly BOM structure.];
+                SourceExpr="Position 2";
+                Visible=FALSE }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the component's position in the assembly BOM structure.;
+                           ENG=Specifies the component's position in the assembly BOM structure.];
+                SourceExpr="Position 3";
+                Visible=FALSE }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a machine that should be used when processing the component on this line of the assembly BOM.;
+                           ENG=Specifies a machine that should be used when processing the component on this line of the assembly BOM.];
+                SourceExpr="Machine No.";
+                Visible=FALSE }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the total number of days required to assemble the item on the assembly BOM line.;
+                           ENG=Specifies the total number of days required to assemble the item on the assembly BOM line.];
+                SourceExpr="Lead-Time Offset";
+                Visible=FALSE }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how the cost of the resource on the assembly BOM is allocated during assembly.;
+                           ENG=Specifies how the cost of the resource on the assembly BOM is allocated during assembly.];
+                SourceExpr="Resource Usage Type";
+                Visible=FALSE;
+                Editable=NOT IsEmptyOrItem;
+                HideValue=IsEmptyOrItem }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 18  ;1   ;Part      ;
+                SubPageLink=No.=FIELD(Parent Item No.);
+                PagePartID=Page910;
+                PartType=Page }
+
+    { 17  ;1   ;Part      ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 11  ;1   ;Part      ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+    { 13  ;1   ;Part      ;
+                SubPageLink=No.=FIELD(No.);
+                PagePartID=Page911;
+                PartType=Page }
+
+    { 9   ;1   ;Part      ;
+                SubPageLink=No.=FIELD(No.);
+                PagePartID=Page912;
+                PartType=Page }
+
+  }
+  CODE
+  {
+    VAR
+      IsEmptyOrItem@1000 : Boolean INDATASET;
+
+    BEGIN
+    END.
+  }
+}
+

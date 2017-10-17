@@ -1,0 +1,91 @@
+OBJECT Page 5637 FA Reclass. Journal Templates
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=FA Reclass. Journal Templates;
+               ENG=FA Reclass. Journal Templates];
+    SourceTable=Table5622;
+    DelayedInsert=Yes;
+    PageType=List;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 17      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Te&mplate;
+                                 ENG=Te&mplate];
+                      Image=Template }
+      { 18      ;2   ;Action    ;
+                      CaptionML=[ENU=Batches;
+                                 ENG=Batches];
+                      ToolTipML=[ENU=View the related journal batches.;
+                                 ENG=View the related journal batches.];
+                      ApplicationArea=#FixedAssets;
+                      RunObject=Page 5640;
+                      RunPageLink=Journal Template Name=FIELD(Name);
+                      Image=Description }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the journal template you are creating.;
+                           ENG=Specifies the name of the journal template you are creating.];
+                ApplicationArea=#FixedAssets;
+                SourceExpr=Name }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the journal template that you are creating.;
+                           ENG=Specifies the journal template that you are creating.];
+                ApplicationArea=#FixedAssets;
+                SourceExpr=Description }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the ID of the window used for batches under this journal template.;
+                           ENG=Specifies the ID of the window used for batches under this journal template.];
+                ApplicationArea=#FixedAssets;
+                SourceExpr="Page ID";
+                Visible=FALSE }
+
+    { 12  ;2   ;Field     ;
+                DrillDown=No;
+                ToolTipML=[ENU=Specifies the name of the window that is specified in the Page ID field.;
+                           ENG=Specifies the name of the window that is specified in the Page ID field.];
+                ApplicationArea=#FixedAssets;
+                SourceExpr="Page Caption";
+                Visible=FALSE }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

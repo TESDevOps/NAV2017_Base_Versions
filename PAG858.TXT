@@ -1,0 +1,56 @@
+OBJECT Page 858 Cash Flow Comment List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Cash Flow Comment List;
+               ENG=Cash Flow Comment List];
+    SourceTable=Table842;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1000;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 1001;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the record.;
+                           ENG=Specifies the number of the record.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="No." }
+
+    { 1003;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Date }
+
+    { 1005;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the comment for the record.;
+                           ENG=Specifies the comment for the record.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Comment }
+
+    { 1007;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the record.;
+                           ENG=Specifies the code of the record.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Code;
+                Visible=FALSE }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

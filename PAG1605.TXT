@@ -1,0 +1,143 @@
+OBJECT Page 1605 Office No Company Dlg
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Do you want to add the contact to a company?;
+               ENG=Do you want to add the contact to a company?];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=Yes;
+    SourceTable=Table5050;
+    OnOpenPage=VAR
+                 OfficeMgt@1000 : Codeunit 1630;
+               BEGIN
+                 Company := COPYSTR(SelectCompanyTxt,1,50);
+                 IF NOT InstructionMgt.IsEnabled(InstructionMgt.OfficeNoCompanyDlgCode) THEN BEGIN
+                   PAGE.RUN(PAGE::"Contact Card",Rec);
+                   CurrPage.CLOSE;
+                   OfficeMgt.CurrPageCloseWorkaround;
+                 END;
+               END;
+
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                Name=Dialog;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                GroupType=Group;
+                InstructionalTextML=[ENU=This contact has not been associated with a company. To view the customer or vendor dashboard for the add-in, the contact must be associated with a contact company that is created as a customer or a vendor.;
+                                     ENG=This contact has not been associated with a company. To view the customer or vendor dashboard for the add-in, the contact must be associated with a contact company that is created as a customer or a vendor.] }
+
+    { 7   ;2   ;Field     ;
+                CaptionML=[ENU=You may link the contact to an existing contact company, create a new contact company, or continue to the contact card for this contact.;
+                           ENG=You may link the contact to an existing contact company, create a new contact company, or continue to the contact card for this contact.];
+                ApplicationArea=#Basic,#Suite;
+                HideValue=TRUE }
+
+    { 5   ;2   ;Field     ;
+                Name=HideDialog;
+                CaptionML=[ENU=Do not show this message again.;
+                           ENG=Do not show this message again.];
+                ToolTipML=[ENU=Specifies to no longer show this message when displaying a contact that is not linked to a company.;
+                           ENG=Specifies to no longer show this message when displaying a contact that is not linked to a company.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=HideMessage }
+
+    { 3   ;2   ;Field     ;
+                Name=Company;
+                DrillDown=No;
+                ToolTipML=[ENU=Specifies the company that is linked to the contact.;
+                           ENG=Specifies the company that is linked to the contact.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Company;
+                TableRelation=Contact WHERE (Type=CONST(Company));
+                OnValidate=VAR
+                             ContBusRel@1000 : Record 5054;
+                           BEGIN
+                             VALIDATE("Company Name",Company);
+                             Company := "Company Name";
+                             MODIFY;
+
+                             IF Company = '' THEN BEGIN
+                               Company := COPYSTR(SelectCompanyTxt,1,50);
+                               CurrPage.UPDATE;
+                             END ELSE BEGIN
+                               ContBusRel.RESET;
+                               ContBusRel.SETRANGE("Contact No.","Company No.");
+                               ContBusRel.SETFILTER("No.",'<>''''');
+
+                               IF ContBusRel.COUNT > 0 THEN
+                                 ShowCustVendBank
+                               ELSE
+                                 PAGE.RUN(PAGE::"Contact Card",Rec);
+                             END;
+                           END;
+
+                ShowCaption=No }
+
+    { 6   ;2   ;Field     ;
+                Name=CreateContactCompany;
+                ToolTipML=[ENU=Specifies a new contact company that links to the current contact.;
+                           ENG=Specifies a new contact company that links to the current contact.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=NewContactCompanyLbl;
+                Editable=FALSE;
+                OnDrillDown=VAR
+                              ContactCompany@1000 : Record 5050;
+                            BEGIN
+                              ContactCompany.INIT;
+                              ContactCompany.COPY(Rec);
+                              ContactCompany."No." := '';
+                              ContactCompany.Type := ContactCompany.Type::Company;
+                              ContactCompany.INSERT(TRUE);
+                              COMMIT;
+                              IF ACTION::LookupOK = PAGE.RUNMODAL(PAGE::"Contact Card",ContactCompany) THEN BEGIN
+                                VALIDATE("Company No.",ContactCompany."No.");
+                                MODIFY(TRUE);
+                                PAGE.RUN(PAGE::"Contact Card",Rec);
+                              END ELSE
+                                ContactCompany.DELETE;
+                            END;
+
+                ShowCaption=No }
+
+    { 4   ;2   ;Field     ;
+                Name=ShowContact;
+                ToolTipML=[ENU=Specifies information about the selected contact.;
+                           ENG=Specifies information about the selected contact.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=STRSUBSTNO(ShowContactLbl,Name);
+                Editable=FALSE;
+                OnDrillDown=BEGIN
+                              PAGE.RUN(PAGE::"Contact Card",Rec);
+                              IF HideMessage THEN
+                                InstructionMgt.DisableMessageForCurrentUser(InstructionMgt.OfficeNoCompanyDlgCode);
+                            END;
+
+                ShowCaption=No }
+
+  }
+  CODE
+  {
+    VAR
+      SelectCompanyTxt@1001 : TextConst 'ENU=Select a company;ENG=Select a company';
+      ShowContactLbl@1002 : TextConst '@@@="%1 = Contact name";ENU=View the contact card for %1;ENG=View the contact card for %1';
+      InstructionMgt@1005 : Codeunit 1330;
+      Company@1000 : Text[50];
+      HideMessage@1003 : Boolean;
+      NewContactCompanyLbl@1004 : TextConst 'ENU=Create a new contact company;ENG=Create a new contact company';
+
+    BEGIN
+    END.
+  }
+}
+

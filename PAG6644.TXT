@@ -1,0 +1,358 @@
+OBJECT Page 6644 Purchase Return Order Archive
+{
+  OBJECT-PROPERTIES
+  {
+    Date=28/04/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16585,NAVGB10.00.00.16585;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Purchase Return Order Archive;
+               ENG=Purchase Return Order Archive];
+    DeleteAllowed=No;
+    SourceTable=Table5109;
+    SourceTableView=WHERE(Document Type=CONST(Return Order));
+    PageType=Document;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 116     ;1   ;ActionGroup;
+                      CaptionML=[ENU=Ver&sion;
+                                 ENG=Ver&sion];
+                      Image=Versions }
+      { 119     ;2   ;Action    ;
+                      ShortCutKey=Shift+F7;
+                      CaptionML=[ENU=Card;
+                                 ENG=Card];
+                      RunObject=Page 26;
+                      RunPageLink=No.=FIELD(Buy-from Vendor No.);
+                      Image=EditLines }
+      { 120     ;2   ;Action    ;
+                      AccessByPermission=TableData 348=R;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      Image=Dimensions;
+                      OnAction=BEGIN
+                                 ShowDimensions;
+                               END;
+                                }
+      { 133     ;2   ;Action    ;
+                      CaptionML=[ENU=Co&mments;
+                                 ENG=Co&mments];
+                      RunObject=Page 5179;
+                      RunPageLink=Document Type=FIELD(Document Type),
+                                  No.=FIELD(No.),
+                                  Document Line No.=CONST(0),
+                                  Doc. No. Occurrence=FIELD(Doc. No. Occurrence),
+                                  Version No.=FIELD(Version No.);
+                      Image=ViewComments }
+      { 130     ;2   ;Action    ;
+                      CaptionML=[ENU=Print;
+                                 ENG=Print];
+                      Image=Print;
+                      OnAction=BEGIN
+                                 DocPrint.PrintPurchHeaderArch(Rec);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                CaptionML=[ENU=General;
+                           ENG=General] }
+
+    { 2   ;2   ;Field     ;
+                SourceExpr="No." }
+
+    { 4   ;2   ;Field     ;
+                CaptionML=[ENU=Vendor No.;
+                           ENG=Vendor No.];
+                SourceExpr="Buy-from Vendor No." }
+
+    { 6   ;2   ;Field     ;
+                CaptionML=[ENU=Vendor;
+                           ENG=Vendor];
+                SourceExpr="Buy-from Vendor Name" }
+
+    { 3   ;2   ;Group     ;
+                CaptionML=[ENU=Buy-from;
+                           ENG=Buy-from];
+                GroupType=Group }
+
+    { 8   ;3   ;Field     ;
+                CaptionML=[ENU=Address;
+                           ENG=Address];
+                SourceExpr="Buy-from Address";
+                Importance=Additional }
+
+    { 10  ;3   ;Field     ;
+                CaptionML=[ENU=Address 2;
+                           ENG=Address 2];
+                SourceExpr="Buy-from Address 2";
+                Importance=Additional }
+
+    { 122 ;3   ;Field     ;
+                CaptionML=[ENU=City;
+                           ENG=City];
+                SourceExpr="Buy-from City";
+                Importance=Additional }
+
+    { 1040002;3;Field     ;
+                SourceExpr="Buy-from County" }
+
+    { 12  ;3   ;Field     ;
+                CaptionML=[ENU=Post Code;
+                           ENG=Postcode];
+                SourceExpr="Buy-from Post Code";
+                Importance=Additional }
+
+    { 123 ;3   ;Field     ;
+                CaptionML=[ENU=Contact No.;
+                           ENG=Contact No.];
+                SourceExpr="Buy-from Contact No.";
+                Importance=Additional }
+
+    { 14  ;2   ;Field     ;
+                CaptionML=[ENU=Contact;
+                           ENG=Contact];
+                SourceExpr="Buy-from Contact" }
+
+    { 20  ;2   ;Field     ;
+                SourceExpr="Document Date" }
+
+    { 16  ;2   ;Field     ;
+                SourceExpr="Posting Date" }
+
+    { 18  ;2   ;Field     ;
+                SourceExpr="Order Date" }
+
+    { 31  ;2   ;Field     ;
+                SourceExpr="Vendor Authorization No." }
+
+    { 28  ;2   ;Field     ;
+                SourceExpr="Vendor Cr. Memo No." }
+
+    { 29  ;2   ;Field     ;
+                SourceExpr="Order Address Code" }
+
+    { 27  ;2   ;Field     ;
+                SourceExpr="Purchaser Code" }
+
+    { 30  ;2   ;Field     ;
+                SourceExpr="Responsibility Center" }
+
+    { 32  ;2   ;Field     ;
+                SourceExpr="Assigned User ID" }
+
+    { 34  ;2   ;Field     ;
+                SourceExpr=Status }
+
+    { 115 ;1   ;Part      ;
+                Name=PurchLinesArchive;
+                SubPageLink=Document No.=FIELD(No.),
+                            Doc. No. Occurrence=FIELD(Doc. No. Occurrence),
+                            Version No.=FIELD(Version No.);
+                PagePartID=Page6645 }
+
+    { 1905885101;1;Group  ;
+                CaptionML=[ENU=Invoice Details;
+                           ENG=Invoice Details];
+                GroupType=Group }
+
+    { 92  ;2   ;Field     ;
+                SourceExpr="Currency Code" }
+
+    { 54  ;2   ;Field     ;
+                SourceExpr="Prices Including VAT";
+                OnValidate=BEGIN
+                             PricesIncludingVATOnAfterValid;
+                           END;
+                            }
+
+    { 52  ;2   ;Field     ;
+                SourceExpr="VAT Bus. Posting Group" }
+
+    { 94  ;2   ;Field     ;
+                SourceExpr="Transaction Type" }
+
+    { 48  ;2   ;Field     ;
+                SourceExpr="Shortcut Dimension 1 Code" }
+
+    { 50  ;2   ;Field     ;
+                SourceExpr="Shortcut Dimension 2 Code" }
+
+    { 60  ;2   ;Field     ;
+                SourceExpr="Applies-to Doc. Type" }
+
+    { 58  ;2   ;Field     ;
+                SourceExpr="Applies-to Doc. No." }
+
+    { 56  ;2   ;Field     ;
+                SourceExpr="Applies-to ID" }
+
+    { 74  ;2   ;Field     ;
+                SourceExpr="Location Code" }
+
+    { 62  ;2   ;Field     ;
+                SourceExpr="Expected Receipt Date" }
+
+    { 1906801201;1;Group  ;
+                CaptionML=[ENU=Shipping and Payment;
+                           ENG=Shipping and Payment];
+                GroupType=Group }
+
+    { 5   ;2   ;Group     ;
+                CaptionML=[ENU=Ship-to;
+                           ENG=Ship-to];
+                GroupType=Group }
+
+    { 64  ;3   ;Field     ;
+                CaptionML=[ENU=Name;
+                           ENG=Name];
+                SourceExpr="Ship-to Name";
+                Importance=Additional }
+
+    { 66  ;3   ;Field     ;
+                CaptionML=[ENU=Address;
+                           ENG=Address];
+                SourceExpr="Ship-to Address";
+                Importance=Additional }
+
+    { 68  ;3   ;Field     ;
+                CaptionML=[ENU=Address 2;
+                           ENG=Address 2];
+                SourceExpr="Ship-to Address 2";
+                Importance=Additional }
+
+    { 126 ;3   ;Field     ;
+                CaptionML=[ENU=City;
+                           ENG=City];
+                SourceExpr="Ship-to City";
+                Importance=Additional }
+
+    { 1040008;3;Field     ;
+                SourceExpr="Ship-to County" }
+
+    { 70  ;3   ;Field     ;
+                CaptionML=[ENU=Post Code;
+                           ENG=Postcode];
+                SourceExpr="Ship-to Post Code";
+                Importance=Additional }
+
+    { 72  ;3   ;Field     ;
+                CaptionML=[ENU=Contact;
+                           ENG=Contact];
+                SourceExpr="Ship-to Contact";
+                Importance=Additional }
+
+    { 7   ;2   ;Group     ;
+                CaptionML=[ENU=Pay-to;
+                           ENG=Pay-to];
+                GroupType=Group }
+
+    { 38  ;3   ;Field     ;
+                CaptionML=[ENU=Name;
+                           ENG=Name];
+                SourceExpr="Pay-to Name";
+                Importance=Promoted }
+
+    { 40  ;3   ;Field     ;
+                CaptionML=[ENU=Address;
+                           ENG=Address];
+                SourceExpr="Pay-to Address";
+                Importance=Additional }
+
+    { 42  ;3   ;Field     ;
+                CaptionML=[ENU=Address 2;
+                           ENG=Address 2];
+                SourceExpr="Pay-to Address 2";
+                Importance=Additional }
+
+    { 124 ;3   ;Field     ;
+                CaptionML=[ENU=City;
+                           ENG=City];
+                SourceExpr="Pay-to City";
+                Importance=Additional }
+
+    { 1040005;3;Field     ;
+                SourceExpr="Pay-to County" }
+
+    { 44  ;3   ;Field     ;
+                CaptionML=[ENU=Post Code;
+                           ENG=Postcode];
+                SourceExpr="Pay-to Post Code";
+                Importance=Additional }
+
+    { 127 ;3   ;Field     ;
+                CaptionML=[ENU=Contact No.;
+                           ENG=Contact No.];
+                SourceExpr="Pay-to Contact No.";
+                Importance=Additional }
+
+    { 46  ;3   ;Field     ;
+                CaptionML=[ENU=Contact;
+                           ENG=Contact];
+                SourceExpr="Pay-to Contact";
+                Importance=Additional }
+
+    { 1907468901;1;Group  ;
+                CaptionML=[ENU=Foreign Trade;
+                           ENG=Foreign Trade] }
+
+    { 96  ;2   ;Field     ;
+                SourceExpr="Transaction Specification" }
+
+    { 98  ;2   ;Field     ;
+                SourceExpr="Transport Method" }
+
+    { 100 ;2   ;Field     ;
+                SourceExpr="Entry Point" }
+
+    { 102 ;2   ;Field     ;
+                SourceExpr=Area }
+
+    { 1904291901;1;Group  ;
+                CaptionML=[ENU=Version;
+                           ENG=Version] }
+
+    { 104 ;2   ;Field     ;
+                SourceExpr="Version No." }
+
+    { 106 ;2   ;Field     ;
+                SourceExpr="Archived By" }
+
+    { 108 ;2   ;Field     ;
+                SourceExpr="Date Archived" }
+
+    { 110 ;2   ;Field     ;
+                SourceExpr="Time Archived" }
+
+    { 112 ;2   ;Field     ;
+                SourceExpr="Interaction Exist" }
+
+  }
+  CODE
+  {
+    VAR
+      DocPrint@1000 : Codeunit 229;
+
+    LOCAL PROCEDURE PricesIncludingVATOnAfterValid@19009096();
+    BEGIN
+      CurrPage.UPDATE;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

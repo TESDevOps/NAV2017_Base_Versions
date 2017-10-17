@@ -1,0 +1,251 @@
+OBJECT Page 6303 Power BI Report Spinner Part
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Power BI Reports;
+               ENG=Power BI Reports];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    SourceTable=Table6302;
+    PageType=CardPart;
+    SourceTableTemporary=Yes;
+    OnOpenPage=BEGIN
+                 UpdateContext;
+                 LoadPart;
+                 CurrPage.UPDATE;
+               END;
+
+    ActionList=ACTIONS
+    {
+      { 3       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 8       ;1   ;Action    ;
+                      Name=Select Report;
+                      CaptionML=[ENU=Select Report;
+                                 ENG=Select Report];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=SelectChart;
+                      OnAction=VAR
+                                 PowerBiReportSelection@1001 : Page 6304;
+                               BEGIN
+                                 PowerBiReportSelection.SetContext(Context);
+                                 PowerBiReportSelection.SetReportBuffer(Rec);
+                                 PowerBiReportSelection.LOOKUPMODE(TRUE);
+
+                                 IF PowerBiReportSelection.RUNMODAL = ACTION::LookupOK THEN BEGIN
+                                   RefreshAvailableReports;
+                                   PowerBiReportSelection.GETRECORD(Rec);
+
+                                   IF AddInReady AND Enabled THEN
+                                     // Only show report if enabled (selection page only returns a disabled report if none are enabled).
+                                     CurrPage.WebReportViewer.Navigate(GetEmbedUrl);
+
+                                   // at this point, NAV will load the web page viewer since HasReports should be true. WebReportViewer::ControlAddInReady will then fire, calling Navigate()
+                                 END;
+                               END;
+                                }
+      { 4       ;1   ;Action    ;
+                      Name=Expand Report;
+                      CaptionML=[ENU=Expand Report;
+                                 ENG=Expand Report];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=HasReports;
+                      Image=View;
+                      OnAction=VAR
+                                 PowerBiReportDialog@1000 : Page 6305;
+                               BEGIN
+                                 PowerBiReportDialog.SetUrl(GetEmbedUrlWithNavigation,GetMessage);
+                                 PowerBiReportDialog.CAPTION(ReportName);
+                                 PowerBiReportDialog.RUN;
+                               END;
+                                }
+      { 5       ;1   ;Action    ;
+                      Name=Previous Report;
+                      CaptionML=[ENU=Previous Report;
+                                 ENG=Previous Report];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=HasReports;
+                      Image=PreviousSet;
+                      OnAction=BEGIN
+                                 IF NEXT(-1) = 0 THEN
+                                   FINDLAST;
+
+                                 CurrPage.WebReportViewer.Navigate(GetEmbedUrl);
+                               END;
+                                }
+      { 6       ;1   ;Action    ;
+                      Name=Next Report;
+                      CaptionML=[ENU=Next Report;
+                                 ENG=Next Report];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=HasReports;
+                      Image=NextSet;
+                      OnAction=BEGIN
+                                 IF NEXT = 0 THEN
+                                   FINDFIRST;
+
+                                 CurrPage.WebReportViewer.Navigate(GetEmbedUrl);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                ContainerType=ContentArea }
+
+    { 9   ;1   ;Group     ;
+                Visible=IsGettingStartedVisible;
+                GroupType=Group }
+
+    { 12  ;2   ;Field     ;
+                Name=GettingStarted;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr='Get started with Power BI';
+                Editable=FALSE;
+                Style=StrongAccent;
+                StyleExpr=TRUE;
+                OnDrillDown=BEGIN
+                              AzureAdMgt.GetAccessToken(PowerBiServiceMgt.GetPowerBiResourceUrl,PowerBiServiceMgt.GetPowerBiResourceName,TRUE);
+                              LoadPart;
+                              CurrPage.UPDATE;
+                            END;
+
+                ShowCaption=No }
+
+    { 7   ;1   ;Group     ;
+                Visible=NOT IsGettingStartedVisible AND NOT HasReports;
+                GroupType=Group }
+
+    { 10  ;2   ;Field     ;
+                Name=EmptyMessage;
+                CaptionML=[ENU=There are no enabled reports. Choose Select Report to see a list of reports that you can display.;
+                           ENG=There are no enabled reports. Choose Select Report to see a list of reports that you can display.];
+                ToolTipML=[ENU=Specifies that the user needs to select Power BI reports.;
+                           ENG=Specifies that the user needs to select Power BI reports.];
+                ApplicationArea=#Basic,#Suite;
+                Editable=FALSE }
+
+    { 11  ;1   ;Group     ;
+                Visible=NOT IsGettingStartedVisible AND HasReports;
+                GroupType=Group }
+
+    { 2   ;2   ;Field     ;
+                Name=WebReportViewer;
+                ApplicationArea=#Basic,#Suite;
+                ControlAddIn=[Microsoft.Dynamics.Nav.Client.WebPageViewer;PublicKeyToken=31bf3856ad364e35] }
+
+  }
+  CODE
+  {
+    VAR
+      PowerBiServiceMgt@1001 : Codeunit 6301;
+      AzureAdMgt@1003 : Codeunit 6300;
+      Context@1005 : Text[30];
+      IsGettingStartedVisible@1000 : Boolean;
+      HasReports@1002 : Boolean;
+      NoReportsAvailableErr@1004 : TextConst 'ENU=There are no reports available from Power BI.;ENG=There are no reports available from Power BI.';
+      AddInReady@1006 : Boolean;
+
+    LOCAL PROCEDURE GetMessage@1() : Text;
+    VAR
+      HttpUtility@1000 : DotNet "'System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'.System.Web.HttpUtility";
+    BEGIN
+      EXIT(
+        '{"action":"loadReport","accessToken":"' +
+        HttpUtility.JavaScriptStringEncode(AzureAdMgt.GetAccessToken(
+            PowerBiServiceMgt.GetPowerBiResourceUrl,PowerBiServiceMgt.GetPowerBiResourceName,FALSE)) + '"}');
+    END;
+
+    LOCAL PROCEDURE GetEmbedUrl@2() : Text;
+    BEGIN
+      // Hides both filters and tabs for embedding in small spaces where navigation is unnecessary.
+      EXIT(EmbedUrl + '&filterPaneEnabled=false&navContentPaneEnabled=false');
+    END;
+
+    LOCAL PROCEDURE GetEmbedUrlWithNavigation@3() : Text;
+    BEGIN
+      // Hides filters and shows tabs for embedding in large spaces where navigation is necessary.
+      EXIT(EmbedUrl + '&filterPaneEnabled=false');
+    END;
+
+    LOCAL PROCEDURE LoadPart@5();
+    BEGIN
+      IsGettingStartedVisible := NOT PowerBiServiceMgt.IsUserReadyForPowerBI;
+
+      DELETEALL;
+      IF IsGettingStartedVisible THEN BEGIN
+        IF AzureAdMgt.IsSaaS THEN
+          ERROR(PowerBiServiceMgt.GetGenericError);
+
+        INSERT // Hack to display Get Started link.
+      END ELSE BEGIN
+        PowerBiServiceMgt.GetReports(Rec,Context);
+
+        IF ISEMPTY THEN
+          ERROR(NoReportsAvailableErr);
+
+        RefreshAvailableReports;
+      END;
+    END;
+
+    LOCAL PROCEDURE RefreshAvailableReports@7();
+    BEGIN
+      RESET;
+      SETRANGE(Enabled,TRUE);
+      HasReports := NOT ISEMPTY;
+    END;
+
+    PROCEDURE SetContext@6(ParentContext@1000 : Text[30]);
+    BEGIN
+      // Sets an ID that tracks which page to show reports for - called by the parent page hosting the part,
+      // if possible (see UpdateContext).
+      Context := ParentContext;
+    END;
+
+    LOCAL PROCEDURE UpdateContext@8();
+    VAR
+      ConfPersonalizationMgt@1000 : Codeunit 9170;
+    BEGIN
+      // Automatically sets the parent page ID based on the user's selected role center (role centers can't
+      // have codebehind, so they have no other way to set the context for their reports).
+      IF Context = '' THEN
+        SetContext(ConfPersonalizationMgt.GetCurrentProfileID);
+    END;
+
+    EVENT WebReportViewer@-2::ControlAddInReady@7(callbackUrl@1000 : Text);
+    BEGIN
+      AddInReady := TRUE;
+      IF NOT ISEMPTY THEN
+        CurrPage.WebReportViewer.Navigate(GetEmbedUrl);
+    END;
+
+    EVENT WebReportViewer@-2::DocumentReady@8();
+    BEGIN
+      IF NOT ISEMPTY THEN
+        CurrPage.WebReportViewer.PostMessage(GetMessage,'*',FALSE);
+    END;
+
+    EVENT WebReportViewer@-2::Callback@9(data@1000 : Text);
+    BEGIN
+    END;
+
+    EVENT WebReportViewer@-2::Refresh@10(callbackUrl@1000 : Text);
+    BEGIN
+      IF AddInReady AND NOT ISEMPTY THEN
+        CurrPage.WebReportViewer.Navigate(GetEmbedUrl);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

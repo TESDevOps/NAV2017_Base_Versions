@@ -1,0 +1,277 @@
+OBJECT Page 145 Posted Purchase Receipts
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/09/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.18609;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Posted Purchase Receipts;
+               ENG=Posted Purchase Receipts];
+    SourceTable=Table120;
+    SourceTableView=SORTING(Posting Date)
+                    ORDER(Descending);
+    PageType=List;
+    CardPageID=Posted Purchase Receipt;
+    OnOpenPage=VAR
+                 OfficeMgt@1000 : Codeunit 1630;
+               BEGIN
+                 SetSecurityFilterOnRespCenter;
+                 IsOfficeAddin := OfficeMgt.IsAvailable;
+               END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 8       ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Receipt;
+                                 ENG=&Receipt];
+                      Image=Receipt }
+      { 23      ;2   ;Action    ;
+                      ShortCutKey=F7;
+                      CaptionML=[ENU=Statistics;
+                                 ENG=Statistics];
+                      RunObject=Page 399;
+                      RunPageLink=No.=FIELD(No.);
+                      Promoted=Yes;
+                      Image=Statistics;
+                      PromotedCategory=Process }
+      { 24      ;2   ;Action    ;
+                      CaptionML=[ENU=Co&mments;
+                                 ENG=Co&mments];
+                      RunObject=Page 66;
+                      RunPageLink=Document Type=CONST(Receipt),
+                                  No.=FIELD(No.);
+                      Image=ViewComments }
+      { 1102601000;2 ;Action    ;
+                      AccessByPermission=TableData 348=R;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      ApplicationArea=#Suite;
+                      Image=Dimensions;
+                      OnAction=BEGIN
+                                 ShowDimensions;
+                               END;
+                                }
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 9       ;1   ;Action    ;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=&Print;
+                                 ENG=&Print];
+                      Promoted=Yes;
+                      Visible=NOT IsOfficeAddin;
+                      Image=Print;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 PurchRcptHeader@1102 : Record 120;
+                               BEGIN
+                                 CurrPage.SETSELECTIONFILTER(PurchRcptHeader);
+                                 PurchRcptHeader.PrintRecords(TRUE);
+                               END;
+                                }
+      { 17      ;1   ;Action    ;
+                      CaptionML=[ENU=&Navigate;
+                                 ENG=&Navigate];
+                      Promoted=Yes;
+                      Visible=NOT IsOfficeAddin;
+                      Image=Navigate;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 Navigate;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the receipt number.;
+                           ENG=Specifies the receipt number.];
+                ApplicationArea=#Suite;
+                SourceExpr="No." }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the vendor that you bought the items from.;
+                           ENG=Specifies the number of the vendor that you bought the items from.];
+                SourceExpr="Buy-from Vendor No." }
+
+    { 13  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the order address code used in the receipt.;
+                           ENG=Specifies the order address code used in the receipt.];
+                SourceExpr="Order Address Code";
+                Visible=FALSE }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the vendor who delivered the items.;
+                           ENG=Specifies the name of the vendor who delivered the items.];
+                ApplicationArea=#Suite;
+                SourceExpr="Buy-from Vendor Name" }
+
+    { 25  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code of the address.;
+                           ENG=Specifies the postcode of the address.];
+                SourceExpr="Buy-from Post Code";
+                Visible=FALSE }
+
+    { 21  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the country/region code of the address.;
+                           ENG=Specifies the country/region code of the address.];
+                SourceExpr="Buy-from Country/Region Code";
+                Visible=FALSE }
+
+    { 33  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the person to contact at the vendor who shipped the items.;
+                           ENG=Specifies the name of the person to contact at the vendor who shipped the items.];
+                SourceExpr="Buy-from Contact";
+                Visible=FALSE }
+
+    { 103 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the vendor who invoiced the shipment.;
+                           ENG=Specifies the number of the vendor who invoiced the shipment.];
+                SourceExpr="Pay-to Vendor No.";
+                Visible=FALSE }
+
+    { 101 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the vendor who invoiced the shipment.;
+                           ENG=Specifies the name of the vendor who invoiced the shipment.];
+                SourceExpr="Pay-to Name";
+                Visible=FALSE }
+
+    { 31  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code of the address.;
+                           ENG=Specifies the postcode of the address.];
+                SourceExpr="Pay-to Post Code";
+                Visible=FALSE }
+
+    { 27  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the country/region code of the address.;
+                           ENG=Specifies the country/region code of the address.];
+                SourceExpr="Pay-to Country/Region Code";
+                Visible=FALSE }
+
+    { 91  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the person you should contact at the vendor who invoiced the shipment.;
+                           ENG=Specifies the name of the person you should contact at the vendor who invoiced the shipment.];
+                SourceExpr="Pay-to Contact";
+                Visible=FALSE }
+
+    { 87  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the shipment of the sales order that is linked to the purchase order for drop shipment from the vendor to a customer.;
+                           ENG=Specifies the shipment of the sales order that is linked to the purchase order for drop shipment from the vendor to a customer.];
+                SourceExpr="Ship-to Code";
+                Visible=FALSE }
+
+    { 85  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the company at the address to which the items were shipped.;
+                           ENG=Specifies the name of the company at the address to which the items were shipped.];
+                SourceExpr="Ship-to Name";
+                Visible=FALSE }
+
+    { 19  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code of the address.;
+                           ENG=Specifies the postcode of the address.];
+                SourceExpr="Ship-to Post Code";
+                Visible=FALSE }
+
+    { 15  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the country/region code of the address.;
+                           ENG=Specifies the country/region code of the address.];
+                SourceExpr="Ship-to Country/Region Code";
+                Visible=FALSE }
+
+    { 75  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of a contact person at the address that the items were shipped to.;
+                           ENG=Specifies the name of a contact person at the address that the items were shipped to.];
+                SourceExpr="Ship-to Contact";
+                Visible=FALSE }
+
+    { 71  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date the purchase header was posted.;
+                           ENG=Specifies the date the purchase header was posted.];
+                ApplicationArea=#Suite;
+                SourceExpr="Posting Date";
+                Visible=FALSE }
+
+    { 57  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies which purchaser is associated with the receipt.;
+                           ENG=Specifies which purchaser is associated with the receipt.];
+                ApplicationArea=#Suite;
+                SourceExpr="Purchaser Code";
+                Visible=FALSE }
+
+    { 63  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for Shortcut Dimension 1.;
+                           ENG=Specifies the code for Shortcut Dimension 1.];
+                ApplicationArea=#Suite;
+                SourceExpr="Shortcut Dimension 1 Code";
+                Visible=FALSE }
+
+    { 61  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for Shortcut Dimension 2.;
+                           ENG=Specifies the code for Shortcut Dimension 2.];
+                ApplicationArea=#Suite;
+                SourceExpr="Shortcut Dimension 2 Code";
+                Visible=FALSE }
+
+    { 65  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the location where the items on the receipt were registered.;
+                           ENG=Specifies the code for the location where the items on the receipt were registered.];
+                SourceExpr="Location Code";
+                Visible=TRUE }
+
+    { 53  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how many times the receipt has been printed.;
+                           ENG=Specifies how many times the receipt has been printed.];
+                SourceExpr="No. Printed" }
+
+    { 1102601001;2;Field  ;
+                ToolTipML=[ENU=Specifies the date when the purchase document was created.;
+                           ENG=Specifies the date when the purchase document was created.];
+                ApplicationArea=#Suite;
+                SourceExpr="Document Date";
+                Visible=FALSE }
+
+    { 1102601003;2;Field  ;
+                ToolTipML=[ENU=Specifies the code used to find the shipment method for this receipt.;
+                           ENG=Specifies the code used to find the shipment method for this receipt.];
+                SourceExpr="Shipment Method Code";
+                Visible=FALSE }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=TRUE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      IsOfficeAddin@1000 : Boolean;
+
+    BEGIN
+    END.
+  }
+}
+

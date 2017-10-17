@@ -1,0 +1,80 @@
+OBJECT Page 2117 O365 Mark As Paid
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Mark as paid;
+               ENG=Mark as paid];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    SourceTable=Table981;
+    PageType=StandardDialog;
+    SourceTableTemporary=Yes;
+    ShowFilter=No;
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=General;
+                CaptionML=[ENU=Payment;
+                           ENG=Payment];
+                GroupType=Group }
+
+    { 7   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the amount that still needs to be paid.;
+                           ENG=Specifies the amount that still needs to be paid.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Rem. Amt. after Discount";
+                Editable=FALSE }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the payment received.;
+                           ENG=Specifies the payment received.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Amount Received" }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the amount that has not been paid.;
+                           ENG=Specifies the amount that has not been paid.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Remaining Amount";
+                Editable=FALSE }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date the payment is received.;
+                           ENG=Specifies the date the payment is received.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Date Received" }
+
+    { 6   ;1   ;Part      ;
+                Name=SalesHistoryListPart;
+                ApplicationArea=#Basic,#Suite;
+                PagePartID=Page2119;
+                Visible=SalesHistoryHasEntries;
+                PartType=Page }
+
+  }
+  CODE
+  {
+    VAR
+      SalesHistoryHasEntries@1001 : Boolean;
+
+    PROCEDURE SetPaymentRegistrationBuffer@1(VAR TempPaymentRegistrationBuffer@1000 : TEMPORARY Record 981);
+    BEGIN
+      COPY(TempPaymentRegistrationBuffer,TRUE);
+      SalesHistoryHasEntries := CurrPage.SalesHistoryListPart.PAGE.ShowHistory("Document No.");
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

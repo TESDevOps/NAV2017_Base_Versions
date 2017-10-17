@@ -1,0 +1,88 @@
+OBJECT Page 2119 O365 Payment History ListPart
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Payment History;
+               ENG=Payment History];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    SourceTable=Table2105;
+    PageType=ListPart;
+    SourceTableTemporary=Yes;
+    ShowFilter=No;
+    ActionList=ACTIONS
+    {
+      { 6       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 8       ;1   ;Action    ;
+                      Name=MarkAsUnpaid;
+                      CaptionML=[ENU=Mark as unpaid;
+                                 ENG=Mark as unpaid];
+                      ToolTipML=[ENU=Mark the payment as unpaid.;
+                                 ENG=Mark the payment as unpaid.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Cancel;
+                      Scope=Repeater;
+                      OnAction=BEGIN
+                                 CancelPayment;
+                                 FillPaymentHistory(SalesInvoiceDocNo,TRUE);
+                               END;
+
+                      Gesture=RightSwipe }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of the entry.;
+                           ENG=Specifies the type of the entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Type }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the payment received.;
+                           ENG=Specifies the payment received.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amount }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date the payment is received.;
+                           ENG=Specifies the date the payment is received.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Date Received" }
+
+  }
+  CODE
+  {
+    VAR
+      SalesInvoiceDocNo@1000 : Code[20];
+
+    PROCEDURE ShowHistory@1(SalesInvoiceDocumentNo@1000 : Code[20]) : Boolean;
+    BEGIN
+      SalesInvoiceDocNo := SalesInvoiceDocumentNo;
+      FillPaymentHistory(SalesInvoiceDocumentNo,FALSE);
+      EXIT(NOT ISEMPTY)
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

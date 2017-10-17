@@ -1,0 +1,565 @@
+OBJECT Page 5740 Transfer Order
+{
+  OBJECT-PROPERTIES
+  {
+    Date=28/04/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16585,NAVGB10.00.00.16585;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Transfer Order;
+               ENG=Transfer Order];
+    SourceTable=Table5740;
+    PageType=Document;
+    RefreshOnActivate=Yes;
+    OnDeleteRecord=BEGIN
+                     TESTFIELD(Status,Status::Open);
+                   END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 57      ;1   ;ActionGroup;
+                      CaptionML=[ENU=O&rder;
+                                 ENG=O&rder];
+                      Image=Order }
+      { 27      ;2   ;Action    ;
+                      ShortCutKey=F7;
+                      CaptionML=[ENU=Statistics;
+                                 ENG=Statistics];
+                      RunObject=Page 5755;
+                      RunPageLink=No.=FIELD(No.);
+                      Promoted=Yes;
+                      Image=Statistics;
+                      PromotedCategory=Process }
+      { 28      ;2   ;Action    ;
+                      CaptionML=[ENU=Co&mments;
+                                 ENG=Co&mments];
+                      RunObject=Page 5750;
+                      RunPageLink=Document Type=CONST(Transfer Order),
+                                  No.=FIELD(No.);
+                      Image=ViewComments }
+      { 65      ;2   ;Action    ;
+                      Name=Dimensions;
+                      AccessByPermission=TableData 348=R;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      Image=Dimensions;
+                      OnAction=BEGIN
+                                 ShowDocDim;
+                                 CurrPage.SAVERECORD;
+                               END;
+                                }
+      { 5       ;1   ;ActionGroup;
+                      CaptionML=[ENU=Documents;
+                                 ENG=Documents];
+                      Image=Documents }
+      { 81      ;2   ;Action    ;
+                      CaptionML=[ENU=S&hipments;
+                                 ENG=S&hipments];
+                      RunObject=Page 5752;
+                      RunPageLink=Transfer Order No.=FIELD(No.);
+                      Image=Shipment }
+      { 82      ;2   ;Action    ;
+                      CaptionML=[ENU=Re&ceipts;
+                                 ENG=Re&ceipts];
+                      RunObject=Page 5753;
+                      RunPageLink=Transfer Order No.=FIELD(No.);
+                      Image=PostedReceipts }
+      { 7       ;1   ;ActionGroup;
+                      CaptionML=[ENU=Warehouse;
+                                 ENG=Warehouse];
+                      Image=Warehouse }
+      { 98      ;2   ;Action    ;
+                      CaptionML=[ENU=Whse. Shi&pments;
+                                 ENG=Whse. Shi&pments];
+                      RunObject=Page 7341;
+                      RunPageView=SORTING(Source Type,Source Subtype,Source No.,Source Line No.);
+                      RunPageLink=Source Type=CONST(5741),
+                                  Source Subtype=CONST(0),
+                                  Source No.=FIELD(No.);
+                      Image=Shipment }
+      { 97      ;2   ;Action    ;
+                      CaptionML=[ENU=&Whse. Receipts;
+                                 ENG=&Whse. Receipts];
+                      RunObject=Page 7342;
+                      RunPageView=SORTING(Source Type,Source Subtype,Source No.,Source Line No.);
+                      RunPageLink=Source Type=CONST(5741),
+                                  Source Subtype=CONST(1),
+                                  Source No.=FIELD(No.);
+                      Image=Receipt }
+      { 85      ;2   ;Action    ;
+                      CaptionML=[ENU=In&vt. Put-away/Pick Lines;
+                                 ENG=In&vt. Put-away/Pick Lines];
+                      RunObject=Page 5774;
+                      RunPageView=SORTING(Source Document,Source No.,Location Code);
+                      RunPageLink=Source Document=FILTER(Inbound Transfer|Outbound Transfer),
+                                  Source No.=FIELD(No.);
+                      Image=PickLines }
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 69      ;1   ;Action    ;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=&Print;
+                                 ENG=&Print];
+                      Promoted=Yes;
+                      Image=Print;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 DocPrint@1001 : Codeunit 229;
+                               BEGIN
+                                 DocPrint.PrintTransferHeader(Rec);
+                               END;
+                                }
+      { 3       ;1   ;ActionGroup;
+                      CaptionML=[ENU=Release;
+                                 ENG=Release];
+                      Image=ReleaseDoc }
+      { 59      ;2   ;Action    ;
+                      ShortCutKey=Ctrl+F9;
+                      CaptionML=[ENU=Re&lease;
+                                 ENG=Re&lease];
+                      RunObject=Codeunit 5708;
+                      Promoted=Yes;
+                      Image=ReleaseDoc;
+                      PromotedCategory=Process }
+      { 48      ;2   ;Action    ;
+                      CaptionML=[ENU=Reo&pen;
+                                 ENG=Reo&pen];
+                      Promoted=Yes;
+                      Image=ReOpen;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 ReleaseTransferDoc@1001 : Codeunit 5708;
+                               BEGIN
+                                 ReleaseTransferDoc.Reopen(Rec);
+                               END;
+                                }
+      { 58      ;1   ;ActionGroup;
+                      CaptionML=[ENU=F&unctions;
+                                 ENG=F&unctions];
+                      Image=Action }
+      { 5778    ;2   ;Action    ;
+                      AccessByPermission=TableData 7320=R;
+                      CaptionML=[ENU=Create Whse. S&hipment;
+                                 ENG=Create Whse. S&hipment];
+                      Image=NewShipment;
+                      OnAction=VAR
+                                 GetSourceDocOutbound@1001 : Codeunit 5752;
+                               BEGIN
+                                 GetSourceDocOutbound.CreateFromOutbndTransferOrder(Rec);
+                               END;
+                                }
+      { 84      ;2   ;Action    ;
+                      AccessByPermission=TableData 7316=R;
+                      CaptionML=[ENU=Create &Whse. Receipt;
+                                 ENG=Create &Whse. Receipt];
+                      Image=NewReceipt;
+                      OnAction=VAR
+                                 GetSourceDocInbound@1001 : Codeunit 5751;
+                               BEGIN
+                                 GetSourceDocInbound.CreateFromInbndTransferOrder(Rec);
+                               END;
+                                }
+      { 94      ;2   ;Action    ;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Create Inventor&y Put-away/Pick;
+                                 ENG=Create Inventor&y Put-away/Pick];
+                      Image=CreateInventoryPickup;
+                      OnAction=BEGIN
+                                 CreateInvtPutAwayPick;
+                               END;
+                                }
+      { 95      ;2   ;Action    ;
+                      AccessByPermission=TableData 7302=R;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Get Bin Content;
+                                 ENG=Get Bin Content];
+                      Image=GetBinContent;
+                      OnAction=VAR
+                                 BinContent@1002 : Record 7302;
+                                 GetBinContent@1000 : Report 7391;
+                               BEGIN
+                                 BinContent.SETRANGE("Location Code","Transfer-from Code");
+                                 GetBinContent.SETTABLEVIEW(BinContent);
+                                 GetBinContent.InitializeTransferHeader(Rec);
+                                 GetBinContent.RUNMODAL;
+                               END;
+                                }
+      { 62      ;1   ;ActionGroup;
+                      CaptionML=[ENU=P&osting;
+                                 ENG=P&osting];
+                      Image=Post }
+      { 66      ;2   ;Action    ;
+                      Name=Post;
+                      ShortCutKey=F9;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=P&ost;
+                                 ENG=P&ost];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=PostOrder;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 CODEUNIT.RUN(CODEUNIT::"TransferOrder-Post (Yes/No)",Rec);
+                               END;
+                                }
+      { 67      ;2   ;Action    ;
+                      Name=PostAndPrint;
+                      ShortCutKey=Shift+F9;
+                      CaptionML=[ENU=Post and &Print;
+                                 ENG=Post and &Print];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=PostPrint;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 CODEUNIT.RUN(CODEUNIT::"TransferOrder-Post + Print",Rec);
+                               END;
+                                }
+      { 1900000006;0 ;ActionContainer;
+                      ActionContainerType=Reports }
+      { 1901320106;1 ;Action    ;
+                      CaptionML=[ENU=Inventory - Inbound Transfer;
+                                 ENG=Inventory - Inbound Transfer];
+                      RunObject=Report 5702;
+                      Promoted=Yes;
+                      Image=Report;
+                      PromotedCategory=Report }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                CaptionML=[ENU=General;
+                           ENG=General] }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the transfer order.;
+                           ENG=Specifies the number of the transfer order.];
+                SourceExpr="No.";
+                Importance=Promoted;
+                OnAssistEdit=BEGIN
+                               IF AssistEdit(xRec) THEN
+                                 CurrPage.UPDATE;
+                             END;
+                              }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the location from which items are transferred.;
+                           ENG=Specifies the code of the location from which items are transferred.];
+                SourceExpr="Transfer-from Code";
+                Importance=Promoted }
+
+    { 34  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the location that you are transferring items to.;
+                           ENG=Specifies the code of the location that you are transferring items to.];
+                SourceExpr="Transfer-to Code";
+                Importance=Promoted }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the in-transit code that identifies this transfer.;
+                           ENG=Specifies the in-transit code that identifies this transfer.];
+                SourceExpr="In-Transit Code" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the posting date of the transfer order.;
+                           ENG=Specifies the posting date of the transfer order.];
+                SourceExpr="Posting Date";
+                OnValidate=BEGIN
+                             PostingDateOnAfterValidate;
+                           END;
+                            }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code for the dimension that has been chosen as Global Dimension 1.;
+                           ENG=Specifies the dimension value code for the dimension that has been chosen as Global Dimension 1.];
+                SourceExpr="Shortcut Dimension 1 Code" }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code for the dimension that has been chosen as Global Dimension 2.;
+                           ENG=Specifies the dimension value code for the dimension that has been chosen as Global Dimension 2.];
+                SourceExpr="Shortcut Dimension 2 Code" }
+
+    { 106 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the ID of the user who is responsible for the document.;
+                           ENG=Specifies the ID of the user who is responsible for the document.];
+                SourceExpr="Assigned User ID" }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Indicates whether the transfer order is open or has been released for the next stage of processing.;
+                           ENG=Indicates whether the transfer order is open or has been released for the next stage of processing.];
+                SourceExpr=Status;
+                Importance=Promoted }
+
+    { 55  ;1   ;Part      ;
+                Name=TransferLines;
+                SubPageLink=Document No.=FIELD(No.),
+                            Derived From Line No.=CONST(0);
+                PagePartID=Page5741 }
+
+    { 1904655901;1;Group  ;
+                CaptionML=[ENU=Transfer-from;
+                           ENG=Transfer-from] }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the location from which items are transferred.;
+                           ENG=Specifies the name of the location from which items are transferred.];
+                SourceExpr="Transfer-from Name" }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies an additional part of the name of the location from which items are transferred.;
+                           ENG=Specifies an additional part of the name of the location from which items are transferred.];
+                SourceExpr="Transfer-from Name 2" }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the address of the location from which items are transferred.;
+                           ENG=Specifies the address of the location from which items are transferred.];
+                SourceExpr="Transfer-from Address" }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies an additional part of the address.;
+                           ENG=Specifies an additional part of the address.];
+                SourceExpr="Transfer-from Address 2" }
+
+    { 1040000;2;Field     ;
+                SourceExpr="Transfer-from City" }
+
+    { 1040002;2;Field     ;
+                SourceExpr="Transfer-from County" }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code of the location from which items are transferred.;
+                           ENG=Specifies the postcode of the location from which items are transferred.];
+                SourceExpr="Transfer-from Post Code" }
+
+    { 49  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the contact person at the transfer-from location.;
+                           ENG=Specifies the name of the contact person at the transfer-from location.];
+                SourceExpr="Transfer-from Contact" }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date the order is expected to be shipped.;
+                           ENG=Specifies the date the order is expected to be shipped.];
+                SourceExpr="Shipment Date";
+                Importance=Promoted;
+                OnValidate=BEGIN
+                             ShipmentDateOnAfterValidate;
+                           END;
+                            }
+
+    { 89  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the time it takes for the Transfer-from location to prepare the shipment to the Transfer-to location.;
+                           ENG=Specifies the time it takes for the Transfer-from location to prepare the shipment to the Transfer-to location.];
+                SourceExpr="Outbound Whse. Handling Time";
+                OnValidate=BEGIN
+                             OutboundWhseHandlingTimeOnAfte;
+                           END;
+                            }
+
+    { 79  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the shipment method code that you have entered for this order.;
+                           ENG=Specifies the shipment method code that you have entered for this order.];
+                SourceExpr="Shipment Method Code" }
+
+    { 72  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the shipping agent you are using to ship the items on this transfer order.;
+                           ENG=Specifies the code for the shipping agent you are using to ship the items on this transfer order.];
+                SourceExpr="Shipping Agent Code";
+                Importance=Promoted;
+                OnValidate=BEGIN
+                             ShippingAgentCodeOnAfterValida;
+                           END;
+                            }
+
+    { 74  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the shipping agent service that you are using to ship the items on this transfer order.;
+                           ENG=Specifies the code for the shipping agent service that you are using to ship the items on this transfer order.];
+                SourceExpr="Shipping Agent Service Code";
+                OnValidate=BEGIN
+                             ShippingAgentServiceCodeOnAfte;
+                           END;
+                            }
+
+    { 76  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the shipping time, used to calculate the receipt date.;
+                           ENG=Specifies the shipping time, used to calculate the receipt date.];
+                SourceExpr="Shipping Time";
+                OnValidate=BEGIN
+                             ShippingTimeOnAfterValidate;
+                           END;
+                            }
+
+    { 70  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies advice for the warehouse sending the items, about whether a partial delivery is acceptable.;
+                           ENG=Specifies advice for the warehouse sending the items, about whether a partial delivery is acceptable.];
+                SourceExpr="Shipping Advice";
+                Importance=Promoted;
+                OnValidate=BEGIN
+                             IF "Shipping Advice" <> xRec."Shipping Advice" THEN
+                               IF NOT CONFIRM(Text000,FALSE,FIELDCAPTION("Shipping Advice")) THEN
+                                 ERROR('');
+                           END;
+                            }
+
+    { 1901454601;1;Group  ;
+                CaptionML=[ENU=Transfer-to;
+                           ENG=Transfer-to] }
+
+    { 36  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the location that you are transferring items to.;
+                           ENG=Specifies the name of the location that you are transferring items to.];
+                SourceExpr="Transfer-to Name" }
+
+    { 38  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies an additional part of the transfer-to name of the location that you are transferring items to.;
+                           ENG=Specifies an additional part of the transfer-to name of the location that you are transferring items to.];
+                SourceExpr="Transfer-to Name 2" }
+
+    { 40  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the address of the location that you are transferring items to.;
+                           ENG=Specifies the address of the location that you are transferring items to.];
+                SourceExpr="Transfer-to Address" }
+
+    { 42  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies an additional part of the address of the location to which items are transferred.;
+                           ENG=Specifies an additional part of the address of the location to which items are transferred.];
+                SourceExpr="Transfer-to Address 2" }
+
+    { 1040004;2;Field     ;
+                SourceExpr="Transfer-to City" }
+
+    { 1040006;2;Field     ;
+                SourceExpr="Transfer-to County" }
+
+    { 44  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code of the location that you are transferring items to.;
+                           ENG=Specifies the postcode of the location that you are transferring items to.];
+                SourceExpr="Transfer-to Post Code" }
+
+    { 51  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the contact person at the transfer-to location.;
+                           ENG=Specifies the name of the contact person at the transfer-to location.];
+                SourceExpr="Transfer-to Contact" }
+
+    { 52  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date that you expect the transfer-to location to receive the shipment.;
+                           ENG=Specifies the date that you expect the transfer-to location to receive the shipment.];
+                SourceExpr="Receipt Date";
+                OnValidate=BEGIN
+                             ReceiptDateOnAfterValidate;
+                           END;
+                            }
+
+    { 91  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the time it takes to make items part of available inventory, after the items have been posted as received.;
+                           ENG=Specifies the time it takes to make items part of available inventory, after the items have been posted as received.];
+                SourceExpr="Inbound Whse. Handling Time";
+                OnValidate=BEGIN
+                             InboundWhseHandlingTimeOnAfter;
+                           END;
+                            }
+
+    { 1907468901;1;Group  ;
+                CaptionML=[ENU=Foreign Trade;
+                           ENG=Foreign Trade] }
+
+    { 104 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the transaction type of the transfer.;
+                           ENG=Specifies the transaction nature code of the transfer.];
+                SourceExpr="Transaction Type";
+                Importance=Promoted }
+
+    { 102 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the transaction specification code that was used in the transfer.;
+                           ENG=Specifies the transaction specification code that was used in the transfer.];
+                SourceExpr="Transaction Specification" }
+
+    { 100 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the transport method used for the item on this line.;
+                           ENG=Specifies the code for the transport method used for the item on this line.];
+                SourceExpr="Transport Method";
+                Importance=Promoted }
+
+    { 96  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for an area at the customer or vendor with which you are trading the items on the line.;
+                           ENG=Specifies the code for an area at the customer or vendor with which you are trading the items on the line.];
+                SourceExpr=Area }
+
+    { 83  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of either the port of entry at which the items passed into your country/region, or the port of exit.;
+                           ENG=Specifies the code of either the port of entry at which the items passed into your country/region, or the port of exit.];
+                SourceExpr="Entry/Exit Point" }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=TRUE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      Text000@1000 : TextConst 'ENU=Do you want to change %1 in all related records in the warehouse?;ENG=Do you want to change %1 in all related records in the warehouse?';
+
+    LOCAL PROCEDURE PostingDateOnAfterValidate@19003005();
+    BEGIN
+      CurrPage.TransferLines.PAGE.UpdateForm(TRUE);
+    END;
+
+    LOCAL PROCEDURE ShipmentDateOnAfterValidate@19068710();
+    BEGIN
+      CurrPage.TransferLines.PAGE.UpdateForm(FALSE);
+    END;
+
+    LOCAL PROCEDURE ShippingAgentServiceCodeOnAfte@19046563();
+    BEGIN
+      CurrPage.TransferLines.PAGE.UpdateForm(FALSE);
+    END;
+
+    LOCAL PROCEDURE ShippingAgentCodeOnAfterValida@19008956();
+    BEGIN
+      CurrPage.TransferLines.PAGE.UpdateForm(FALSE);
+    END;
+
+    LOCAL PROCEDURE ShippingTimeOnAfterValidate@19029567();
+    BEGIN
+      CurrPage.TransferLines.PAGE.UpdateForm(FALSE);
+    END;
+
+    LOCAL PROCEDURE OutboundWhseHandlingTimeOnAfte@19078070();
+    BEGIN
+      CurrPage.TransferLines.PAGE.UpdateForm(FALSE);
+    END;
+
+    LOCAL PROCEDURE ReceiptDateOnAfterValidate@19074743();
+    BEGIN
+      CurrPage.TransferLines.PAGE.UpdateForm(FALSE);
+    END;
+
+    LOCAL PROCEDURE InboundWhseHandlingTimeOnAfter@19076948();
+    BEGIN
+      CurrPage.TransferLines.PAGE.UpdateForm(FALSE);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

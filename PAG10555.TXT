@@ -1,0 +1,50 @@
+OBJECT Page 10555 Fin. Charge Interest Rates
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVGB10.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Fin. Charge Interest Rates;
+               ENG=Fin. Charge Interest Rates];
+    SourceTable=Table10555;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1080000;1;Group     ;
+                GroupType=Repeater }
+
+    { 1080003;2;Field     ;
+                ToolTipML=[ENU=Specifies the start date for the interest rate.;
+                           ENG=Specifies the start date for the interest rate.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Start Date" }
+
+    { 1080005;2;Field     ;
+                ToolTipML=[ENU=Specifies the interest rate percentage.;
+                           ENG=Specifies the interest rate percentage.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Interest Rate" }
+
+    { 1080001;2;Field     ;
+                ToolTipML=[ENU=Specifies the number of days in the interest period.;
+                           ENG=Specifies the number of days in the interest period.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Interest Period (Days)" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

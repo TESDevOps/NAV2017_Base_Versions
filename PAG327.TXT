@@ -1,0 +1,126 @@
+OBJECT Page 327 Intrastat Jnl. Batches
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00,NAVGB10.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Intrastat Jnl. Batches;
+               ENG=Intrastat Jnl. Batches];
+    SourceTable=Table262;
+    DataCaptionExpr=DataCaption;
+    PageType=List;
+    OnInit=BEGIN
+             SETRANGE("Journal Template Name");
+           END;
+
+    OnOpenPage=BEGIN
+                 IntraJnlManagement.OpenJnlBatch(Rec);
+               END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 15      ;1   ;Action    ;
+                      Name=EditJournal;
+                      ShortCutKey=Return;
+                      CaptionML=[ENU=Edit Journal;
+                                 ENG=Edit Journal];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=OpenJournal;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 IntraJnlManagement.TemplateSelectionFromBatch(Rec);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the Intrastat journal.;
+                           ENG=Specifies the name of the Intrastat journal.];
+                SourceExpr=Name }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies some information about the Intrastat journal.;
+                           ENG=Specifies some information about the Intrastat journal.];
+                SourceExpr=Description }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the statistics period the report will cover.;
+                           ENG=Specifies the statistics period the report will cover.];
+                SourceExpr="Statistics Period" }
+
+    { 13  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a code that identifies the currency of the Intrastat report.;
+                           ENG=Specifies a code that identifies the currency of the Intrastat report.];
+                SourceExpr="Currency Identifier" }
+
+    { 17  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies that you use an additional reporting currency in the general ledger and that you want to report Intrastat in this currency.;
+                           ENG=Specifies that you use an additional reporting currency in the general ledger and that you want to report Intrastat in this currency.];
+                SourceExpr="Amounts in Add. Currency";
+                Visible=FALSE }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether the entry has already been reported to the tax authorities.;
+                           ENG=Specifies whether the entry has already been reported to the tax authorities.];
+                SourceExpr=Reported }
+
+    { 1040000;2;Field     ;
+                ToolTipML=[ENU=Specifies if arrivals have been reported for this journal batch.;
+                           ENG=Specifies if arrivals have been reported for this journal batch.];
+                SourceExpr="Arrivals Reported" }
+
+    { 1040002;2;Field     ;
+                ToolTipML=[ENU=Specifies if dispatches have been reported for this journal batch.;
+                           ENG=Specifies if dispatches have been reported for this journal batch.];
+                SourceExpr="Dispatches Reported" }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      IntraJnlManagement@1000 : Codeunit 350;
+
+    LOCAL PROCEDURE DataCaption@1() : Text[250];
+    VAR
+      IntraJnlTemplate@1000 : Record 261;
+    BEGIN
+      IF NOT CurrPage.LOOKUPMODE THEN
+        IF (GETFILTER("Journal Template Name") <> '') AND (GETFILTER("Journal Template Name") <> '''''') THEN
+          IF GETRANGEMIN("Journal Template Name") = GETRANGEMAX("Journal Template Name") THEN
+            IF IntraJnlTemplate.GET(GETRANGEMIN("Journal Template Name")) THEN
+              EXIT(IntraJnlTemplate.Name + ' ' + IntraJnlTemplate.Description);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

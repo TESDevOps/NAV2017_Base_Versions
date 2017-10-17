@@ -1,0 +1,157 @@
+OBJECT Page 5157 Customer Template Card
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Customer Template Card;
+               ENG=Customer Template Card];
+    SourceTable=Table5105;
+    PageType=Card;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 29      ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Customer Template;
+                                 ENG=&Customer Template];
+                      Image=Template }
+      { 31      ;2   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      RunObject=Page 540;
+                      RunPageLink=Table ID=CONST(5105),
+                                  No.=FIELD(Code);
+                      Image=Dimensions }
+      { 27      ;1   ;ActionGroup;
+                      CaptionML=[ENU=S&ales;
+                                 ENG=S&ales];
+                      Image=Sales }
+      { 28      ;2   ;Action    ;
+                      CaptionML=[ENU=Invoice &Discounts;
+                                 ENG=Invoice &Discounts];
+                      RunObject=Page 23;
+                      RunPageLink=Code=FIELD(Invoice Disc. Code);
+                      Image=CalculateInvoiceDiscount }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                CaptionML=[ENU=General;
+                           ENG=General] }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the customer template. You can set up as many codes as you want. The code must be unique. You cannot have the same code twice in one table.;
+                           ENG=Specifies the code for the customer template. You can set up as many codes as you want. The code must be unique. You cannot have the same code twice in one table.];
+                ApplicationArea=#All;
+                SourceExpr=Code }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the description of the customer template.;
+                           ENG=Specifies the description of the customer template.];
+                ApplicationArea=#All;
+                SourceExpr=Description }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the country/region code for the customer template.;
+                           ENG=Specifies the country/region code for the customer template.];
+                SourceExpr="Country/Region Code" }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the territory code for the customer template.;
+                           ENG=Specifies the territory code for the customer template.];
+                SourceExpr="Territory Code" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the currency code for the customer template.;
+                           ENG=Specifies the currency code for the customer template.];
+                SourceExpr="Currency Code" }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general business posting group for the customer template. To see the general business posting groups in the Gen. Business Posting Groups window, click the field.;
+                           ENG=Specifies the general business posting group for the customer template. To see the general business posting groups in the Gen. Business Posting Groups window, click the field.];
+                SourceExpr="Gen. Bus. Posting Group" }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a VAT business posting group for the customer template. To see the VAT business posting groups in the VAT Business Posting Groups window, click the field.;
+                           ENG=Specifies a VAT business posting group for the customer template. To see the VAT business posting groups in the VAT Business Posting Groups window, click the field.];
+                SourceExpr="VAT Bus. Posting Group" }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a code for the customer posting group to which the customer template will belong. To see the customer posting group codes in the Customer Posting Groups window, click the field.;
+                           ENG=Specifies a code for the customer posting group to which the customer template will belong. To see the customer posting group codes in the Customer Posting Groups window, click the field.];
+                SourceExpr="Customer Posting Group" }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a code for the customer price group to which the customer template will belong. To see the price group codes in the Customer Price Groups window, click the field.;
+                           ENG=Specifies a code for the customer price group to which the customer template will belong. To see the price group codes in the Customer Price Groups window, click the field.];
+                SourceExpr="Customer Price Group" }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the customer discount group to which the customer template will belong. To see the customer discount group codes in the Customer Discount Group table, click the field.;
+                           ENG=Specifies the code for the customer discount group to which the customer template will belong. To see the customer discount group codes in the Customer Discount Group table, click the field.];
+                SourceExpr="Customer Disc. Group" }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies that a line discount is calculated when the sales price is offered.;
+                           ENG=Specifies that a line discount is calculated when the sales price is offered.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Allow Line Disc." }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the invoice discount code for the customer template.;
+                           ENG=Specifies the invoice discount code for the customer template.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Invoice Disc. Code" }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the payment terms code for the customer template.;
+                           ENG=Specifies the payment terms code for the customer template.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Payment Terms Code" }
+
+    { 34  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the payment method code for the customer template.;
+                           ENG=Specifies the payment method code for the customer template.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Payment Method Code" }
+
+    { 36  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the shipment method code for the customer template.;
+                           ENG=Specifies the shipment method code for the customer template.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Shipment Method Code" }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

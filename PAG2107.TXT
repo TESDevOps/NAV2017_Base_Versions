@@ -1,0 +1,204 @@
+OBJECT Page 2107 O365 Sales Customer Card
+{
+  OBJECT-PROPERTIES
+  {
+    Date=28/04/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16585;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Customer;
+               ENG=Customer];
+    SourceTable=Table18;
+    PageType=Card;
+    PromotedActionCategoriesML=[ENU=New,Process,Report,Details;
+                                ENG=New,Process,Report,Details];
+    OnNewRecord=VAR
+                  MiniCustomerTemplate@1000 : Record 1300;
+                  Customer@1002 : Record 18;
+                  DocumentNoVisibility@1001 : Codeunit 1400;
+                BEGIN
+                  IF GUIALLOWED THEN BEGIN
+                    IF "No." = '' THEN BEGIN
+                      IF NOT DocumentNoVisibility.CustomerNoSeriesIsDefault THEN
+                        EXIT;
+
+                      IF NOT MiniCustomerTemplate.NewCustomerFromTemplate(Customer) THEN BEGIN
+                        CurrPage.CLOSE;
+                        EXIT;
+                      END;
+                    END;
+                    CurrPage.CLOSE;
+                    PAGE.RUN(PAGE::"O365 Sales Customer Card",Customer);
+                  END;
+                END;
+
+    ActionList=ACTIONS
+    {
+      { 11      ;0   ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 9       ;1   ;Action    ;
+                      Name=NewSalesInvoice;
+                      CaptionML=[ENU=New Invoice;
+                                 ENG=New Invoice];
+                      ToolTipML=[ENU=Create a new invoice for the customer.;
+                                 ENG=Create a new invoice for the customer.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=NewSalesInvoice;
+                      RunPageMode=Create;
+                      Scope=Repeater;
+                      OnAction=VAR
+                                 SalesHeader@1000 : Record 36;
+                               BEGIN
+                                 SalesHeader.INIT;
+                                 SalesHeader.VALIDATE("Document Type",SalesHeader."Document Type"::Invoice);
+                                 SalesHeader.VALIDATE("Sell-to Customer No.","No.");
+                                 SalesHeader.INSERT(TRUE);
+                                 COMMIT;
+
+                                 PAGE.RUN(PAGE::"O365 Sales Invoice",SalesHeader);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=General;
+                CaptionML=[ENU=General;
+                           ENG=General];
+                GroupType=Group }
+
+    { 3   ;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Name;
+                ShowMandatory=TRUE }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the customer's email address.;
+                           ENG=Specifies the customer's email address.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="E-Mail";
+                Importance=Promoted }
+
+    { 7   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the customer's telephone number.;
+                           ENG=Specifies the customer's telephone number.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Phone No." }
+
+    { 5   ;2   ;Field     ;
+                Lookup=No;
+                DrillDown=No;
+                CaptionML=[ENU=Balance;
+                           ENG=Balance];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Balance (LCY)";
+                Importance=Additional }
+
+    { 6   ;2   ;Field     ;
+                Lookup=No;
+                DrillDown=No;
+                CaptionML=[ENU=Balance Due;
+                           ENG=Balance Due];
+                ToolTipML=[ENU=Specifies payments from the customer that are overdue per today's date.;
+                           ENG=Specifies payments from the customer that are overdue per today's date.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Balance Due (LCY)";
+                Importance=Additional }
+
+    { 8   ;2   ;Field     ;
+                Lookup=No;
+                DrillDown=No;
+                CaptionML=[ENU=Sales;
+                           ENG=Sales];
+                ToolTipML=[ENU=Specifies the total net amount of sales to the customer in LCY.;
+                           ENG=Specifies the total net amount of sales to the customer in LCY.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sales (LCY)";
+                Importance=Additional }
+
+    { 22  ;1   ;Group     ;
+                CaptionML=[ENU=Address & Contact;
+                           ENG=Address & Contact];
+                GroupType=Group }
+
+    { 21  ;2   ;Group     ;
+                Name=AddressDetails;
+                CaptionML=[ENU=Address;
+                           ENG=Address];
+                GroupType=Group }
+
+    { 20  ;3   ;Field     ;
+                Name=Address;
+                ToolTipML=[ENU=Specifies the customer's address. This address will appear on all sales documents for the customer.;
+                           ENG=Specifies the customer's address. This address will appear on all sales documents for the customer.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Address }
+
+    { 18  ;3   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code.;
+                           ENG=Specifies the postcode.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Post Code";
+                Importance=Promoted }
+
+    { 17  ;3   ;Field     ;
+                ToolTipML=[ENU=Specifies the customer's city.;
+                           ENG=Specifies the customer's city.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=City }
+
+    { 16  ;3   ;Field     ;
+                ToolTipML=[ENU=Specifies the country/region of the address.;
+                           ENG=Specifies the country/region of the address.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Country/Region Code" }
+
+    { 15  ;3   ;Field     ;
+                Name=ShowMap;
+                ToolTipML=[ENU=Specifies the customer's address on your preferred map website.;
+                           ENG=Specifies the customer's address on your preferred map website.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=ShowMapLbl;
+                Editable=FALSE;
+                Style=StrongAccent;
+                StyleExpr=TRUE;
+                OnDrillDown=BEGIN
+                              CurrPage.UPDATE(TRUE);
+                              DisplayMap;
+                            END;
+
+                ShowCaption=No }
+
+    { 12  ;1   ;Group     ;
+                Name=Tax Information;
+                CaptionML=[ENU=Tax Information;
+                           ENG=Tax Information];
+                GroupType=Group }
+
+    { 14  ;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Tax Liable" }
+
+    { 19  ;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Tax Area Code" }
+
+  }
+  CODE
+  {
+    VAR
+      ShowMapLbl@1002 : TextConst 'ENU=Show on Map;ENG=Show on Map';
+
+    BEGIN
+    END.
+  }
+}
+

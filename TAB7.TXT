@@ -1,0 +1,53 @@
+OBJECT Table 7 Standard Text
+{
+  OBJECT-PROPERTIES
+  {
+    Date=23/02/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.15601;
+  }
+  PROPERTIES
+  {
+    OnDelete=BEGIN
+               ExtTextHeader.SETRANGE("Table Name",ExtTextHeader."Table Name"::"Standard Text");
+               ExtTextHeader.SETRANGE("No.",Code);
+               ExtTextHeader.DELETEALL(TRUE);
+             END;
+
+    OnRename=VAR
+               SalesLine@1000 : Record 37;
+               PurchaseLine@1001 : Record 39;
+             BEGIN
+               SalesLine.RenameNo(SalesLine.Type::" ",xRec.Code,Code);
+               PurchaseLine.RenameNo(PurchaseLine.Type::" ",xRec.Code,Code);
+             END;
+
+    CaptionML=[ENU=Standard Text;
+               ENG=Standard Text];
+    LookupPageID=Page8;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code20        ;CaptionML=[ENU=Code;
+                                                              ENG=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              ENG=Description] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      ExtTextHeader@1000 : Record 279;
+
+    BEGIN
+    END.
+  }
+}
+

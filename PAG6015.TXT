@@ -1,0 +1,69 @@
+OBJECT Page 6015 Resource Locations
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Resource Locations;
+               ENG=Resource Locations];
+    SourceTable=Table5952;
+    DelayedInsert=Yes;
+    PopulateAllFields=Yes;
+    DataCaptionFields=Location Code,Location Name;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the resource in the location.;
+                           ENG=Specifies the number of the resource in the location.];
+                SourceExpr="Resource No.";
+                Visible=FALSE }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date when the resource becomes available in this location.;
+                           ENG=Specifies the date when the resource becomes available in this location.];
+                SourceExpr="Starting Date" }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the location code of the resource.;
+                           ENG=Specifies the location code of the resource.];
+                SourceExpr="Location Code" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the resource.;
+                           ENG=Specifies the name of the resource.];
+                SourceExpr="Resource Name" }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

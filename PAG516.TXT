@@ -1,0 +1,265 @@
+OBJECT Page 516 Sales Lines
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Sales Lines;
+               ENG=Sales Lines];
+    LinksAllowed=No;
+    SourceTable=Table37;
+    PageType=List;
+    OnAfterGetRecord=BEGIN
+                       ShowShortcutDimCode(ShortcutDimCode);
+                     END;
+
+    OnNewRecord=BEGIN
+                  CLEAR(ShortcutDimCode);
+                END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 30      ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Line;
+                                 ENG=&Line];
+                      Image=Line }
+      { 23      ;2   ;Action    ;
+                      ShortCutKey=Shift+F7;
+                      CaptionML=[ENU=Show Document;
+                                 ENG=Show Document];
+                      ToolTipML=[ENU=Open the document that the selected line exists on.;
+                                 ENG=Open the document that the selected line exists on.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=View;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 PageManagement@1000 : Codeunit 700;
+                               BEGIN
+                                 SalesHeader.GET("Document Type","Document No.");
+                                 PageManagement.PageRun(SalesHeader);
+                               END;
+                                }
+      { 32      ;2   ;Action    ;
+                      AccessByPermission=TableData 27=R;
+                      CaptionML=[ENU=Reservation Entries;
+                                 ENG=Reservation Entries];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=ReservationLedger;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 ShowReservationEntries(TRUE);
+                               END;
+                                }
+      { 6500    ;2   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+I;
+                      CaptionML=[ENU=Item &Tracking Lines;
+                                 ENG=Item &Tracking Lines];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=ItemTrackingLines;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 OpenItemTrackingLines;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of document that you are about to create.;
+                           ENG=Specifies the type of document that you are about to create.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Document Type" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document number.;
+                           ENG=Specifies the document number.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Document No." }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the customer to whom the items in the sales order will be shipped.;
+                           ENG=Specifies the number of the customer to whom the items in the sales order will be shipped.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Customer No." }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the line number.;
+                           ENG=Specifies the line number.];
+                SourceExpr="Line No.";
+                Visible=FALSE }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of entity that will be posted for this sales line, such as Item, Resource, or G/L Account. The type that you enter in this field determines what you can select in the No. field.;
+                           ENG=Specifies the type of entity that will be posted for this sales line, such as Item, Resource, or G/L Account. The type that you enter in this field determines what you can select in the No. field.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Type }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of a general ledger account, item, resource, additional cost, or fixed asset, depending on the contents of the Type field.;
+                           ENG=Specifies the number of a general ledger account, item, resource, additional cost, or fixed asset, depending on the contents of the Type field.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="No." }
+
+    { 40  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a variant code for the item.;
+                           ENG=Specifies a variant code for the item.];
+                SourceExpr="Variant Code";
+                Visible=FALSE }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description of the entry, which is based on the contents of the Type and No. fields.;
+                           ENG=Specifies a description of the entry, which is based on the contents of the Type and No. fields.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Description }
+
+    { 31  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the inventory location from which the items sold should be picked and where the inventory decrease is registered.;
+                           ENG=Specifies the inventory location from which the items sold should be picked and where the inventory decrease is registered.];
+                SourceExpr="Location Code";
+                Visible=TRUE }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether a reservation can be made for items on this line.;
+                           ENG=Specifies whether a reservation can be made for items on this line.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Reserve }
+
+    { 52  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how many units are being sold.;
+                           ENG=Specifies how many units are being sold.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Quantity }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the value in the Reserved Quantity field, expressed in the base unit of measure.;
+                           ENG=Specifies the value in the Reserved Quantity field, expressed in the base unit of measure.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Reserved Qty. (Base)" }
+
+    { 28  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit of measure that is used to determine the value in the Unit Price field on the sales line.;
+                           ENG=Specifies the unit of measure that is used to determine the value in the Unit Price field on the sales line.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Unit of Measure Code" }
+
+    { 54  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the net amount (before subtracting the invoice discount amount) that must be paid for the items on the line.;
+                           ENG=Specifies the net amount (before subtracting the invoice discount amount) that must be paid for the items on the line.];
+                ApplicationArea=#Basic,#Suite;
+                BlankZero=Yes;
+                SourceExpr="Line Amount" }
+
+    { 50  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the job number that the sales line is linked to.;
+                           ENG=Specifies the job number that the sales line is linked to.];
+                SourceExpr="Job No.";
+                Visible=FALSE }
+
+    { 38  ;2   ;Field     ;
+                ToolTipML=[ENU=Belongs to the Job application area.;
+                           ENG=Belongs to the Job application area.];
+                SourceExpr="Work Type Code";
+                Visible=FALSE }
+
+    { 34  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code linked to the sale.;
+                           ENG=Specifies the dimension value code linked to the sale.];
+                SourceExpr="Shortcut Dimension 1 Code";
+                Visible=FALSE }
+
+    { 36  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code linked to the sale.;
+                           ENG=Specifies the dimension value code linked to the sale.];
+                SourceExpr="Shortcut Dimension 2 Code";
+                Visible=FALSE }
+
+    { 300 ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[3];
+                CaptionClass='1,2,3';
+                TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(3),
+                                                            Dimension Value Type=CONST(Standard),
+                                                            Blocked=CONST(No));
+                Visible=FALSE }
+
+    { 302 ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[4];
+                CaptionClass='1,2,4';
+                TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(4),
+                                                            Dimension Value Type=CONST(Standard),
+                                                            Blocked=CONST(No));
+                Visible=FALSE }
+
+    { 304 ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[5];
+                CaptionClass='1,2,5';
+                TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(5),
+                                                            Dimension Value Type=CONST(Standard),
+                                                            Blocked=CONST(No));
+                Visible=FALSE }
+
+    { 306 ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[6];
+                CaptionClass='1,2,6';
+                TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(6),
+                                                            Dimension Value Type=CONST(Standard),
+                                                            Blocked=CONST(No));
+                Visible=FALSE }
+
+    { 308 ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[7];
+                CaptionClass='1,2,7';
+                TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(7),
+                                                            Dimension Value Type=CONST(Standard),
+                                                            Blocked=CONST(No));
+                Visible=FALSE }
+
+    { 310 ;2   ;Field     ;
+                SourceExpr=ShortcutDimCode[8];
+                CaptionClass='1,2,8';
+                TableRelation="Dimension Value".Code WHERE (Global Dimension No.=CONST(8),
+                                                            Dimension Value Type=CONST(Standard),
+                                                            Blocked=CONST(No));
+                Visible=FALSE }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date that the items on the line are in inventory and available to be picked.;
+                           ENG=Specifies the date that the items on the line are in inventory and available to be picked.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Shipment Date" }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how many units on the order line have not yet been shipped.;
+                           ENG=Specifies how many units on the order line have not yet been shipped.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Outstanding Quantity" }
+
+  }
+  CODE
+  {
+    VAR
+      SalesHeader@1000 : Record 36;
+      ShortcutDimCode@1001 : ARRAY [8] OF Code[20];
+
+    BEGIN
+    END.
+  }
+}
+

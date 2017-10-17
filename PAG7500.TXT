@@ -1,0 +1,101 @@
+OBJECT Page 7500 Item Attributes
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Item Attributes;
+               ENG=Item Attributes];
+    SourceTable=Table7500;
+    PageType=List;
+    CardPageID=Item Attribute;
+    RefreshOnActivate=Yes;
+    ActionList=ACTIONS
+    {
+      { 1900000003;  ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 19      ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Attribute;
+                                 ENG=&Attribute];
+                      Image=Attributes }
+      { 20      ;2   ;Action    ;
+                      Name=ItemAttributeValues;
+                      CaptionML=[ENU=Item Attribute &Values;
+                                 ENG=Item Attribute &Values];
+                      ToolTipML=[ENU=Opens a window in which you can define the values for the selected item attribute.;
+                                 ENG=Opens a window in which you can define the values for the selected item attribute.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 7501;
+                      RunPageLink=Attribute ID=FIELD(ID);
+                      Promoted=Yes;
+                      Enabled=(Type = Type::Option);
+                      PromotedIsBig=Yes;
+                      Image=CalculateInventory;
+                      PromotedCategory=Process }
+      { 22      ;2   ;Action    ;
+                      Name=ItemAttributeTranslations;
+                      CaptionML=[ENU=Translations;
+                                 ENG=Translations];
+                      ToolTipML=[ENU=Opens a window in which you can define the translations for the selected item attribute.;
+                                 ENG=Opens a window in which you can define the translations for the selected item attribute.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 7502;
+                      RunPageLink=Attribute ID=FIELD(ID);
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Translations;
+                      PromotedCategory=Process }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the item attribute.;
+                           ENG=Specifies the name of the item attribute.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Name }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of the item attribute.;
+                           ENG=Specifies the type of the item attribute.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Type }
+
+    { 2   ;2   ;Field     ;
+                Name=Values;
+                CaptionML=[ENU=Values;
+                           ENG=Values];
+                ToolTipML=[ENU=Specifies the values of the item attribute.;
+                           ENG=Specifies the values of the item attribute.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=GetValues;
+                OnDrillDown=BEGIN
+                              OpenItemAttributeValues;
+                            END;
+                             }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether it should be possible to assign this item attribute to an item.;
+                           ENG=Specifies whether it should be possible to assign this item attribute to an item.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Blocked }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

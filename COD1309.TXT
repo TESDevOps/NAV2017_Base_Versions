@@ -1,0 +1,174 @@
+OBJECT Codeunit 1309 O365 Getting Started Mgt.
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+
+    PROCEDURE LaunchWizard@4(UserInitiated@1000 : Boolean;TourCompleted@1003 : Boolean);
+    VAR
+      O365GettingStarted@1001 : Record 1309;
+      CompanyInformationMgt@1004 : Codeunit 1306;
+      PermissionManager@1006 : Codeunit 9002;
+      WizardHasBeenShownToUser@1002 : Boolean;
+      PageToStart@1005 : Integer;
+    BEGIN
+      IF NOT CompanyInformationMgt.IsDemoCompany THEN
+        EXIT;
+
+      WizardHasBeenShownToUser := O365GettingStarted.GET(USERID,CURRENTCLIENTTYPE);
+
+      IF CURRENTCLIENTTYPE IN [CLIENTTYPE::Phone,CLIENTTYPE::Tablet] THEN BEGIN
+        IF NOT PermissionManager.SoftwareAsAService THEN
+          EXIT;
+        PageToStart := PAGE::"O365 Getting Started Device"
+      END ELSE BEGIN
+        IF IsDeveloperUser THEN
+          PageToStart := PAGE::"O365 Developer Getting Started"
+        ELSE
+          PageToStart := PAGE::"O365 Getting Started";
+      END;
+
+      IF NOT WizardHasBeenShownToUser THEN BEGIN
+        EnsurePayPalDemoAccountExists;
+        PAGE.RUNMODAL(PageToStart);
+        EXIT;
+      END;
+
+      IF (NOT O365GettingStarted."Tour in Progress") AND (NOT UserInitiated) THEN
+        EXIT;
+
+      IF UserInitiated THEN BEGIN
+        PAGE.RUNMODAL(PageToStart);
+        EXIT;
+      END;
+
+      IF O365GettingStarted."Tour in Progress" THEN BEGIN
+        IF CURRENTCLIENTTYPE IN [CLIENTTYPE::Phone,CLIENTTYPE::Tablet] THEN
+          EXIT;
+
+        IF TourCompleted AND NOT IsDeveloperUser THEN
+          PAGE.RUNMODAL(PAGE::"O365 Tour Complete")
+        ELSE
+          PAGE.RUNMODAL(PageToStart);
+      END;
+    END;
+
+    PROCEDURE UpdateGettingStartedVisible@2(VAR TileGettingStartedVisible@1003 : Boolean;VAR TileRestartGettingStartedVisible@1004 : Boolean);
+    VAR
+      O365GettingStarted@1001 : Record 1309;
+    BEGIN
+      TileGettingStartedVisible := FALSE;
+      TileRestartGettingStartedVisible := FALSE;
+
+      IF NOT IsGettingStartedSupported THEN
+        EXIT;
+
+      TileRestartGettingStartedVisible := TRUE;
+
+      IF NOT O365GettingStarted.GET(USERID,CURRENTCLIENTTYPE) THEN
+        EXIT;
+
+      TileGettingStartedVisible := O365GettingStarted."Tour in Progress";
+      TileRestartGettingStartedVisible := NOT TileGettingStartedVisible;
+    END;
+
+    PROCEDURE IsGettingStartedSupported@9() : Boolean;
+    VAR
+      CompanyInformationMgt@1000 : Codeunit 1306;
+    BEGIN
+      EXIT(CompanyInformationMgt.IsDemoCompany AND (CURRENTCLIENTTYPE = CLIENTTYPE::Web));
+    END;
+
+    PROCEDURE GetGettingStartedTourID@3() : Integer;
+    BEGIN
+      EXIT(173706);
+    END;
+
+    PROCEDURE GetInvoicingTourID@5() : Integer;
+    BEGIN
+      EXIT(174204);
+    END;
+
+    PROCEDURE GetReportingTourID@6() : Integer;
+    BEGIN
+      EXIT(174207);
+    END;
+
+    PROCEDURE GetChangeCompanyTourID@7() : Integer;
+    BEGIN
+      EXIT(174206);
+    END;
+
+    PROCEDURE GetWizardDoneTourID@1() : Integer;
+    BEGIN
+      EXIT(176849);
+    END;
+
+    PROCEDURE GetReturnToGettingStartedTourID@8() : Integer;
+    BEGIN
+      EXIT(176291);
+    END;
+
+    PROCEDURE GetDevJourneyTourID@10() : Integer;
+    BEGIN
+      // TODO: Update with actual tour ID, placeholder for now
+      EXIT(176849);
+    END;
+
+    LOCAL PROCEDURE EnsurePayPalDemoAccountExists@12();
+    VAR
+      AllObj@1000 : Record 2000000038;
+    BEGIN
+      AllObj.SETRANGE("Object Type",AllObj."Object Type"::Codeunit);
+      AllObj.SETRANGE("Object ID",1072);
+      IF NOT AllObj.FINDFIRST THEN
+        EXIT;
+
+      IF CODEUNIT.RUN(AllObj."Object ID") THEN
+        COMMIT;
+    END;
+
+    LOCAL PROCEDURE IsDeveloperUser@13() : Boolean;
+    VAR
+      CompanyInformation@1000 : Record 79;
+    BEGIN
+      CompanyInformation.GET;
+      EXIT(CompanyInformation."Custom System Indicator Text" = CompanyInformation.GetDevBetaModeTxt);
+    END;
+
+    PROCEDURE GetAddItemTourID@11() : Integer;
+    BEGIN
+      EXIT(237373);
+    END;
+
+    PROCEDURE GetAddCustomerTourID@14() : Integer;
+    BEGIN
+      EXIT(239510);
+    END;
+
+    PROCEDURE GetCreateSalesOrderTourID@15() : Integer;
+    BEGIN
+      EXIT(240566);
+    END;
+
+    PROCEDURE GetCreateSalesInvoiceTourID@16() : Integer;
+    BEGIN
+      EXIT(240561);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,773 @@
+OBJECT Page 1803 Assisted Company Setup Wizard
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Company Setup;
+               ENG=Company Setup];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    LinksAllowed=No;
+    SourceTable=Table8627;
+    PageType=NavigatePage;
+    SourceTableTemporary=Yes;
+    PromotedActionCategoriesML=[ENU=New,Process,Report,Step 4,Step 5;
+                                ENG=New,Process,Report,Step 4,Step 5];
+    ShowFilter=No;
+    OnInit=BEGIN
+             InitializeRecord;
+             LoadTopBanners;
+           END;
+
+    OnOpenPage=BEGIN
+                 ResetWizardControls;
+                 ShowIntroStep;
+                 TypeSelectionEnabled := LoadConfigTypes AND NOT PackageImported;
+                 ImportSessionID := 0;
+               END;
+
+    OnAfterGetRecord=BEGIN
+                       LogoPositionOnDocumentsShown := Picture.HASVALUE;
+                     END;
+
+    OnQueryClosePage=VAR
+                       AssistedSetup@1000 : Record 1803;
+                     BEGIN
+                       IF CloseAction = ACTION::OK THEN
+                         IF AssistedSetup.GetStatus(PAGE::"Assisted Company Setup Wizard") = AssistedSetup.Status::"Not Completed" THEN
+                           IF NOT CONFIRM(NotSetUpQst,FALSE) THEN
+                             ERROR('');
+                     END;
+
+    ActionList=ACTIONS
+    {
+      { 4       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 3       ;1   ;Action    ;
+                      Name=ActionBack;
+                      CaptionML=[ENU=Back;
+                                 ENG=Back];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=BackEnabled;
+                      InFooterBar=Yes;
+                      Image=PreviousRecord;
+                      OnAction=BEGIN
+                                 NextStep(TRUE);
+                               END;
+                                }
+      { 2       ;1   ;Action    ;
+                      Name=ActionNext;
+                      CaptionML=[ENU=Next;
+                                 ENG=Next];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=NextEnabled;
+                      InFooterBar=Yes;
+                      Image=NextRecord;
+                      OnAction=BEGIN
+                                 IF (Step = Step::"Select Type") AND NOT (TypeStandard OR TypeEvaluation) THEN
+                                   IF NOT CONFIRM(NoSetupTypeSelectedQst,FALSE) THEN
+                                     ERROR('');
+                                 NextStep(FALSE);
+                               END;
+                                }
+      { 1       ;1   ;Action    ;
+                      Name=ActionFinish;
+                      CaptionML=[ENU=Finish;
+                                 ENG=Finish];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=FinishEnabled;
+                      InFooterBar=Yes;
+                      Image=Approve;
+                      OnAction=VAR
+                                 AssistedSetup@1001 : Record 1803;
+                                 AssistedCompanySetup@1000 : Codeunit 1800;
+                               BEGIN
+                                 AssistedCompanySetup.WaitForPackageImportToComplete(ImportSessionID);
+                                 BankAccount.TRANSFERFIELDS(TempBankAccount,TRUE);
+                                 AssistedCompanySetup.ApplyUserInput(Rec,BankAccount,AccountingPeriodStartDate,TypeEvaluation);
+                                 AssistedSetup.SetStatus(PAGE::"Assisted Company Setup Wizard",AssistedSetup.Status::Completed);
+                                 IF (BankAccount."No." <> '') AND (TempOnlineBankAccLink.COUNT > 0) THEN
+                                   BankAccount.OnMarkAccountLinkedEvent(TempOnlineBankAccLink,BankAccount);
+                                 CurrPage.CLOSE;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 96  ;1   ;Group     ;
+                Visible=TopBannerVisible AND NOT DoneVisible;
+                Editable=FALSE;
+                GroupType=Group }
+
+    { 97  ;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=MediaRepositoryStandard.Image;
+                Editable=FALSE;
+                ShowCaption=No }
+
+    { 98  ;1   ;Group     ;
+                Visible=TopBannerVisible AND DoneVisible;
+                Editable=FALSE;
+                GroupType=Group }
+
+    { 99  ;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=MediaRepositoryDone.Image;
+                Editable=FALSE;
+                ShowCaption=No }
+
+    { 8   ;1   ;Group     ;
+                Visible=IntroVisible;
+                GroupType=Group }
+
+    { 5   ;2   ;Group     ;
+                CaptionML=[ENU=Welcome to Company Setup.;
+                           ENG=Welcome to Company Setup.];
+                GroupType=Group;
+                InstructionalTextML=[ENU=To prepare Dynamics 365 for Financials for first use, you must specify some basic information about your company. This information is used on your external documents, such as sales invoices, and includes your company logo and bank information. You must also set up the fiscal year.;
+                                     ENG=To prepare Dynamics 365 for Financials for first use, you must specify some basic information about your company. This information is used on your external documents, such as sales invoices, and includes your company logo and bank information. You must also set up the fiscal year.] }
+
+    { 11  ;2   ;Group     ;
+                CaptionML=[ENU=Let's go!;
+                           ENG=Let's go!];
+                GroupType=Group;
+                InstructionalTextML=[ENU=Choose Next so you can specify basic company information.;
+                                     ENG=Choose Next so you can specify basic company information.] }
+
+    { 18  ;1   ;Group     ;
+                Visible=SelectTypeVisible AND TypeSelectionEnabled;
+                GroupType=Group }
+
+    { 22  ;2   ;Group     ;
+                CaptionML=[ENU=Standard Setup;
+                           ENG=Standard Setup];
+                Visible=StandardVisible;
+                GroupType=Group;
+                InstructionalTextML=[ENU=The company will be ready to use when Setup has completed.;
+                                     ENG=The company will be ready to use when Setup has completed.] }
+
+    { 19  ;3   ;Field     ;
+                Name=Standard;
+                CaptionML=[ENU=Set up as Standard;
+                           ENG=Set up as Standard];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=TypeStandard;
+                OnValidate=BEGIN
+                             IF TypeStandard THEN
+                               TypeEvaluation := FALSE;
+                           END;
+                            }
+
+    { 23  ;2   ;Group     ;
+                CaptionML=[ENU=Evaluation Setup;
+                           ENG=Evaluation Setup];
+                Visible=EvaluationVisible;
+                GroupType=Group;
+                InstructionalTextML=[ENU=The company will be set up in demonstration mode for exploring and testing.;
+                                     ENG=The company will be set up in demonstration mode for exploring and testing.] }
+
+    { 20  ;3   ;Field     ;
+                Name=Evaluation;
+                CaptionML=[ENU=Set up as Evaluation;
+                           ENG=Set up as Evaluation];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=TypeEvaluation;
+                OnValidate=BEGIN
+                             IF TypeEvaluation THEN
+                               TypeStandard := FALSE;
+                           END;
+                            }
+
+    { 17  ;2   ;Group     ;
+                CaptionML=[ENU=Important;
+                           ENG=Important];
+                Visible=TypeStandard OR TypeEvaluation;
+                GroupType=Group;
+                InstructionalTextML=[ENU=You cannot change your choice of setup after you choose Next.;
+                                     ENG=You cannot change your choice of setup after you choose Next.] }
+
+    { 56  ;1   ;Group     ;
+                Visible=CompanyDetailsVisible;
+                GroupType=Group }
+
+    { 12  ;2   ;Group     ;
+                CaptionML=[ENU=Specify your company's address information and logo.;
+                           ENG=Specify your company's address information and logo.];
+                GroupType=Group }
+
+    { 55  ;3   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                NotBlank=Yes;
+                SourceExpr=Name;
+                ShowMandatory=TRUE }
+
+    { 54  ;3   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Address }
+
+    { 53  ;3   ;Field     ;
+                SourceExpr="Address 2";
+                Visible=FALSE }
+
+    { 52  ;3   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Post Code" }
+
+    { 51  ;3   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=City }
+
+    { 50  ;3   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Country/Region Code";
+                TableRelation=Country/Region.Code }
+
+    { 48  ;3   ;Field     ;
+                SourceExpr="VAT Registration No.";
+                Visible=FALSE }
+
+    { 47  ;3   ;Field     ;
+                NotBlank=Yes;
+                SourceExpr="Industrial Classification";
+                Visible=FALSE;
+                ShowMandatory=TRUE }
+
+    { 10  ;3   ;Field     ;
+                CaptionML=[ENU=Company Logo;
+                           ENG=Company Logo];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Picture;
+                OnValidate=BEGIN
+                             LogoPositionOnDocumentsShown := Picture.HASVALUE;
+                             IF LogoPositionOnDocumentsShown THEN BEGIN
+                               IF "Logo Position on Documents" = "Logo Position on Documents"::"No Logo" THEN
+                                 "Logo Position on Documents" := "Logo Position on Documents"::Right;
+                             END ELSE
+                               "Logo Position on Documents" := "Logo Position on Documents"::"No Logo";
+                             CurrPage.UPDATE(TRUE);
+                           END;
+                            }
+
+    { 30  ;3   ;Field     ;
+                SourceExpr="Logo Position on Documents";
+                Editable=LogoPositionOnDocumentsShown }
+
+    { 45  ;1   ;Group     ;
+                Visible=CommunicationDetailsVisible;
+                GroupType=Group }
+
+    { 13  ;2   ;Group     ;
+                CaptionML=[ENU=Specify the contact details for your company.;
+                           ENG=Specify the contact details for your company.];
+                GroupType=Group;
+                InstructionalTextML=[ENU=This is used in invoices and other documents where general information about your company is printed.;
+                                     ENG=This is used in invoices and other documents where general information about your company is printed.] }
+
+    { 44  ;3   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Phone No." }
+
+    { 42  ;3   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="E-Mail" }
+
+    { 41  ;3   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Home Page" }
+
+    { 29  ;1   ;Group     ;
+                Visible=BankStatementConfirmationVisible;
+                GroupType=Group }
+
+    { 25  ;2   ;Group     ;
+                CaptionML=[ENU=Bank Feed Service;
+                           ENG=Bank Feed Service];
+                GroupType=Group;
+                InstructionalTextML=[ENU=You can use a bank feeds service to import electronic bank statements from your bank to quickly process payments.;
+                                     ENG=You can use a bank feeds service to import electronic bank statements from your bank to quickly process payments.] }
+
+    { 46  ;3   ;Field     ;
+                CaptionML=[ENU=Use a bank feed service;
+                           ENG=Use a bank feed service];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=UseBankStatementFeed }
+
+    { 26  ;2   ;Group     ;
+                CaptionML=[ENU=NOTE:;
+                           ENG=NOTE:];
+                Visible=UseBankStatementFeed;
+                GroupType=Group;
+                InstructionalTextML=[ENU=When you choose Next, you accept the terms of use for the bank feed service.;
+                                     ENG=When you choose Next, you accept the terms of use for the bank feed service.] }
+
+    { 28  ;3   ;Field     ;
+                ToolTipML=[ENU=Specifies a link to the terms of use for the Envestnet Yodlee bank feed service.;
+                           ENG=Specifies a link to the terms of use for the Envestnet Yodlee bank feed service.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=TermsOfUseLbl;
+                Editable=FALSE;
+                OnDrillDown=BEGIN
+                              HYPERLINK(TermsOfUseUrlTxt);
+                            END;
+
+                ShowCaption=No }
+
+    { 32  ;1   ;Group     ;
+                CaptionML=[ENU=Select bank account.;
+                           ENG=Select bank account.];
+                Visible=SelectBankAccountVisible;
+                GroupType=Group }
+
+    { 24  ;2   ;Part      ;
+                Name=OnlineBanckAccountLinkPagePart;
+                ApplicationArea=#Basic,#Suite;
+                PagePartID=Page270;
+                PartType=Page }
+
+    { 37  ;1   ;Group     ;
+                Visible=PaymentDetailsVisible;
+                GroupType=Group }
+
+    { 14  ;2   ;Group     ;
+                CaptionML=[ENU=Specify your company's bank information.;
+                           ENG=Specify your company's bank information.];
+                GroupType=Group;
+                InstructionalTextML=[ENU=This information is included on documents that you send to customer and vendors to inform about payments to your bank account.;
+                                     ENG=This information is included on documents that you send to customer and vendors to inform about payments to your bank account.] }
+
+    { 36  ;3   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Bank Name" }
+
+    { 35  ;3   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Bank Branch No." }
+
+    { 34  ;3   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Bank Account No.";
+                OnValidate=BEGIN
+                             ShowBankAccountCreationWarning := NOT ValidateBankAccountNotEmpty;
+                           END;
+                            }
+
+    { 31  ;3   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="SWIFT Code" }
+
+    { 27  ;3   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=IBAN }
+
+    { 33  ;2   ;Group     ;
+                CaptionML=[ENU=" ";
+                           ENG=" "];
+                Visible=ShowBankAccountCreationWarning;
+                GroupType=Group;
+                InstructionalTextML=[ENU=To create a bank account that is linked to the related online bank account, you must specify the bank account information above.;
+                                     ENG=To create a bank account that is linked to the related online bank account, you must specify the bank account information above.] }
+
+    { 6   ;1   ;Group     ;
+                Visible=AccountingPeriodVisible;
+                GroupType=Group }
+
+    { 15  ;2   ;Group     ;
+                CaptionML=[ENU=Specify information about your company's fiscal year for accounting purposes.;
+                           ENG=Specify information about your company's fiscal year for accounting purposes.];
+                GroupType=Group }
+
+    { 7   ;3   ;Field     ;
+                CaptionML=[ENU=Accounting Period Start;
+                           ENG=Accounting Period Start];
+                ApplicationArea=#Basic,#Suite;
+                NotBlank=Yes;
+                SourceExpr=AccountingPeriodStartDate;
+                ShowMandatory=TRUE }
+
+    { 9   ;1   ;Group     ;
+                Visible=DoneVisible;
+                GroupType=Group }
+
+    { 16  ;2   ;Group     ;
+                CaptionML=[ENU=That's it!;
+                           ENG=That's it!];
+                GroupType=Group;
+                InstructionalTextML=[ENU=Choose Finish to prepare the application for first use. This will take a few moments.;
+                                     ENG=Choose Finish to prepare the application for first use. This will take a few moments.] }
+
+    { 21  ;3   ;Field     ;
+                ExtendedDatatype=URL;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=HelpLbl;
+                Editable=FALSE;
+                OnDrillDown=BEGIN
+                              HYPERLINK(HelpLinkTxt);
+                            END;
+                             }
+
+  }
+  CODE
+  {
+    VAR
+      MediaRepositoryStandard@1040 : Record 9400;
+      TempBankAccount@1029 : TEMPORARY Record 270;
+      BankAccount@1039 : Record 270;
+      TempOnlineBankAccLink@1033 : TEMPORARY Record 777;
+      MediaRepositoryDone@1041 : Record 9400;
+      AccountingPeriodStartDate@1000 : Date;
+      ImportSessionID@1037 : Integer;
+      TypeStandard@1018 : Boolean;
+      TypeEvaluation@1019 : Boolean;
+      Step@1012 : 'Intro,Select Type,Company Details,Communication Details,BankStatementFeed,SelectBankAccont,Payment Details,Accounting Period,Done';
+      BackEnabled@1003 : Boolean;
+      NextEnabled@1004 : Boolean;
+      FinishEnabled@1005 : Boolean;
+      TopBannerVisible@1042 : Boolean;
+      IntroVisible@1006 : Boolean;
+      SelectTypeVisible@1015 : Boolean;
+      CompanyDetailsVisible@1007 : Boolean;
+      CommunicationDetailsVisible@1008 : Boolean;
+      PaymentDetailsVisible@1010 : Boolean;
+      AccountingPeriodVisible@1009 : Boolean;
+      DoneVisible@1011 : Boolean;
+      TypeSelectionEnabled@1026 : Boolean;
+      StandardVisible@1023 : Boolean;
+      EvaluationVisible@1024 : Boolean;
+      SkipAccountingPeriod@1013 : Boolean;
+      NotSetUpQst@1001 : TextConst 'ENU=The application has not been set up. Setup will continue the next time you start the program.\\Are you sure that you want to exit?;ENG=The application has not been set up. Setup will continue the next time you start the program.\\Are you sure that you want to exit?';
+      HideBankStatementProvider@1028 : Boolean;
+      ImportStarted@1014 : Boolean;
+      StandardTxt@1016 : TextConst '@@@=Must be similar to "Data Type" option in table 101900 Demonstration Data Setup;ENU=Standard;ENG=Standard';
+      EvaluationTxt@1021 : TextConst '@@@=Must be similar to "Data Type" option in table 101900 Demonstration Data Setup;ENU=Evaluation;ENG=Evaluation';
+      NoSetupTypeSelectedQst@1020 : TextConst 'ENU=You have not selected any setup type. If you proceed, the application will not be fully functional, until you set it up manually.\\Do you want to continue?;ENG=You have not selected any setup type. If you proceed, the application will not be fully functional, until you set it up manually.\\Do you want to continue?';
+      HelpLbl@1027 : TextConst 'ENU=To learn more about setting up your company, follow this link;ENG=To learn more about setting up your company, follow this link';
+      HelpLinkTxt@1022 : TextConst '@@@={Locked};ENU="http://go.microsoft.com/fwlink/?LinkId=746160";ENG="http://go.microsoft.com/fwlink/?LinkId=746160"';
+      BankStatementConfirmationVisible@1030 : Boolean;
+      UseBankStatementFeed@1032 : Boolean;
+      SelectBankAccountVisible@1038 : Boolean;
+      TermsOfUseLbl@1031 : TextConst 'ENU=Envestnet Yodlee Terms of Use;ENG=Envestnet Yodlee Terms of Use';
+      TermsOfUseUrlTxt@1025 : TextConst '@@@={Locked};ENU="https://go.microsoft.com/fwlink/?LinkId=746179";ENG="https://go.microsoft.com/fwlink/?LinkId=746179"';
+      LogoPositionOnDocumentsShown@1034 : Boolean;
+      ShowBankAccountCreationWarning@1036 : Boolean;
+
+    LOCAL PROCEDURE NextStep@3(Backwards@1000 : Boolean);
+    BEGIN
+      ResetWizardControls;
+
+      IF Backwards THEN
+        Step := Step - 1
+      ELSE
+        Step := Step + 1;
+
+      CASE Step OF
+        Step::Intro:
+          ShowIntroStep;
+        Step::"Select Type":
+          IF NOT TypeSelectionEnabled THEN
+            NextStep(Backwards)
+          ELSE
+            ShowSelectTypeStep;
+        Step::"Company Details":
+          IF TypeEvaluation THEN BEGIN
+            Step := Step::Done;
+            ShowDoneStep;
+          END ELSE
+            ShowCompanyDetailsStep;
+        Step::"Communication Details":
+          ShowCommunicationDetailsStep;
+        Step::BankStatementFeed:
+          IF NOT ShowBankStatementFeedStep THEN
+            NextStep(Backwards)
+          ELSE
+            ShowBankStatementFeedConfirmation;
+        Step::SelectBankAccont:
+          BEGIN
+            IF NOT Backwards THEN
+              ShowOnlineBankStatement;
+            IF NOT ShowSelectBankAccountStep THEN
+              NextStep(Backwards)
+            ELSE
+              ShowSelectBankAccount;
+          END;
+        Step::"Payment Details":
+          BEGIN
+            IF NOT Backwards THEN
+              PopulateBankAccountInformation;
+            ShowPaymentDetailsStep;
+            ShowBankAccountCreationWarning := NOT ValidateBankAccountNotEmpty;
+          END;
+        Step::"Accounting Period":
+          IF SkipAccountingPeriod THEN
+            NextStep(Backwards)
+          ELSE
+            ShowAccountingPeriodStep;
+        Step::Done:
+          ShowDoneStep;
+      END;
+      CurrPage.UPDATE(TRUE);
+    END;
+
+    LOCAL PROCEDURE ShowIntroStep@1();
+    BEGIN
+      IntroVisible := TRUE;
+      BackEnabled := FALSE;
+    END;
+
+    LOCAL PROCEDURE ShowSelectTypeStep@12();
+    BEGIN
+      SelectTypeVisible := TRUE;
+    END;
+
+    LOCAL PROCEDURE ShowCompanyDetailsStep@2();
+    BEGIN
+      CompanyDetailsVisible := TRUE;
+      IF TypeSelectionEnabled THEN BEGIN
+        StartConfigPackageImport;
+        BackEnabled := FALSE;
+      END;
+    END;
+
+    LOCAL PROCEDURE ShowCommunicationDetailsStep@4();
+    BEGIN
+      CommunicationDetailsVisible := TRUE;
+    END;
+
+    LOCAL PROCEDURE ShowPaymentDetailsStep@5();
+    BEGIN
+      PaymentDetailsVisible := TRUE;
+    END;
+
+    LOCAL PROCEDURE ShowOnlineBankStatement@19();
+    VAR
+      CompanyInformationMgt@1001 : Codeunit 1306;
+    BEGIN
+      IF CompanyInformationMgt.IsDemoCompany THEN
+        EXIT;
+
+      IF HideBankStatementProvider THEN
+        EXIT;
+
+      IF NOT TempBankAccount.StatementProvidersExist THEN
+        EXIT;
+
+      IF UseBankStatementFeed THEN BEGIN
+        TempOnlineBankAccLink.RESET;
+        TempOnlineBankAccLink.DELETEALL;
+        TempBankAccount.SimpleLinkStatementProvider(TempOnlineBankAccLink);
+        IF TempOnlineBankAccLink.FINDFIRST THEN
+          IF TempOnlineBankAccLink.COUNT > 0 THEN BEGIN
+            CurrPage.OnlineBanckAccountLinkPagePart.PAGE.SetRecs(TempOnlineBankAccLink);
+            HideBankStatementProvider := TRUE;
+          END;
+      END;
+    END;
+
+    LOCAL PROCEDURE ShowAccountingPeriodStep@7();
+    BEGIN
+      AccountingPeriodVisible := TRUE;
+    END;
+
+    LOCAL PROCEDURE ShowDoneStep@6();
+    BEGIN
+      DoneVisible := TRUE;
+      NextEnabled := FALSE;
+      FinishEnabled := TRUE;
+      IF TypeEvaluation THEN BEGIN
+        StartConfigPackageImport;
+        BackEnabled := FALSE;
+      END;
+    END;
+
+    LOCAL PROCEDURE ResetWizardControls@10();
+    BEGIN
+      // Buttons
+      BackEnabled := TRUE;
+      NextEnabled := TRUE;
+      FinishEnabled := FALSE;
+
+      // Tabs
+      IntroVisible := FALSE;
+      SelectTypeVisible := FALSE;
+      CompanyDetailsVisible := FALSE;
+      CommunicationDetailsVisible := FALSE;
+      BankStatementConfirmationVisible := FALSE;
+      SelectBankAccountVisible := FALSE;
+      PaymentDetailsVisible := FALSE;
+      AccountingPeriodVisible := FALSE;
+      DoneVisible := FALSE;
+    END;
+
+    LOCAL PROCEDURE InitializeRecord@8();
+    VAR
+      CompanyInformation@1001 : Record 79;
+      AccountingPeriod@1000 : Record 50;
+    BEGIN
+      INIT;
+
+      IF CompanyInformation.GET THEN BEGIN
+        TRANSFERFIELDS(CompanyInformation);
+        IF Name = '' THEN
+          Name := COMPANYNAME;
+      END ELSE
+        Name := COMPANYNAME;
+
+      SkipAccountingPeriod := NOT AccountingPeriod.ISEMPTY;
+      IF NOT SkipAccountingPeriod THEN
+        AccountingPeriodStartDate := CALCDATE('<-CY>',TODAY);
+
+      INSERT;
+    END;
+
+    LOCAL PROCEDURE StartConfigPackageImport@9();
+    VAR
+      Company@1003 : Record 2000000006;
+      ConfigurationPackageFile@1001 : Record 2000000170;
+      AssistedCompanySetupStatus@1000 : Record 1802;
+      CodeFilter@1002 : Text;
+    BEGIN
+      IF ImportStarted OR NOT TypeSelectionEnabled THEN
+        EXIT;
+
+      IF NOT (TypeStandard OR TypeEvaluation) THEN
+        EXIT;
+
+      Company.GET(COMPANYNAME);
+      Company."Evaluation Company" := TypeEvaluation;
+      Company.MODIFY;
+
+      CASE TRUE OF
+        TypeStandard:
+          CodeFilter := '*' + StandardTxt + '*';
+        TypeEvaluation:
+          CodeFilter := '*' + EvaluationTxt + '*';
+      END;
+      ConfigurationPackageFile.SETFILTER(Code,CodeFilter);
+      ConfigurationPackageFile.SETRANGE("Language ID",GLOBALLANGUAGE);
+      ConfigurationPackageFile.SETRANGE("Setup Type",ConfigurationPackageFile."Setup Type"::Company);
+      ImportStarted := STARTSESSION(ImportSessionID,CODEUNIT::"Import Config. Package Files",COMPANYNAME,ConfigurationPackageFile);
+      IF ImportStarted THEN BEGIN
+        AssistedCompanySetupStatus.GET(COMPANYNAME);
+        AssistedCompanySetupStatus."Company Setup Session ID" := ImportSessionID;
+        AssistedCompanySetupStatus.MODIFY;
+      END;
+    END;
+
+    LOCAL PROCEDURE LoadConfigTypes@42() : Boolean;
+    VAR
+      ConfigurationPackageFile@1000 : Record 2000000170;
+    BEGIN
+      ConfigurationPackageFile.SETRANGE("Language ID",GLOBALLANGUAGE);
+      ConfigurationPackageFile.SETRANGE("Setup Type",ConfigurationPackageFile."Setup Type"::Company);
+
+      ConfigurationPackageFile.SETFILTER(Code,'*' + StandardTxt + '*');
+      IF NOT ConfigurationPackageFile.ISEMPTY THEN
+        StandardVisible := TRUE;
+
+      ConfigurationPackageFile.SETFILTER(Code,'*' + EvaluationTxt + '*');
+      IF NOT ConfigurationPackageFile.ISEMPTY THEN
+        EvaluationVisible := TRUE;
+
+      EXIT(StandardVisible OR EvaluationVisible);
+    END;
+
+    LOCAL PROCEDURE PackageImported@11() : Boolean;
+    VAR
+      AssistedCompanySetupStatus@1000 : Record 1802;
+    BEGIN
+      AssistedCompanySetupStatus.GET(COMPANYNAME);
+      EXIT(AssistedCompanySetupStatus."Package Imported" OR AssistedCompanySetupStatus."Import Failed");
+    END;
+
+    LOCAL PROCEDURE LoadTopBanners@40();
+    BEGIN
+      IF MediaRepositoryStandard.GET('AssistedSetup-NoText-400px.png',FORMAT(CURRENTCLIENTTYPE)) AND
+         MediaRepositoryDone.GET('AssistedSetupDone-NoText-400px.png',FORMAT(CURRENTCLIENTTYPE))
+      THEN
+        TopBannerVisible := MediaRepositoryDone.Image.HASVALUE;
+    END;
+
+    LOCAL PROCEDURE PopulateBankAccountInformation@14();
+    BEGIN
+      IF TempOnlineBankAccLink.COUNT = 0 THEN
+        EXIT;
+      IF TempOnlineBankAccLink.COUNT = 1 THEN
+        TempOnlineBankAccLink.FINDFIRST
+      ELSE
+        CurrPage.OnlineBanckAccountLinkPagePart.PAGE.GETRECORD(TempOnlineBankAccLink);
+
+      IF (TempBankAccount."Bank Account No." = TempBankAccount."Bank Account No.") AND
+         (TempBankAccount.Name = TempOnlineBankAccLink.Name)
+      THEN
+        EXIT;
+
+      IF NOT IsBankAccountFormatValid(TempOnlineBankAccLink."Bank Account No.") THEN
+        CLEAR(TempOnlineBankAccLink."Bank Account No.");
+
+      TempBankAccount.INIT;
+      TempBankAccount.CreateNewAccount(TempOnlineBankAccLink);
+      "Bank Account No." := TempBankAccount."Bank Account No.";
+      "Bank Name" := TempBankAccount.Name;
+      "Bank Branch No." := TempBankAccount."Bank Branch No.";
+      "SWIFT Code" := TempBankAccount."SWIFT Code";
+      IBAN := TempBankAccount.IBAN;
+    END;
+
+    LOCAL PROCEDURE ShowBankStatementFeedConfirmation@18();
+    BEGIN
+      BankStatementConfirmationVisible := TRUE;
+    END;
+
+    LOCAL PROCEDURE ShowBankStatementFeedStep@37() : Boolean;
+    VAR
+      GeneralLedgerSetup@1000 : Record 98;
+    BEGIN
+      IF NOT GeneralLedgerSetup.GET THEN
+        EXIT(FALSE);
+      IF GeneralLedgerSetup."LCY Code" = '' THEN
+        EXIT(FALSE);
+
+      UseBankStatementFeed := BankAccount.StatementProvidersExist;
+      EXIT(UseBankStatementFeed);
+    END;
+
+    LOCAL PROCEDURE ShowSelectBankAccountStep@13() : Boolean;
+    BEGIN
+      EXIT(TempOnlineBankAccLink.COUNT > 1);
+    END;
+
+    LOCAL PROCEDURE ShowSelectBankAccount@16();
+    BEGIN
+      SelectBankAccountVisible := TRUE;
+    END;
+
+    LOCAL PROCEDURE IsBankAccountFormatValid@15(BankAccount@1000 : Text) : Boolean;
+    VAR
+      VarInt@1001 : Integer;
+      Which@1002 : Text;
+    BEGIN
+      Which := ' -';
+      EXIT(EVALUATE(VarInt,DELCHR(BankAccount,'=',Which)));
+    END;
+
+    LOCAL PROCEDURE ValidateBankAccountNotEmpty@17() : Boolean;
+    BEGIN
+      IF ("Bank Account No." = '') AND (TempOnlineBankAccLink.COUNT > 0) THEN
+        EXIT(FALSE);
+
+      EXIT(TRUE);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

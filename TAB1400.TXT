@@ -1,0 +1,75 @@
+OBJECT Table 1400 Service Connection
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Service Connection;
+               ENG=Service Connection];
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Text250       ;CaptionML=[ENU=No.;
+                                                              ENG=No.] }
+    { 2   ;   ;Record ID           ;RecordID      ;CaptionML=[ENU=Record ID;
+                                                              ENG=Record ID] }
+    { 3   ;   ;Name                ;Text250       ;CaptionML=[ENU=Name;
+                                                              ENG=Name] }
+    { 4   ;   ;Host Name           ;Text250       ;CaptionML=[ENU=Host Name;
+                                                              ENG=Host Name] }
+    { 8   ;   ;Status              ;Option        ;CaptionML=[ENU=Status;
+                                                              ENG=Status];
+                                                   OptionCaptionML=[ENU=" ,Enabled,Disabled,Connected,Error";
+                                                                    ENG=" ,Enabled,Disabled,Connected,Error"];
+                                                   OptionString=[ ,Enabled,Disabled,Connected,Error] }
+    { 10  ;   ;Page ID             ;Integer       ;CaptionML=[ENU=Page ID;
+                                                              ENG=Page ID] }
+    { 11  ;   ;Assisted Setup Page ID;Integer     ;CaptionML=[ENU=Assisted Setup Page ID;
+                                                              ENG=Assisted Setup Page ID] }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    [Integration]
+    PROCEDURE OnRegisterServiceConnection@1(VAR ServiceConnection@1000 : Record 1400);
+    BEGIN
+    END;
+
+    PROCEDURE InsertServiceConnection@4(VAR ServiceConnection@1003 : Record 1400;RecordID@1000 : RecordID;ServiceName@1001 : Text;HostName@1006 : Text;PageID@1004 : Integer);
+    BEGIN
+      InsertServiceConnectionExtended(ServiceConnection,RecordID,ServiceName,HostName,PageID,0);
+    END;
+
+    PROCEDURE InsertServiceConnectionExtended@2(VAR ServiceConnection@1003 : Record 1400;RecordID@1000 : RecordID;ServiceName@1001 : Text;HostName@1006 : Text;PageID@1004 : Integer;AssistedSetupPageId@1002 : Integer);
+    VAR
+      ServiceConnectionOld@1005 : Record 1400;
+    BEGIN
+      ServiceConnection."Record ID" := RecordID;
+      ServiceConnection."No." := FORMAT(RecordID);
+      ServiceConnection.Name := COPYSTR(ServiceName,1,MAXSTRLEN(ServiceConnection.Name));
+      ServiceConnection."Host Name" := COPYSTR(HostName,1,MAXSTRLEN(ServiceConnection."Host Name"));
+      ServiceConnection."Page ID" := PageID;
+      ServiceConnection."Assisted Setup Page ID" := AssistedSetupPageId;
+      ServiceConnectionOld := ServiceConnection;
+      IF NOT ServiceConnection.GET(ServiceConnection."No.") THEN BEGIN
+        ServiceConnection := ServiceConnectionOld;
+        ServiceConnection.INSERT(TRUE)
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

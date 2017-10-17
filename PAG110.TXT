@@ -1,0 +1,135 @@
+OBJECT Page 110 Customer Posting Groups
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Customer Posting Groups;
+               ENG=Customer Posting Groups];
+    SourceTable=Table92;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a customer posting group code.;
+                           ENG=Specifies a customer posting group code.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Code }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to post receivables from customers in this posting group.;
+                           ENG=Specifies the general ledger account number to post receivables from customers in this posting group.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Receivables Account" }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to post service charges for customers in this posting group.;
+                           ENG=Specifies the general ledger account number to post service charges for customers in this posting group.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Service Charge Acc." }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to post payment discounts granted to customers in this posting group.;
+                           ENG=Specifies the general ledger account number to post payment discounts granted to customers in this posting group.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Payment Disc. Debit Acc." }
+
+    { 27  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to post reductions in payment discounts granted to customers in this posting group.;
+                           ENG=Specifies the general ledger account number to post reductions in payment discounts granted to customers in this posting group.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Payment Disc. Credit Acc." }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to post interest from reminders and finance charge memos for customers in this posting group.;
+                           ENG=Specifies the general ledger account number to post interest from reminders and finance charge memos for customers in this posting group.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Interest Account" }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to post additional fees from reminders and finance charge memos for customers in this posting group.;
+                           ENG=Specifies the general ledger account number to post additional fees from reminders and finance charge memos for customers in this posting group.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Additional Fee Account" }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the account that additional fees are posted to.;
+                           ENG=Specifies the account that additional fees are posted to.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Add. Fee per Line Account" }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies to which account to post amounts resulting from invoice rounding when you post transactions involving customers.;
+                           ENG=Specifies to which account to post amounts resulting from invoice rounding when you post transactions involving customers.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Invoice Rounding Account" }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to post rounding differences that can occur when you apply entries in different currencies to one another.;
+                           ENG=Specifies the general ledger account number to post rounding differences that can occur when you apply entries in different currencies to one another.];
+                ApplicationArea=#Suite;
+                SourceExpr="Debit Curr. Appln. Rndg. Acc." }
+
+    { 21  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to post rounding differences that can occur when you apply entries in different currencies to one another.;
+                           ENG=Specifies the general ledger account number to post rounding differences that can occur when you apply entries in different currencies to one another.];
+                ApplicationArea=#Suite;
+                SourceExpr="Credit Curr. Appln. Rndg. Acc." }
+
+    { 23  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to post rounding differences from remaining amount.;
+                           ENG=Specifies the general ledger account number to post rounding differences from remaining amount.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Debit Rounding Account" }
+
+    { 25  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to post rounding differences from remaining amount.;
+                           ENG=Specifies the general ledger account number to post rounding differences from remaining amount.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Credit Rounding Account" }
+
+    { 29  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to post payment tolerance when you post payments for sales with this particular combination of business group and product group.;
+                           ENG=Specifies the general ledger account number to post payment tolerance when you post payments for sales with this particular combination of business group and product group.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Payment Tolerance Debit Acc." }
+
+    { 31  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to post payment tolerance when you post payments for sales with this particular combination of business group and product group.;
+                           ENG=Specifies the general ledger account number to post payment tolerance when you post payments for sales with this particular combination of business group and product group.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Payment Tolerance Credit Acc." }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

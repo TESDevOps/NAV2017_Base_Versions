@@ -1,0 +1,56 @@
+OBJECT Table 326 Tax Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Tax Setup;
+               ENG=VAT Setup];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=[ENU=Primary Key;
+                                                              ENG=Primary Key] }
+    { 2   ;   ;Auto. Create Tax Details;Boolean   ;CaptionML=[ENU=Auto. Create Tax Details;
+                                                              ENG=Auto. Create VAT Details] }
+    { 3   ;   ;Non-Taxable Tax Group Code;Code10  ;TableRelation="Tax Group";
+                                                   CaptionML=[ENU=Non-Taxable Tax Group Code;
+                                                              ENG=Non-Taxable Tax Group Code] }
+    { 6   ;   ;Tax Account (Sales) ;Code20        ;TableRelation="G/L Account";
+                                                   CaptionML=[ENU=Tax Account (Sales);
+                                                              ENG=VAT Account (Sales)] }
+    { 7   ;   ;Tax Account (Purchases);Code20     ;TableRelation="G/L Account";
+                                                   CaptionML=[ENU=Tax Account (Purchases);
+                                                              ENG=VAT Account (Purchases)] }
+    { 8   ;   ;Unreal. Tax Acc. (Sales);Code20    ;TableRelation="G/L Account";
+                                                   CaptionML=[ENU=Unreal. Tax Acc. (Sales);
+                                                              ENG=Unreal. VAT Acc. (Sales)] }
+    { 9   ;   ;Unreal. Tax Acc. (Purchases);Code20;TableRelation="G/L Account";
+                                                   CaptionML=[ENU=Unreal. Tax Acc. (Purchases);
+                                                              ENG=Unreal. VAT Acc. (Purchases)] }
+    { 10  ;   ;Reverse Charge (Purchases);Code20  ;TableRelation="G/L Account";
+                                                   CaptionML=[ENU=Reverse Charge (Purchases);
+                                                              ENG=Reverse Charge (Purchases)] }
+    { 11  ;   ;Unreal. Rev. Charge (Purch.);Code20;TableRelation="G/L Account";
+                                                   CaptionML=[ENU=Unreal. Rev. Charge (Purch.);
+                                                              ENG=Unreal. Rev. Charge (Purch.)] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

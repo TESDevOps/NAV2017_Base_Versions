@@ -1,0 +1,90 @@
+OBJECT Page 9620 Page Fields
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=Yes;
+    CaptionML=[ENU=Add Field to Page;
+               ENG=Add Field to Page];
+    Description=Place fields by dragging from the list to a position on the page.;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    SourceTable=Table2000000171;
+    PageType=List;
+    CardPageID=Add Page Fields;
+    InstructionalTextML=[ENU=Place fields by dragging from the list to a position on the page.;
+                         ENG=Place fields by dragging from the list to a position on the page.];
+    OnOpenPage=VAR
+                 DesignerPageId@1000 : Codeunit 9621;
+               BEGIN
+                 DesignerPageId.SetPageId("Page ID");
+               END;
+
+    OnAfterGetRecord=BEGIN
+                       FieldPlaced := Status = 1;
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the ID of the page where the field can be placed.;
+                           ENG=Specifies the ID of the page where the field can be placed.];
+                ApplicationArea=#All;
+                SourceExpr="Page ID" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the ID of the field.;
+                           ENG=Specifies the ID of the field.];
+                ApplicationArea=#All;
+                SourceExpr="Field ID" }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of the field.;
+                           ENG=Specifies the type of the field.];
+                ApplicationArea=#All;
+                SourceExpr=Type }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the length of the field.;
+                           ENG=Specifies the length of the field.];
+                ApplicationArea=#All;
+                SourceExpr=Length }
+
+    { 7   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the caption of the field.;
+                           ENG=Specifies the caption of the field.];
+                ApplicationArea=#All;
+                SourceExpr=Caption }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the field's status, such as if the field is already placed on the page.;
+                           ENG=Specifies the field's status, such as if the field is already placed on the page.];
+                ApplicationArea=#All;
+                SourceExpr=Status;
+                Style=Favorable;
+                StyleExpr=FieldPlaced }
+
+  }
+  CODE
+  {
+    VAR
+      FieldPlaced@1000 : Boolean;
+
+    BEGIN
+    END.
+  }
+}
+

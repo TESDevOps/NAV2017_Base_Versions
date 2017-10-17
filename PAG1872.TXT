@@ -1,0 +1,236 @@
+OBJECT Page 1872 Item Availability Check
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Availability check;
+               ENG=Availability check];
+    SaveValues=No;
+    MultipleNewLines=No;
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    LinksAllowed=No;
+    SourceTable=Table27;
+    DelayedInsert=No;
+    PopulateAllFields=No;
+    SourceTableTemporary=No;
+    AutoSplitKey=No;
+    PromotedActionCategoriesML=[ENU=New,Process,Report,Manage;
+                                ENG=New,Process,Report,Manage];
+    ShowFilter=Yes;
+    ActionList=ACTIONS
+    {
+      { 2       ;    ;ActionContainer;
+                      Name=Action1;
+                      ActionContainerType=RelatedInformation }
+      { 7       ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Manage;
+                                 ENG=&Manage] }
+      { 8       ;2   ;Action    ;
+                      Name=Page Item Card;
+                      CaptionML=[ENU=Item;
+                                 ENG=Item];
+                      ToolTipML=[ENU=View details of the Item;
+                                 ENG=View details of the Item];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 30;
+                      RunPageLink=No.=FIELD(No.),
+                                  Date Filter=FIELD(Date Filter),
+                                  Global Dimension 1 Filter=FIELD(Global Dimension 1 Filter),
+                                  Global Dimension 2 Filter=FIELD(Global Dimension 2 Filter);
+                      Promoted=Yes;
+                      PromotedIsBig=No;
+                      Image=Item;
+                      PromotedCategory=Category4;
+                      PromotedOnly=Yes;
+                      RunPageMode=View }
+      { 9       ;1   ;ActionGroup;
+                      CaptionML=[ENU=Create;
+                                 ENG=Create] }
+      { 10      ;2   ;Action    ;
+                      Name=Purchase Invoice;
+                      CaptionML=[ENU=Create Purchase Invoice;
+                                 ENG=Create Purchase Invoice];
+                      ToolTipML=[ENU=Create Purchase Invoice;
+                                 ENG=Create Purchase Invoice];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      PromotedIsBig=No;
+                      Image=NewPurchaseInvoice;
+                      PromotedCategory=New;
+                      PromotedOnly=Yes;
+                      OnAction=VAR
+                                 PurchaseHeader@1000 : Record 38;
+                                 PurchaseLine@1001 : Record 39;
+                                 Vendor@1002 : Record 23;
+                               BEGIN
+                                 IF "Vendor No." = '' THEN BEGIN
+                                   IF NOT SelectVendor(Vendor) THEN
+                                     EXIT;
+
+                                   "Vendor No." := Vendor."No."
+                                 END;
+                                 PurchaseHeader.INIT;
+                                 PurchaseHeader.VALIDATE("Document Type",PurchaseHeader."Document Type"::Invoice);
+                                 PurchaseHeader.INSERT(TRUE);
+                                 PurchaseHeader.VALIDATE("Buy-from Vendor No.","Vendor No.");
+                                 PurchaseHeader.MODIFY(TRUE);
+
+                                 PurchaseLine.INIT;
+                                 PurchaseLine.VALIDATE("Document Type",PurchaseHeader."Document Type");
+                                 PurchaseLine.VALIDATE("Document No.",PurchaseHeader."No.");
+                                 PurchaseLine.VALIDATE("Line No.",10000);
+                                 PurchaseLine.INSERT(TRUE);
+
+                                 PurchaseLine.VALIDATE(Type,PurchaseLine.Type::Item);
+                                 PurchaseLine.VALIDATE("No.","No.");
+
+                                 PurchaseLine.MODIFY(TRUE);
+                                 PAGE.RUN(PAGE::"Purchase Invoice",PurchaseHeader);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                Name=Control1;
+                ContainerType=ContentArea }
+
+    { 6   ;1   ;Field     ;
+                Name=Control2;
+                ApplicationArea=#Basic,#Suite;
+                CaptionClass=Heading }
+
+    { 4   ;1   ;Field     ;
+                Name=InventoryQty;
+                CaptionML=[ENU=Available Inventory;
+                           ENG=Available Inventory];
+                ToolTipML=[ENU=Specifies the quantity of the item that is currently in inventory and not reserved for other demand.;
+                           ENG=Specifies the quantity of the item that is currently in inventory and not reserved for other demand.];
+                ApplicationArea=#Basic,#Suite;
+                DecimalPlaces=0:5;
+                SourceExpr=InventoryQty;
+                Editable=false }
+
+    { 5   ;1   ;Field     ;
+                Name=TotalQuantity;
+                CaptionML=[ENU=Inventory Shortage;
+                           ENG=Inventory Shortage];
+                ToolTipML=[ENU="Specifies the total quantity of the item that is currently in inventory. The Total Quantity field is used to calculate the Available Inventory field as follows: Available Inventory = Total Quantity - Reserved Quantity.";
+                           ENG="Specifies the total quantity of the item that is currently in inventory. The Total Quantity field is used to calculate the Available Inventory field as follows: Available Inventory = Total Quantity - Reserved Quantity."];
+                ApplicationArea=#Basic,#Suite;
+                DecimalPlaces=0:5;
+                SourceExpr=TotalQuantity;
+                Editable=false }
+
+    { 3   ;1   ;Part      ;
+                Name=AvailabilityCheckDetails;
+                ApplicationArea=#Basic,#Suite;
+                SubPageLink=No.=FIELD(No.);
+                PagePartID=Page1873;
+                Editable=FALSE;
+                PartType=Page }
+
+  }
+  CODE
+  {
+    VAR
+      TotalQuantity@1000 : Decimal;
+      InventoryQty@1001 : Decimal;
+      Heading@1003 : Text;
+      SelectVentorTxt@1002 : TextConst 'ENU=Select a vendor to buy from.;ENG=Select a vendor to buy from.';
+
+    PROCEDURE PopulateDataOnNotification@1(VAR AvailabilityCheckNotification@1000 : Notification;ItemNo@1012 : Code[20];UnitOfMeasureCode@1011 : Code[20];InventoryQty@1010 : Decimal;GrossReq@1009 : Decimal;ReservedReq@1008 : Decimal;SchedRcpt@1007 : Decimal;ReservedRcpt@1006 : Decimal;CurrentQuantity@1005 : Decimal;CurrentReservedQty@1004 : Decimal;TotalQuantity@1003 : Decimal;EarliestAvailDate@1002 : Date);
+    BEGIN
+      AvailabilityCheckNotification.SETDATA('ItemNo',ItemNo);
+      AvailabilityCheckNotification.SETDATA('UnitOfMeasureCode',UnitOfMeasureCode);
+      AvailabilityCheckNotification.SETDATA('GrossReq',FORMAT(GrossReq));
+      AvailabilityCheckNotification.SETDATA('ReservedReq',FORMAT(ReservedReq));
+      AvailabilityCheckNotification.SETDATA('SchedRcpt',FORMAT(SchedRcpt));
+      AvailabilityCheckNotification.SETDATA('ReservedRcpt',FORMAT(ReservedRcpt));
+      AvailabilityCheckNotification.SETDATA('CurrentQuantity',FORMAT(CurrentQuantity));
+      AvailabilityCheckNotification.SETDATA('CurrentReservedQty',FORMAT(CurrentReservedQty));
+      AvailabilityCheckNotification.SETDATA('TotalQuantity',FORMAT(TotalQuantity));
+      AvailabilityCheckNotification.SETDATA('InventoryQty',FORMAT(InventoryQty));
+      AvailabilityCheckNotification.SETDATA('EarliestAvailDate',FORMAT(EarliestAvailDate));
+    END;
+
+    PROCEDURE InitializeFromNotification@4(AvailabilityCheckNotification@1000 : Notification);
+    VAR
+      GrossReq@1007 : Decimal;
+      SchedRcpt@1006 : Decimal;
+      ReservedReq@1005 : Decimal;
+      ReservedRcpt@1004 : Decimal;
+      CurrentQuantity@1003 : Decimal;
+      CurrentReservedQty@1002 : Decimal;
+      EarliestAvailDate@1001 : Date;
+    BEGIN
+      GET(AvailabilityCheckNotification.GETDATA('ItemNo'));
+      SETRANGE("No.",AvailabilityCheckNotification.GETDATA('ItemNo'));
+      EVALUATE(TotalQuantity,AvailabilityCheckNotification.GETDATA('TotalQuantity'));
+      EVALUATE(InventoryQty,AvailabilityCheckNotification.GETDATA('InventoryQty'));
+      CurrPage.AvailabilityCheckDetails.PAGE.SetUnitOfMeasureCode(
+        AvailabilityCheckNotification.GETDATA('UnitOfMeasureCode'));
+
+      IF AvailabilityCheckNotification.GETDATA('GrossReq') <> '' THEN BEGIN
+        EVALUATE(GrossReq,AvailabilityCheckNotification.GETDATA('GrossReq'));
+        CurrPage.AvailabilityCheckDetails.PAGE.SetGrossReq(GrossReq);
+      END;
+      IF AvailabilityCheckNotification.GETDATA('ReservedReq') <> '' THEN BEGIN
+        EVALUATE(ReservedReq,AvailabilityCheckNotification.GETDATA('ReservedReq'));
+        CurrPage.AvailabilityCheckDetails.PAGE.SetReservedReq(ReservedReq);
+      END;
+      IF AvailabilityCheckNotification.GETDATA('SchedRcpt') <> '' THEN BEGIN
+        EVALUATE(SchedRcpt,AvailabilityCheckNotification.GETDATA('SchedRcpt'));
+        CurrPage.AvailabilityCheckDetails.PAGE.SetSchedRcpt(SchedRcpt);
+      END;
+      IF AvailabilityCheckNotification.GETDATA('ReservedRcpt') <> '' THEN BEGIN
+        EVALUATE(ReservedRcpt,AvailabilityCheckNotification.GETDATA('ReservedRcpt'));
+        CurrPage.AvailabilityCheckDetails.PAGE.SetReservedRcpt(ReservedRcpt);
+      END;
+      IF AvailabilityCheckNotification.GETDATA('CurrentQuantity') <> '' THEN BEGIN
+        EVALUATE(CurrentQuantity,AvailabilityCheckNotification.GETDATA('CurrentQuantity'));
+        CurrPage.AvailabilityCheckDetails.PAGE.SetCurrentQuantity(CurrentQuantity);
+      END;
+      IF AvailabilityCheckNotification.GETDATA('CurrentReservedQty') <> '' THEN BEGIN
+        EVALUATE(CurrentReservedQty,AvailabilityCheckNotification.GETDATA('CurrentReservedQty'));
+        CurrPage.AvailabilityCheckDetails.PAGE.SetCurrentReservedQty(CurrentReservedQty);
+      END;
+      IF AvailabilityCheckNotification.GETDATA('EarliestAvailDate') <> '' THEN BEGIN
+        EVALUATE(EarliestAvailDate,AvailabilityCheckNotification.GETDATA('EarliestAvailDate'));
+        CurrPage.AvailabilityCheckDetails.PAGE.SetEarliestAvailDate(EarliestAvailDate);
+      END;
+    END;
+
+    PROCEDURE SetHeading@21(Value@1000 : Text);
+    BEGIN
+      Heading := Value;
+    END;
+
+    LOCAL PROCEDURE SelectVendor@2(VAR Vendor@1000 : Record 23) : Boolean;
+    VAR
+      VendorList@1003 : Page 27;
+    BEGIN
+      VendorList.LOOKUPMODE(TRUE);
+      VendorList.CAPTION(SelectVentorTxt);
+      IF VendorList.RUNMODAL = ACTION::LookupOK THEN BEGIN
+        VendorList.GETRECORD(Vendor);
+        EXIT(TRUE);
+      END;
+
+      EXIT(FALSE);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

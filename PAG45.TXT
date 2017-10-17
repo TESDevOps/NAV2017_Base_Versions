@@ -1,0 +1,253 @@
+OBJECT Page 45 Sales List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=28/04/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16585;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Sales List;
+               ENG=Sales List];
+    SourceTable=Table36;
+    DataCaptionFields=Document Type;
+    PageType=List;
+    OnOpenPage=BEGIN
+                 CopySellToCustomerFilter;
+               END;
+
+    OnAfterGetCurrRecord=BEGIN
+                           CurrPage.IncomingDocAttachFactBox.PAGE.LoadDataFromRecord(Rec);
+                         END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 19      ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Line;
+                                 ENG=&Line];
+                      Image=Line }
+      { 20      ;2   ;Action    ;
+                      ShortCutKey=Shift+F7;
+                      CaptionML=[ENU=Card;
+                                 ENG=Card];
+                      ToolTipML=[ENU=View or change detailed information about the customer.;
+                                 ENG=View or change detailed information about the customer.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=EditLines;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 PageManagement@1000 : Codeunit 700;
+                               BEGIN
+                                 PageManagement.PageRun(Rec);
+                               END;
+                                }
+      { 1900000006;0 ;ActionContainer;
+                      ActionContainerType=Reports }
+      { 1904702706;1 ;Action    ;
+                      CaptionML=[ENU=Sales Reservation Avail.;
+                                 ENG=Sales Reservation Avail.];
+                      ToolTipML=[ENU=View, print, or save an overview of availability of items for shipment on sales documents, filtered on shipment status.;
+                                 ENG=View, print, or save an overview of availability of items for shipment on sales documents, filtered on shipment status.];
+                      RunObject=Report 209;
+                      Promoted=No;
+                      Image=Report;
+                      PromotedCategory=Report }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the sales document.;
+                           ENG=Specifies the number of the sales document.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="No." }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the customer who will receive the products and be billed by default.;
+                           ENG=Specifies the number of the customer who will receive the products and be billed by default.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Customer No." }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the customer who will receive the products and be billed by default.;
+                           ENG=Specifies the name of the customer who will receive the products and be billed by default.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Customer Name" }
+
+    { 17  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number that the customer uses in their own system to refer to this sales document.;
+                           ENG=Specifies the number that the customer uses in their own system to refer to this sales document.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="External Document No." }
+
+    { 33  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code of the address.;
+                           ENG=Specifies the postcode of the address.];
+                SourceExpr="Sell-to Post Code";
+                Visible=FALSE }
+
+    { 29  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the country/region code of the address.;
+                           ENG=Specifies the country/region code of the address.];
+                SourceExpr="Sell-to Country/Region Code";
+                Visible=FALSE }
+
+    { 41  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the person to contact at the customer.;
+                           ENG=Specifies the name of the person to contact at the customer.];
+                SourceExpr="Sell-to Contact";
+                Visible=FALSE }
+
+    { 13  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the customer to whom you will send the sales invoice when this customer is different from the sell-to customer.;
+                           ENG=Specifies the customer to whom you will send the sales invoice when this customer is different from the sell-to customer.];
+                SourceExpr="Bill-to Customer No.";
+                Visible=FALSE }
+
+    { 15  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the customer to whom you will send the sales invoice, when different from the customer that you are selling to.;
+                           ENG=Specifies the customer to whom you will send the sales invoice, when different from the customer that you are selling to.];
+                SourceExpr="Bill-to Name";
+                Visible=FALSE }
+
+    { 39  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code of the address.;
+                           ENG=Specifies the postcode of the address.];
+                SourceExpr="Bill-to Post Code";
+                Visible=FALSE }
+
+    { 35  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the country/region code of the address.;
+                           ENG=Specifies the country/region code of the address.];
+                SourceExpr="Bill-to Country/Region Code";
+                Visible=FALSE }
+
+    { 159 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the person you should contact at the customer who you are sending the invoice to.;
+                           ENG=Specifies the name of the person you should contact at the customer who you are sending the invoice to.];
+                SourceExpr="Bill-to Contact";
+                Visible=FALSE }
+
+    { 155 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for another shipment address than the customer's own address, which is entered by default.;
+                           ENG=Specifies the code for another shipment address than the customer's own address, which is entered by default.];
+                SourceExpr="Ship-to Code";
+                Visible=FALSE }
+
+    { 153 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name that products on the sales document will be shipped to.;
+                           ENG=Specifies the name that products on the sales document will be shipped to.];
+                SourceExpr="Ship-to Name";
+                Visible=FALSE }
+
+    { 27  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code of the address.;
+                           ENG=Specifies the postcode of the address.];
+                SourceExpr="Ship-to Post Code";
+                Visible=FALSE }
+
+    { 23  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the country/region code of the address.;
+                           ENG=Specifies the country/region code of the address.];
+                SourceExpr="Ship-to Country/Region Code";
+                Visible=FALSE }
+
+    { 143 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the contact person at the address that products will be shipped to.;
+                           ENG=Specifies the name of the contact person at the address that products will be shipped to.];
+                SourceExpr="Ship-to Contact";
+                Visible=FALSE }
+
+    { 139 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date when the posting of the sales document will be recorded.;
+                           ENG=Specifies the date when the posting of the sales document will be recorded.];
+                SourceExpr="Posting Date";
+                Visible=FALSE }
+
+    { 121 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code associated with the sales header.;
+                           ENG=Specifies the dimension value code associated with the sales header.];
+                SourceExpr="Shortcut Dimension 1 Code";
+                Visible=FALSE }
+
+    { 119 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code associated with the sales header.;
+                           ENG=Specifies the dimension value code associated with the sales header.];
+                SourceExpr="Shortcut Dimension 2 Code";
+                Visible=FALSE }
+
+    { 123 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the location from where inventory items to the customer on the sales document are to be shipped by default.;
+                           ENG=Specifies the location from where inventory items to the customer on the sales document are to be shipped by default.];
+                SourceExpr="Location Code" }
+
+    { 99  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the sales person who is assigned to the customer.;
+                           ENG=Specifies the name of the sales person who is assigned to the customer.];
+                SourceExpr="Salesperson Code";
+                Visible=FALSE }
+
+    { 21  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the ID of the user who is responsible for the document.;
+                           ENG=Specifies the ID of the user who is responsible for the document.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Assigned User ID" }
+
+    { 11  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the currency of amounts on the sales document.;
+                           ENG=Specifies the currency of amounts on the sales document.];
+                SourceExpr="Currency Code";
+                Visible=FALSE }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date on which you created the sales document.;
+                           ENG=Specifies the date on which you created the sales document.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Document Date" }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether the document is open, waiting to be approved, has been invoiced for prepayment, or has been released to the next stage of processing.;
+                           ENG=Specifies whether the document is open, waiting to be approved, has been invoiced for prepayment, or has been released to the next stage of processing.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Status }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 8   ;1   ;Part      ;
+                Name=IncomingDocAttachFactBox;
+                PagePartID=Page193;
+                Visible=FALSE;
+                PartType=Page;
+                ShowFilter=No }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

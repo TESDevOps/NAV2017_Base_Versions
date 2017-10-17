@@ -1,0 +1,76 @@
+OBJECT Page 464 Tax Area
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Tax Area;
+               ENG=VAT Area];
+    SourceTable=Table318;
+    PageType=ListPlus;
+    OnQueryClosePage=VAR
+                       TaxAreaLine@1000 : Record 319;
+                     BEGIN
+                       IF CloseAction IN [ACTION::OK,ACTION::LookupOK] THEN BEGIN
+                         TaxAreaLine.SETRANGE("Tax Area",Code);
+                         IF NOT TaxAreaLine.FINDFIRST THEN
+                           IF NOT CONFIRM(TaxAreaNotSetupQst,FALSE) THEN
+                             ERROR('');
+                       END;
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                CaptionML=[ENU=General;
+                           ENG=General] }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code you want to assign to this tax area. You can enter up to 20 characters, both numbers and letters. It is a good idea to enter a code that is easy to remember.;
+                           ENG=Specifies the code you want to assign to this VAT area. You can enter up to 20 characters, both numbers and letters. It is a good idea to enter a code that is easy to remember.];
+                ApplicationArea=#All;
+                SourceExpr=Code }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description of the tax area. For example, if you use a number as the tax code, you might want to describe the tax area in this field.;
+                           ENG=Specifies a description of the VAT area. For example, if you use a number as the VAT code, you might want to describe the VAT area in this field.];
+                ApplicationArea=#All;
+                SourceExpr=Description }
+
+    { 7   ;1   ;Part      ;
+                ApplicationArea=#Basic,#Suite;
+                SubPageLink=Tax Area=FIELD(Code);
+                PagePartID=Page465 }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      TaxAreaNotSetupQst@1000 : TextConst 'ENU=The Tax Area functionality does not work because you have not specified the Jurisdictions field.\\Do you want to continue?;ENG=The Tax Area functionality does not work because you have not specified the Jurisdictions field.\\Do you want to continue?';
+
+    BEGIN
+    END.
+  }
+}
+

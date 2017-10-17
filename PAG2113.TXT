@@ -1,0 +1,291 @@
+OBJECT Page 2113 O365 Posted Sales Invoice
+{
+  OBJECT-PROPERTIES
+  {
+    Date=28/04/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16585;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Sent Invoice;
+               ENG=Sent Invoice];
+    SourceTable=Table112;
+    PageType=Document;
+    OnAfterGetRecord=VAR
+                       DummyCustLedgerEntry@1002 : Record 21;
+                       O365SalesInvoicePayment@1001 : Codeunit 2105;
+                     BEGIN
+                       IsFullyPaid := O365SalesInvoicePayment.GetPaymentCustLedgerEntry(DummyCustLedgerEntry,"No.");
+                       WorkDescription := GetWorkDescription;
+                     END;
+
+    ActionList=ACTIONS
+    {
+      { 22      ;    ;ActionContainer;
+                      CaptionML=[ENU=Invoice;
+                                 ENG=Invoice];
+                      ActionContainerType=ActionItems }
+      { 23      ;1   ;Action    ;
+                      Name=Send;
+                      CaptionML=[ENU=Resend by email;
+                                 ENG=Resend by email];
+                      ToolTipML=[ENU=Sends the invoice as pdf by email.;
+                                 ENG=Sends the invoice as pdf by email.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=Email;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 SETRECFILTER;
+                                 LOCKTABLE;
+                                 FIND;
+                                 EmailRecords(FALSE);
+                                 FIND;
+                               END;
+                                }
+      { 24      ;1   ;Action    ;
+                      Name=ViewPdf;
+                      CaptionML=[ENU=View Invoice;
+                                 ENG=View Invoice];
+                      ToolTipML=[ENU=View the final invoice as pdf.;
+                                 ENG=View the final invoice as pdf.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=View;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 ReportSelections@1001 : Record 77;
+                                 ReportViewer@1000 : Page 2115;
+                               BEGIN
+                                 SETRECFILTER;
+                                 LOCKTABLE;
+                                 FIND;
+                                 ReportViewer.SetDocument(Rec,ReportSelections.Usage::"S.Invoice","Sell-to Customer No.");
+                                 ReportViewer.RUN;
+                                 FIND;
+                               END;
+                                }
+      { 27      ;1   ;Action    ;
+                      Name=ShowPayments;
+                      CaptionML=[ENU=Show Payments;
+                                 ENG=Show Payments];
+                      ToolTipML=[ENU=Show a list of payments made for this invoice.;
+                                 ENG=Show a list of payments made for this invoice.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=Payment;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 O365SalesInvoicePayment.ShowHistory("No.");
+                               END;
+                                }
+      { 26      ;1   ;Action    ;
+                      Name=MarkAsPaid;
+                      CaptionML=[ENU=Mark as paid;
+                                 ENG=Mark as paid];
+                      ToolTipML=[ENU=Pay the invoice as specified in the default Payment Registration Setup.;
+                                 ENG=Pay the invoice as specified in the default Payment Registration Setup.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Visible=NOT IsFullyPaid;
+                      Image=Payment;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 O365SalesInvoicePayment.MarkAsPaid("No.");
+                               END;
+                                }
+      { 25      ;1   ;Action    ;
+                      Name=MarkAsUnpaid;
+                      CaptionML=[ENU=Mark as unpaid;
+                                 ENG=Mark as unpaid];
+                      ToolTipML=[ENU=Mark the invoice as unpaid.;
+                                 ENG=Mark the invoice as unpaid.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Visible=IsFullyPaid;
+                      Image=Cancel;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 O365SalesInvoicePayment.CancelSalesInvoicePayment("No.");
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                GroupType=Group }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the record.;
+                           ENG=Specifies the number of the record.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="No.";
+                Importance=Additional }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the customer who will receive the products and be billed by default. When you fill this field, most of the other fields on the document are filled from the customer card.;
+                           ENG=Specifies the number of the customer who will receive the products and be billed by default. When you fill this field, most of the other fields on the document are filled from the customer card.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Customer No.";
+                Importance=Additional;
+                Visible=FALSE }
+
+    { 9   ;2   ;Field     ;
+                CaptionML=[ENU=Customer Name;
+                           ENG=Customer Name];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Customer Name";
+                Importance=Promoted }
+
+    { 10  ;2   ;Field     ;
+                CaptionML=[ENU=Address;
+                           ENG=Address];
+                ToolTipML=[ENU=Specifies the customer's sell-to address.;
+                           ENG=Specifies the customer's sell-to address.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Address";
+                Importance=Additional }
+
+    { 11  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies an additional part of the address of the customer that the items were sold to.;
+                           ENG=Specifies an additional part of the address of the customer that the items were sold to.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Address 2";
+                Importance=Additional;
+                Visible=FALSE }
+
+    { 12  ;2   ;Field     ;
+                CaptionML=[ENU=City;
+                           ENG=City];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to City";
+                Importance=Additional }
+
+    { 13  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the person to contact at the customer that the items were sold to.;
+                           ENG=Specifies the name of the person to contact at the customer that the items were sold to.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Contact";
+                Visible=FALSE }
+
+    { 14  ;2   ;Field     ;
+                CaptionML=[ENU=" Post Code";
+                           ENG=" Postcode"];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Post Code";
+                Importance=Additional }
+
+    { 15  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the county of the customer that the items were sold to.;
+                           ENG=Specifies the county of the customer that the items were sold to.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to County";
+                Importance=Additional;
+                Visible=FALSE }
+
+    { 16  ;2   ;Field     ;
+                CaptionML=[ENU=Country/Region Code;
+                           ENG=Country/Region Code];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Country/Region Code" }
+
+    { 17  ;2   ;Field     ;
+                CaptionML=[ENU=Invoice Date;
+                           ENG=Invoice Date];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Document Date" }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the posting date of the record.;
+                           ENG=Specifies the posting date of the record.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Posting Date";
+                Importance=Additional;
+                Visible=FALSE }
+
+    { 6   ;2   ;Field     ;
+                CaptionML=[ENU=Due Date;
+                           ENG=Due Date];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Due Date" }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the tax area code that is used to calculate and post sales tax.;
+                           ENG=Specifies the VAT area code that is used to calculate and post VAT.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Tax Area Code";
+                Importance=Additional }
+
+    { 19  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies if the sales invoice contains sales tax.;
+                           ENG=Specifies if the sales invoice contains VAT.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Tax Liable";
+                Importance=Additional }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the sales quote that the sales order was created from. You can track the number to sales quote documents that you have printed, saved, or emailed.;
+                           ENG=Specifies the number of the sales quote that the sales order was created from. You can track the number to sales quote documents that you have printed, saved, or emailed.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Quote No.";
+                Importance=Additional;
+                Visible=FALSE }
+
+    { 30  ;2   ;Group     ;
+                CaptionML=[ENU=Work Description;
+                           ENG=Work Description];
+                GroupType=Group }
+
+    { 29  ;3   ;Field     ;
+                ToolTipML=[ENU=Specifies the products or service being offered;
+                           ENG=Specifies the products or service being offered];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=WorkDescription;
+                Importance=Additional;
+                Editable=FALSE;
+                MultiLine=Yes;
+                ShowCaption=No }
+
+    { 21  ;1   ;Part      ;
+                CaptionML=[ENU=Lines;
+                           ENG=Lines];
+                ApplicationArea=#Basic,#Suite;
+                SubPageLink=Document No.=FIELD(No.);
+                PagePartID=Page2114;
+                PartType=Page }
+
+    { 7   ;1   ;Field     ;
+                CaptionML=[ENU=Net Total;
+                           ENG=Net Total];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amount;
+                Importance=Promoted;
+                Enabled=FALSE }
+
+    { 8   ;1   ;Field     ;
+                CaptionML=[ENU=Total Including Tax;
+                           ENG=Total Including VAT];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Amount Including VAT";
+                Importance=Promoted;
+                Enabled=FALSE }
+
+  }
+  CODE
+  {
+    VAR
+      O365SalesInvoicePayment@1002 : Codeunit 2105;
+      IsFullyPaid@1000 : Boolean;
+      WorkDescription@1001 : Text;
+
+    BEGIN
+    END.
+  }
+}
+

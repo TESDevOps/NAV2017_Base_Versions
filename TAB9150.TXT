@@ -1,0 +1,67 @@
+OBJECT Table 9150 My Customer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=30/06/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.17501;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=My Customer;
+               ENG=My Customer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;User ID             ;Code50        ;TableRelation=User."User Name";
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=User ID;
+                                                              ENG=User ID] }
+    { 2   ;   ;Customer No.        ;Code20        ;TableRelation=Customer;
+                                                   OnValidate=BEGIN
+                                                                SetCustomerFields;
+                                                              END;
+
+                                                   CaptionML=[ENU=Customer No.;
+                                                              ENG=Customer No.];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Name                ;Text50        ;CaptionML=[ENU=Name;
+                                                              ENG=Name];
+                                                   Editable=No }
+    { 4   ;   ;Phone No.           ;Text30        ;CaptionML=[ENU=Phone No.;
+                                                              ENG=Phone No.];
+                                                   Editable=No }
+    { 5   ;   ;Balance (LCY)       ;Decimal       ;FieldClass=FlowField;
+                                                   CalcFormula=Sum("Detailed Cust. Ledg. Entry"."Amount (LCY)" WHERE (Customer No.=FIELD(Customer No.)));
+                                                   CaptionML=[ENU=Balance (LCY);
+                                                              ENG=Balance (LCY)];
+                                                   Editable=No;
+                                                   AutoFormatType=1 }
+  }
+  KEYS
+  {
+    {    ;User ID,Customer No.                    ;Clustered=Yes }
+    {    ;Name                                     }
+    {    ;Phone No.                                }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE SetCustomerFields@3();
+    VAR
+      Customer@1000 : Record 18;
+    BEGIN
+      Customer.GET("Customer No.");
+      Name := Customer.Name;
+      "Phone No." := Customer."Phone No.";
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

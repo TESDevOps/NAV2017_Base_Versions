@@ -1,0 +1,86 @@
+OBJECT Page 1550 Restricted Records
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Restricted Records;
+               ENG=Restricted Records];
+    InsertAllowed=No;
+    ModifyAllowed=No;
+    SourceTable=Table1550;
+    PageType=List;
+    OnAfterGetRecord=BEGIN
+                       RecordDetails := FORMAT("Record ID",0,1);
+                     END;
+
+    OnAfterGetCurrRecord=BEGIN
+                           RecordDetails := FORMAT("Record ID",0,1);
+                         END;
+
+    ActionList=ACTIONS
+    {
+      { 6       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 7       ;1   ;Action    ;
+                      Name=Record;
+                      ShortCutKey=Return;
+                      CaptionML=[ENU=Record;
+                                 ENG=Record];
+                      ToolTipML=[ENU=Open the record that is restricted from certain usage, as defined by the workflow response.;
+                                 ENG=Open the record that is restricted from certain usage, as defined by the workflow response.];
+                      ApplicationArea=#Suite;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Document;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 ShowRecord;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Identifies the record in the Restricted Record table.;
+                           ENG=Identifies the record in the Restricted Record table.];
+                SourceExpr=ID;
+                Visible=FALSE }
+
+    { 5   ;2   ;Field     ;
+                CaptionML=[ENU=Record Details;
+                           ENG=Record Details];
+                ToolTipML=[ENU=Specifies details about what imposed the restriction on the record.;
+                           ENG=Specifies details about what imposed the restriction on the record.];
+                ApplicationArea=#Suite;
+                SourceExpr=RecordDetails }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies details about what imposed the restriction on the record.;
+                           ENG=Specifies details about what imposed the restriction on the record.];
+                ApplicationArea=#Suite;
+                SourceExpr=Details }
+
+  }
+  CODE
+  {
+    VAR
+      RecordDetails@1000 : Text;
+
+    BEGIN
+    END.
+  }
+}
+

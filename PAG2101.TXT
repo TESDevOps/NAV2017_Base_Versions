@@ -1,0 +1,111 @@
+OBJECT Page 2101 O365 Customer Activity Page
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Customers;
+               ENG=Customers];
+    SourceTable=Table18;
+    SourceTableView=SORTING(Name);
+    PageType=ListPart;
+    CardPageID=O365 Sales Customer Card;
+    RefreshOnActivate=Yes;
+    ActionList=ACTIONS
+    {
+      { 3       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 2       ;1   ;Action    ;
+                      Name=NewSalesInvoice;
+                      CaptionML=[ENU=New Invoice;
+                                 ENG=New Invoice];
+                      ToolTipML=[ENU=Create a sales invoice for the customer.;
+                                 ENG=Create a sales invoice for the customer.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=NewSalesInvoice;
+                      RunPageMode=Create;
+                      Scope=Repeater;
+                      OnAction=VAR
+                                 SalesHeader@1000 : Record 36;
+                               BEGIN
+                                 SalesHeader.INIT;
+                                 SalesHeader.VALIDATE("Document Type",SalesHeader."Document Type"::Invoice);
+                                 SalesHeader.VALIDATE("Sell-to Customer No.","No.");
+                                 SalesHeader.INSERT(TRUE);
+                                 COMMIT;
+
+                                 PAGE.RUN(PAGE::"O365 Sales Invoice",SalesHeader);
+                               END;
+
+                      Gesture=RightSwipe }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                CaptionML=[ENU="";
+                           ENG=""];
+                GroupType=Repeater }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the customer's name. This name will appear on all sales documents for the customer. You can enter a maximum of 50 characters, both numbers and letters.;
+                           ENG=Specifies the customer's name. This name will appear on all sales documents for the customer. You can enter a maximum of 50 characters, both numbers and letters.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Name }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the customer's telephone number.;
+                           ENG=Specifies the customer's telephone number.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Phone No." }
+
+    { 34  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the person you regularly contact when you do business with this customer.;
+                           ENG=Specifies the name of the person you regularly contact when you do business with this customer.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Contact }
+
+    { 62  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the payment amount that the customer owes for completed sales. This value is also known as the customer's balance.;
+                           ENG=Specifies the payment amount that the customer owes for completed sales. This value is also known as the customer's balance.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Balance (LCY)";
+                OnDrillDown=BEGIN
+                              OpenCustomerLedgerEntries(FALSE);
+                            END;
+                             }
+
+    { 59  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies payments from the customer that are overdue per today's date.;
+                           ENG=Specifies payments from the customer that are overdue per today's date.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Balance Due (LCY)";
+                OnDrillDown=BEGIN
+                              OpenCustomerLedgerEntries(TRUE);
+                            END;
+                             }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the total net amount of sales to the customer in LCY.;
+                           ENG=Specifies the total net amount of sales to the customer in LCY.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sales (LCY)" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

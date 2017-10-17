@@ -1,0 +1,48 @@
+OBJECT Table 2000000194 Webhook Notification
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/09/17;
+    Time=12:00:00;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Webhook Notification;
+               ENG=Webhook Notification];
+  }
+  FIELDS
+  {
+    { 1   ;   ;ID                  ;GUID          ;CaptionML=[ENU=ID;
+                                                              ENG=ID] }
+    { 2   ;   ;Sequence Number     ;Integer       ;CaptionML=[ENU=Sequence Number;
+                                                              ENG=Sequence Number] }
+    { 3   ;   ;Subscription ID     ;Text150       ;CaptionML=[ENU=Subscription ID;
+                                                              ENG=Subscription ID] }
+    { 4   ;   ;Resource ID         ;Text200       ;CaptionML=[ENU=Resource ID;
+                                                              ENG=Resource ID] }
+    { 5   ;   ;Change Type         ;Text50        ;CaptionML=[ENU=Change Type;
+                                                              ENG=Change Type] }
+    { 6   ;   ;Resource Type Name  ;Text250       ;CaptionML=[ENU=Resource Type Name;
+                                                              ENG=Resource Type Name] }
+    { 7   ;   ;Notification        ;BLOB          ;CaptionML=[ENU=Notification;
+                                                              ENG=Notification];
+                                                   SubType=Json }
+  }
+  KEYS
+  {
+    {    ;ID,Resource Type Name,Sequence Number,Subscription ID;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

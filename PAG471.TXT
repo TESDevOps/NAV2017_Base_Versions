@@ -1,0 +1,73 @@
+OBJECT Page 471 VAT Product Posting Groups
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=VAT Product Posting Groups;
+               ENG=VAT Product Posting Groups];
+    SourceTable=Table324;
+    PageType=List;
+    ActionList=ACTIONS
+    {
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 8       ;1   ;Action    ;
+                      CaptionML=[ENU=&Setup;
+                                 ENG=&Setup];
+                      ToolTipML=[ENU=View or edit combinations of Tax business posting groups and Tax product posting groups. Fill in a line for each combination of VAT business posting group and VAT product posting group.;
+                                 ENG=View or edit combinations of VAT business posting groups and VAT product posting groups. Fill in a line for each combination of VAT business posting group and VAT product posting group.];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Page 472;
+                      RunPageLink=VAT Prod. Posting Group=FIELD(Code);
+                      Promoted=Yes;
+                      Image=Setup;
+                      PromotedCategory=Process }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a code for the VAT product posting group.;
+                           ENG=Specifies a code for the VAT product posting group.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Code }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description for the product posting group.;
+                           ENG=Specifies a description for the product posting group.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Description }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

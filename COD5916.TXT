@@ -1,0 +1,42 @@
+OBJECT Codeunit 5916 ServMailManagement
+{
+  OBJECT-PROPERTIES
+  {
+    Date=23/01/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.15052;
+  }
+  PROPERTIES
+  {
+    TableNo=5935;
+    OnRun=VAR
+            TempEmailItem@1001 : TEMPORARY Record 9500;
+            MailManagement@1000 : Codeunit 9520;
+          BEGIN
+            TempEmailItem.Init;
+            TempEmailItem."Attachment File Path" := "Attachment Filename";
+            TempEmailItem.SetBodyText("Body Line");
+            TempEmailItem."Send to" := "To Address";
+            TempEmailItem."Send CC" := "Copy-to Address";
+            TempEmailItem.Subject := "Subject Line";
+            TempEmailItem.INSERT;
+
+            // HideMailDialog = TRUE - means use SMTP engine
+            // HideSMTPError = FALSE - we should throw smtp error
+            MailManagement.InitializeFrom(TRUE,FALSE);
+            IF MailManagement.IsEnabled THEN
+              IF NOT MailManagement.Send(TempEmailItem) THEN
+                ERROR(STRSUBSTNO(EmailSendErr,"To Address","Subject Line"));
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      EmailSendErr@1000 : TextConst '@@@=%1 - To address, %2 - Email subject;ENU="The email to %1 with subject %2 has not been sent. ";ENG="The email to %1 with subject %2 has not been sent. "';
+
+    BEGIN
+    END.
+  }
+}
+

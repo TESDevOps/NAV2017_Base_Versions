@@ -1,0 +1,164 @@
+OBJECT Page 10551 BACS Registers
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVGB10.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=BACS Registers;
+               ENG=BACS Registers];
+    SourceTable=Table10551;
+    PageType=List;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 1040000 ;1   ;ActionGroup;
+                      CaptionML=[ENU=BACS Register;
+                                 ENG=BACS Register];
+                      Image=ElectronicRegister }
+      { 1040006 ;2   ;Action    ;
+                      CaptionML=[ENU=Entries;
+                                 ENG=Entries];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Entries;
+                      OnAction=BEGIN
+                                 BacsMgt.ShowRegisterEntries(Rec);
+                               END;
+                                }
+      { 1040002 ;2   ;Separator  }
+      { 1040001 ;2   ;ActionGroup;
+                      CaptionML=[ENU=File;
+                                 ENG=File];
+                      Image=Document }
+      { 1040005 ;3   ;Action    ;
+                      CaptionML=[ENU=Import;
+                                 ENG=Import];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Import;
+                      OnAction=BEGIN
+                                 BacsMgt.ImportBACSFile(Rec,'',TRUE);
+                               END;
+                                }
+      { 1040003 ;3   ;Action    ;
+                      CaptionML=[ENU=Export;
+                                 ENG=Export];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Export;
+                      OnAction=BEGIN
+                                 BacsMgt.ExportBACSFile(Rec);
+                               END;
+                                }
+      { 1040004 ;3   ;Action    ;
+                      CaptionML=[ENU=Delete;
+                                 ENG=Delete];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Delete;
+                      OnAction=BEGIN
+                                 BacsMgt.DeleteBACSFile(Rec);
+                               END;
+                                }
+      { 1040011 ;2   ;Action    ;
+                      CaptionML=[ENU=Void Register;
+                                 ENG=Void Register];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=VoidRegister;
+                      OnAction=BEGIN
+                                 IF CONFIRM(Text001) THEN BEGIN
+                                   TESTFIELD("From BACS Entry No.");
+                                   TESTFIELD("To BACS Entry No.");
+                                   BACSLedgEntry.SETRANGE("Entry No.","From BACS Entry No.","To BACS Entry No.");
+                                   IF BACSLedgEntry.FIND('-') THEN
+                                     REPEAT
+                                       BacsMgt.FinancialVoidBACS(BACSLedgEntry);
+                                     UNTIL BACSLedgEntry.NEXT = 0;
+                                 END;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the BACS register.;
+                           ENG=Specifies the number of the BACS register.];
+                ApplicationArea=#All;
+                SourceExpr="No." }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the first BACS entry number in the register.;
+                           ENG=Specifies the first BACS entry number in the register.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="From BACS Entry No." }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the last BACS entry number in the register.;
+                           ENG=Specifies the last BACS entry number in the register.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="To BACS Entry No." }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date when the entries in the register were posted.;
+                           ENG=Specifies the date when the entries in the register were posted.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Creation Date" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the source code for the entries in the register.;
+                           ENG=Specifies the source code for the entries in the register.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Source Code" }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the ID of the user who posted the entries and created the BACS register.;
+                           ENG=Specifies the ID of the user who posted the entries and created the BACS register.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="User ID" }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the payment journal that the entries were posted from.;
+                           ENG=Specifies the name of the payment journal that the entries were posted from.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Journal Batch Name" }
+
+    { 1040007;2;Field     ;
+                ToolTipML=[ENU=Specifies the total amount from the underlying BACS ledger entries.;
+                           ENG=Specifies the total amount from the underlying BACS ledger entries.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Ledger Entry Amount" }
+
+    { 1040009;2;Field     ;
+                ToolTipML=[ENU=Specifies if all the underlying BACS entries have been reconciled.;
+                           ENG=Specifies if all the underlying BACS entries have been reconciled.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Reconciled }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the BACS file that was created with this register.;
+                           ENG=Specifies the BACS file that was created with this register.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="BACS File" }
+
+  }
+  CODE
+  {
+    VAR
+      BACSLedgEntry@1040001 : Record 10550;
+      BacsMgt@1040000 : Codeunit 10550;
+      Text001@1040002 : TextConst 'ENU=Are you sure you want to financially void all BACS entries belonging to this register?;ENG=Are you sure you want to financially void all BACS entries belonging to this register?';
+
+    BEGIN
+    END.
+  }
+}
+

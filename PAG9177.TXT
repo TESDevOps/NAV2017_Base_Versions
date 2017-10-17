@@ -1,0 +1,87 @@
+OBJECT Page 9177 Allowed Companies
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Allowed Companies;
+               ENG=Allowed Companies];
+    SourceTable=Table2000000006;
+    PageType=List;
+    SourceTableTemporary=Yes;
+    ActionList=ACTIONS
+    {
+      { 4       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 5       ;1   ;Action    ;
+                      Name=Create New Company;
+                      AccessByPermission=TableData 2000000006=I;
+                      CaptionML=[ENU=Create New Company;
+                                 ENG=Create New Company];
+                      ToolTipML=[ENU=Get assistance with creating a new company.;
+                                 ENG=Get assistance with creating a new company.];
+                      ApplicationArea=#Suite;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Company;
+                      PromotedOnly=Yes;
+                      OnAction=BEGIN
+                                 // Action invoked through event subscriber to avoid hard coupling to other objects,
+                                 // as this page is part of the Cloud Manager.
+                                 Initialize;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of a company that has been created in the current database.;
+                           ENG=Specifies the name of a company that has been created in the current database.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Name }
+
+    { 6   ;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Evaluation Company";
+                Editable=FALSE }
+
+  }
+  CODE
+  {
+
+    PROCEDURE Initialize@1();
+    VAR
+      Company@1001 : Record 2000000006;
+      Language@1000 : Record 8;
+    BEGIN
+      DELETEALL;
+      Language.INIT;
+
+      IF Company.FINDSET THEN
+        REPEAT
+          // Use a table that all users can access, and check whether users have permissions to open the company.
+          IF Language.CHANGECOMPANY(Company.Name) THEN BEGIN
+            Rec := Company;
+            INSERT;
+          END;
+        UNTIL Company.NEXT = 0;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

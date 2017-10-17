@@ -1,0 +1,183 @@
+OBJECT Page 7023 Sales Price Worksheet
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Sales Price Worksheet;
+               ENG=Sales Price Worksheet];
+    SaveValues=Yes;
+    SourceTable=Table7023;
+    DelayedInsert=Yes;
+    PageType=Worksheet;
+    ActionList=ACTIONS
+    {
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 31      ;1   ;ActionGroup;
+                      CaptionML=[ENU=F&unctions;
+                                 ENG=F&unctions];
+                      Image=Action }
+      { 32      ;2   ;Action    ;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Suggest &Item Price on Wksh.;
+                                 ENG=Suggest &Item Price on Wksh.];
+                      Promoted=Yes;
+                      Image=SuggestItemPrice;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 REPORT.RUNMODAL(REPORT::"Suggest Item Price on Wksh.",TRUE,TRUE);
+                               END;
+                                }
+      { 33      ;2   ;Action    ;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Suggest &Sales Price on Wksh.;
+                                 ENG=Suggest &Sales Price on Wksh.];
+                      Promoted=Yes;
+                      Image=SuggestSalesPrice;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 REPORT.RUNMODAL(REPORT::"Suggest Sales Price on Wksh.",TRUE,TRUE);
+                               END;
+                                }
+      { 36      ;2   ;Action    ;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=I&mplement Price Change;
+                                 ENG=I&mplement Price Change];
+                      Promoted=Yes;
+                      Image=ImplementPriceChange;
+                      PromotedCategory=Process;
+                      Scope=Repeater;
+                      OnAction=BEGIN
+                                 REPORT.RUNMODAL(REPORT::"Implement Price Change",TRUE,TRUE,Rec);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the earliest date on which the item can be sold at the sales price.;
+                           ENG=Specifies the earliest date on which the item can be sold at the sales price.];
+                SourceExpr="Starting Date" }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date on which the sales price agreement ends.;
+                           ENG=Specifies the date on which the sales price agreement ends.];
+                SourceExpr="Ending Date" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of sale that the price is based on, such as All Customers or Campaign.;
+                           ENG=Specifies the type of sale that the price is based on, such as All Customers or Campaign.];
+                SourceExpr="Sales Type" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the Sales Type code.;
+                           ENG=Specifies the Sales Type code.];
+                SourceExpr="Sales Code" }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the description of the sales type, such as Campaign, on the worksheet line.;
+                           ENG=Specifies the description of the sales type, such as Campaign, on the worksheet line.];
+                SourceExpr="Sales Description";
+                Visible=FALSE }
+
+    { 37  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the currency code of the sales price.;
+                           ENG=Specifies the currency code of the sales price.];
+                SourceExpr="Currency Code";
+                Visible=FALSE }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the item for which sales prices are being changed or set up.;
+                           ENG=Specifies the number of the item for which sales prices are being changed or set up.];
+                SourceExpr="Item No." }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the description of the item on the worksheet line.;
+                           ENG=Specifies the description of the item on the worksheet line.];
+                SourceExpr="Item Description";
+                Visible=FALSE }
+
+    { 27  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the applicable variant code for the new unit price.;
+                           ENG=Specifies the applicable variant code for the new unit price.];
+                SourceExpr="Variant Code";
+                Visible=FALSE }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit of measure code for the item to which the sales price is applicable.;
+                           ENG=Specifies the unit of measure code for the item to which the sales price is applicable.];
+                SourceExpr="Unit of Measure Code" }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the minimum sales quantity that must be met to warrant the sales price.;
+                           ENG=Specifies the minimum sales quantity that must be met to warrant the sales price.];
+                SourceExpr="Minimum Quantity" }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit price of the item.;
+                           ENG=Specifies the unit price of the item.];
+                SourceExpr="Current Unit Price" }
+
+    { 34  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the new unit price that is valid for the selected combination of Sales Code, Currency Code and/or Starting Date.;
+                           ENG=Specifies the new unit price that is valid for the selected combination of Sales Code, Currency Code and/or Starting Date.];
+                SourceExpr="New Unit Price" }
+
+    { 23  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies if an invoice discount will be calculated when the sales price is offered.;
+                           ENG=Specifies if an invoice discount will be calculated when the sales price is offered.];
+                SourceExpr="Allow Invoice Disc.";
+                Visible=FALSE }
+
+    { 21  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies if the sales price includes VAT.;
+                           ENG=Specifies if the sales price includes VAT.];
+                SourceExpr="Price Includes VAT";
+                Visible=FALSE }
+
+    { 25  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the VAT business posting group of customers for whom the sales prices will apply.;
+                           ENG=Specifies the code for the VAT business posting group of customers for whom the sales prices will apply.];
+                SourceExpr="VAT Bus. Posting Gr. (Price)";
+                Visible=FALSE }
+
+    { 29  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies if a line discount will be calculated when the sales price is offered.;
+                           ENG=Specifies if a line discount will be calculated when the sales price is offered.];
+                SourceExpr="Allow Line Disc.";
+                Visible=FALSE }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

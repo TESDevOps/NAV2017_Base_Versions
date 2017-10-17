@@ -1,0 +1,142 @@
+OBJECT Page 9099 Job WIP/Recognition FactBox
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Job Details - WIP/Recognition;
+               ENG=Job Details - WIP/Recognition];
+    SourceTable=Table167;
+    PageType=CardPart;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 15  ;1   ;Field     ;
+                CaptionML=[ENU=Job No.;
+                           ENG=Job No.];
+                ToolTipML=[ENU=Specifies the job number.;
+                           ENG=Specifies the job number.];
+                ApplicationArea=#Jobs;
+                SourceExpr="No.";
+                OnDrillDown=BEGIN
+                              ShowDetails;
+                            END;
+                             }
+
+    { 1   ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the posting date that was entered when the Job Calculate WIP batch job was last run.;
+                           ENG=Specifies the posting date that was entered when the Job Calculate WIP batch job was last run.];
+                ApplicationArea=#Jobs;
+                SourceExpr="WIP Posting Date" }
+
+    { 5   ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the total WIP cost amount that was last calculated for the job. The WIP Cost Amount for the job is the value WIP Cost Job WIP Entries less the value of the Recognized Cost Job WIP Entries. For jobs with WIP Methods of Sales Value or Percentage of Completion, the WIP Cost Amount is normally 0.;
+                           ENG=Specifies the total WIP cost amount that was last calculated for the job. The WIP Cost Amount for the job is the value WIP Cost Job WIP Entries less the value of the Recognised Cost Job WIP Entries. For jobs with WIP Methods of Sales Value or Percentage of Completion, the WIP Cost Amount is normally 0.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Total WIP Cost Amount" }
+
+    { 4   ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the sum of all applied costs of the selected job.;
+                           ENG=Specifies the sum of all applied costs of the selected job.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Applied Costs G/L Amount";
+                Visible=FALSE }
+
+    { 2   ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the total WIP Sales amount that was last calculated for the job. The WIP Sales Amount for the job is the value WIP Sales Job WIP Entries less the value of the Recognized Sales Job WIP Entries. For jobs with WIP Methods of Cost Value or Cost of Sales, the WIP Sales Amount is normally 0.;
+                           ENG=Specifies the total WIP Sales amount that was last calculated for the job. The WIP Sales Amount for the job is the value WIP Sales Job WIP Entries less the value of the Recognised Sales Job WIP Entries. For jobs with WIP Methods of Cost Value or Cost of Sales, the WIP Sales Amount is normally 0.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Total WIP Sales Amount" }
+
+    { 7   ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the sum of all applied costs of the selected job.;
+                           ENG=Specifies the sum of all applied costs of the selected job.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Applied Sales G/L Amount";
+                Visible=FALSE }
+
+    { 9   ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the Recognized Cost amount that was last calculated for the job. The Recognized Cost Amount for the job is the sum of the Recognized Cost Job WIP Entries.;
+                           ENG=Specifies the Recognised Cost amount that was last calculated for the job. The Recognised Cost Amount for the job is the sum of the Recognised Cost Job WIP Entries.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Recog. Costs Amount" }
+
+    { 3   ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the recognized sales amount that was last calculated for the job. The Recog. Sales Amount for the job is the sum of the Recognized Sales Job WIP Entries.;
+                           ENG=Specifies the recognised sales amount that was last calculated for the job. The Recog. Sales Amount for the job is the sum of the Recognised Sales Job WIP Entries.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Recog. Sales Amount" }
+
+    { 19  ;1   ;Field     ;
+                Name=Recog. Profit Amount;
+                CaptionML=[ENU=Recog. Profit Amount;
+                           ENG=Recog. Profit Amount];
+                ToolTipML=[ENU=Specifies the recognized profit amount for the job.;
+                           ENG=Specifies the recognised profit amount for the job.];
+                ApplicationArea=#Jobs;
+                SourceExpr=CalcRecognizedProfitAmount }
+
+    { 17  ;1   ;Field     ;
+                Name=Recog. Profit %;
+                CaptionML=[ENU=Recog. Profit %;
+                           ENG=Recog. Profit %];
+                ToolTipML=[ENU=Specifies the recognized profit percentage for the job.;
+                           ENG=Specifies the recognised profit percentage for the job.];
+                ApplicationArea=#Jobs;
+                SourceExpr=CalcRecognizedProfitPercentage }
+
+    { 6   ;1   ;Field     ;
+                Name=Acc. WIP Costs Amount;
+                CaptionML=[ENU=Acc. WIP Costs Amount;
+                           ENG=Acc. WIP Costs Amount];
+                ToolTipML=[ENU=Specifies the total WIP costs for the job.;
+                           ENG=Specifies the total WIP costs for the job.];
+                ApplicationArea=#Jobs;
+                SourceExpr=CalcAccWIPCostsAmount;
+                Visible=FALSE }
+
+    { 8   ;1   ;Field     ;
+                Name=Acc. WIP Sales Amount;
+                CaptionML=[ENU=Acc. WIP Sales Amount;
+                           ENG=Acc. WIP Sales Amount];
+                ToolTipML=[ENU=Specifies the total WIP sales for the job.;
+                           ENG=Specifies the total WIP sales for the job.];
+                ApplicationArea=#Jobs;
+                SourceExpr=CalcAccWIPSalesAmount;
+                Visible=FALSE }
+
+    { 10  ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the sum of the recognized costs of the involved job tasks.;
+                           ENG=Specifies the sum of the recognised costs of the involved job tasks.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Calc. Recog. Sales Amount";
+                Visible=FALSE }
+
+    { 11  ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the sum of the recognized costs of the involved job tasks.;
+                           ENG=Specifies the sum of the recognised costs of the involved job tasks.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Calc. Recog. Costs Amount";
+                Visible=FALSE }
+
+  }
+  CODE
+  {
+
+    LOCAL PROCEDURE ShowDetails@1();
+    BEGIN
+      PAGE.RUN(PAGE::"Job Card",Rec);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

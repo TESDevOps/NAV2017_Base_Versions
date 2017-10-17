@@ -1,0 +1,181 @@
+OBJECT Page 528 Posted Purchase Receipt Lines
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Posted Purchase Receipt Lines;
+               ENG=Posted Purchase Receipt Lines];
+    SourceTable=Table121;
+    PageType=List;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 45      ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Line;
+                                 ENG=&Line];
+                      Image=Line }
+      { 46      ;2   ;Action    ;
+                      ShortCutKey=Shift+F7;
+                      CaptionML=[ENU=Show Document;
+                                 ENG=Show Document];
+                      Image=View;
+                      OnAction=BEGIN
+                                 PurchRcptHeader.GET("Document No.");
+                                 PAGE.RUN(PAGE::"Posted Purchase Receipt",PurchRcptHeader);
+                               END;
+                                }
+      { 47      ;2   ;Action    ;
+                      AccessByPermission=TableData 348=R;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      Image=Dimensions;
+                      OnAction=BEGIN
+                                 ShowDimensions;
+                               END;
+                                }
+      { 6500    ;2   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+I;
+                      CaptionML=[ENU=Item &Tracking Lines;
+                                 ENG=Item &Tracking Lines];
+                      Image=ItemTrackingLines;
+                      OnAction=BEGIN
+                                 ShowItemTrackingLines;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the receipt number.;
+                           ENG=Specifies the receipt number.];
+                SourceExpr="Document No." }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the vendor that you bought the items from.;
+                           ENG=Specifies the number of the vendor that you bought the items from.];
+                SourceExpr="Buy-from Vendor No." }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the line type.;
+                           ENG=Specifies the line type.];
+                SourceExpr=Type }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies an item number that identifies the item or a general ledger account number for the general ledger account used when posting.;
+                           ENG=Specifies an item number that identifies the item or a general ledger account number for the general ledger account used when posting.];
+                SourceExpr="No." }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the variant code for the item.;
+                           ENG=Specifies the variant code for the item.];
+                SourceExpr="Variant Code";
+                Visible=FALSE }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies either the name of or a description of the item or general ledger account.;
+                           ENG=Specifies either the name of or a description of the item or general ledger account.];
+                SourceExpr=Description }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the dimension value associated with the receipt.;
+                           ENG=Specifies the code for the dimension value associated with the receipt.];
+                SourceExpr="Shortcut Dimension 1 Code";
+                Visible=FALSE }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the dimension value associated with the receipt.;
+                           ENG=Specifies the code for the dimension value associated with the receipt.];
+                SourceExpr="Shortcut Dimension 2 Code";
+                Visible=FALSE }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the location where the receipt line is registered.;
+                           ENG=Specifies the code for the location where the receipt line is registered.];
+                SourceExpr="Location Code";
+                Visible=TRUE }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of units of the item specified on the line.;
+                           ENG=Specifies the number of units of the item specified on the line.];
+                SourceExpr=Quantity }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit of measure code for the item.;
+                           ENG=Specifies the unit of measure code for the item.];
+                SourceExpr="Unit of Measure Code" }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit of measure for the item (bottle or piece, for example).;
+                           ENG=Specifies the unit of measure for the item (bottle or piece, for example).];
+                SourceExpr="Unit of Measure";
+                Visible=FALSE }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the item ledger entry that the items were applied to when the receipt was posted.;
+                           ENG=Specifies the number of the item ledger entry that the items were applied to when the receipt was posted.];
+                SourceExpr="Appl.-to Item Entry";
+                Visible=FALSE }
+
+    { 34  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the job number corresponding to the purchase document (quote, order, invoice, or credit memo).;
+                           ENG=Specifies the job number corresponding to the purchase document (quote, order, invoice, or credit memo).];
+                SourceExpr="Job No.";
+                Visible=FALSE }
+
+    { 36  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the production order number.;
+                           ENG=Specifies the production order number.];
+                SourceExpr="Prod. Order No." }
+
+    { 38  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date the items were expected.;
+                           ENG=Specifies the date the items were expected.];
+                SourceExpr="Expected Receipt Date";
+                Visible=FALSE }
+
+    { 40  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how much of the line has been invoiced.;
+                           ENG=Specifies how much of the line has been invoiced.];
+                SourceExpr="Quantity Invoiced" }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      PurchRcptHeader@1000 : Record 120;
+
+    BEGIN
+    END.
+  }
+}
+

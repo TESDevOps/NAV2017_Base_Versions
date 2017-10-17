@@ -1,0 +1,430 @@
+OBJECT Page 20 General Ledger Entries
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/09/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.18609,NAVGB10.00.00.18609;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=General Ledger Entries;
+               ENG=General Ledger Entries];
+    SourceTable=Table17;
+    DataCaptionExpr=GetCaption;
+    SourceTableView=SORTING(G/L Account No.,Posting Date)
+                    ORDER(Descending);
+    PageType=List;
+    OnAfterGetCurrRecord=VAR
+                           IncomingDocument@1000 : Record 130;
+                         BEGIN
+                           HasIncomingDocument := IncomingDocument.PostedDocExists("Document No.","Posting Date");
+                           CurrPage.IncomingDocAttachFactBox.PAGE.LoadDataFromRecord(Rec);
+                         END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 48      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Ent&ry;
+                                 ENG=Ent&ry];
+                      Image=Entry }
+      { 49      ;2   ;Action    ;
+                      AccessByPermission=TableData 348=R;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edits dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edits dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      ApplicationArea=#Suite;
+                      Image=Dimensions;
+                      Scope=Repeater;
+                      OnAction=BEGIN
+                                 ShowDimensions;
+                                 CurrPage.SAVERECORD;
+                               END;
+                                }
+      { 50      ;2   ;Action    ;
+                      Name=GLDimensionOverview;
+                      AccessByPermission=TableData 348=R;
+                      CaptionML=[ENU=G/L Dimension Overview;
+                                 ENG=G/L Dimension Overview];
+                      ToolTipML=[ENU=View an overview of general ledger entries and dimensions.;
+                                 ENG=View an overview of general ledger entries and dimensions.];
+                      ApplicationArea=#Suite;
+                      Image=Dimensions;
+                      OnAction=VAR
+                                 GLEntriesDimensionOverview@1000 : Page 563;
+                               BEGIN
+                                 IF ISTEMPORARY THEN BEGIN
+                                   GLEntriesDimensionOverview.SetTempGLEntry(Rec);
+                                   GLEntriesDimensionOverview.RUN;
+                                 END ELSE
+                                   PAGE.RUN(PAGE::"G/L Entries Dimension Overview",Rec);
+                               END;
+                                }
+      { 65      ;2   ;Action    ;
+                      AccessByPermission=TableData 27=R;
+                      CaptionML=[ENU=Value Entries;
+                                 ENG=Value Entries];
+                      ToolTipML=[ENU=View all amounts relating to an item.;
+                                 ENG=View all amounts relating to an item.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=ValueLedger;
+                      Scope=Repeater;
+                      OnAction=BEGIN
+                                 ShowValueEntries;
+                               END;
+                                }
+      { 1040000 ;2   ;Action    ;
+                      CaptionML=[ENU=Direct &Sales Details;
+                                 ENG=Direct &Sales Details];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Sales;
+                      OnAction=BEGIN
+                                 REPORT.RUNMODAL(REPORT::"Direct Sales Details",TRUE,FALSE,Rec);
+                               END;
+                                }
+      { 1040001 ;2   ;Action    ;
+                      CaptionML=[ENU=Direct &Purchase Details;
+                                 ENG=Direct &Purchase Details];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Purchase;
+                      OnAction=BEGIN
+                                 REPORT.RUNMODAL(REPORT::"Direct Purchase Details",TRUE,FALSE,Rec);
+                               END;
+                                }
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 57      ;1   ;ActionGroup;
+                      CaptionML=[ENU=F&unctions;
+                                 ENG=F&unctions];
+                      Image=Action }
+      { 63      ;2   ;Action    ;
+                      Name=ReverseTransaction;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Reverse Transaction;
+                                 ENG=Reverse Transaction];
+                      ToolTipML=[ENU=Reverse a posted general ledger entry.;
+                                 ENG=Reverse a posted general ledger entry.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=ReverseRegister;
+                      Scope=Repeater;
+                      OnAction=VAR
+                                 ReversalEntry@1000 : Record 179;
+                               BEGIN
+                                 CLEAR(ReversalEntry);
+                                 IF Reversed THEN
+                                   ReversalEntry.AlreadyReversedEntry(TABLECAPTION,"Entry No.");
+                                 IF "Journal Batch Name" = '' THEN
+                                   ReversalEntry.TestFieldError;
+                                 TESTFIELD("Transaction No.");
+                                 ReversalEntry.ReverseTransaction("Transaction No.")
+                               END;
+                                }
+      { 15      ;2   ;ActionGroup;
+                      Name=IncomingDocument;
+                      CaptionML=[ENU=Incoming Document;
+                                 ENG=Incoming Document];
+                      ActionContainerType=NewDocumentItems;
+                      Image=Documents }
+      { 13      ;3   ;Action    ;
+                      Name=IncomingDocCard;
+                      CaptionML=[ENU=View Incoming Document;
+                                 ENG=View Incoming Document];
+                      ToolTipML=[ENU=View any incoming document records and file attachments that exist for the entry or document.;
+                                 ENG=View any incoming document records and file attachments that exist for the entry or document.];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=HasIncomingDocument;
+                      Image=ViewOrder;
+                      OnAction=VAR
+                                 IncomingDocument@1000 : Record 130;
+                               BEGIN
+                                 IncomingDocument.ShowCard("Document No.","Posting Date");
+                               END;
+                                }
+      { 9       ;3   ;Action    ;
+                      Name=SelectIncomingDoc;
+                      AccessByPermission=TableData 130=R;
+                      CaptionML=[ENU=Select Incoming Document;
+                                 ENG=Select Incoming Document];
+                      ToolTipML=[ENU=Select an incoming document record and file attachment that you want to link to the entry or document.;
+                                 ENG=Select an incoming document record and file attachment that you want to link to the entry or document.];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=NOT HasIncomingDocument;
+                      Image=SelectLineToApply;
+                      OnAction=VAR
+                                 IncomingDocument@1000 : Record 130;
+                               BEGIN
+                                 IncomingDocument.SelectIncomingDocumentForPostedDocument("Document No.","Posting Date",RECORDID);
+                               END;
+                                }
+      { 3       ;3   ;Action    ;
+                      Name=IncomingDocAttachFile;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Create Incoming Document from File;
+                                 ENG=Create Incoming Document from File];
+                      ToolTipML=[ENU=Create an incoming document record by selecting a file to attach, and then link the incoming document record to the entry or document.;
+                                 ENG=Create an incoming document record by selecting a file to attach, and then link the incoming document record to the entry or document.];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=NOT HasIncomingDocument;
+                      Image=Attach;
+                      OnAction=VAR
+                                 IncomingDocumentAttachment@1000 : Record 133;
+                               BEGIN
+                                 IncomingDocumentAttachment.NewAttachmentFromPostedDocument("Document No.","Posting Date");
+                               END;
+                                }
+      { 24      ;1   ;Action    ;
+                      CaptionML=[ENU=&Navigate;
+                                 ENG=&Navigate];
+                      ToolTipML=[ENU=Find all entries and documents that exist for the document number and posting date on the selected entry or document.;
+                                 ENG=Find all entries and documents that exist for the document number and posting date on the selected entry or document.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=Navigate;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 Navigate@1000 : Page 344;
+                               BEGIN
+                                 Navigate.SetDoc("Posting Date","Document No.");
+                                 Navigate.RUN;
+                               END;
+                                }
+      { 11      ;1   ;Action    ;
+                      Name=DocsWithoutIC;
+                      CaptionML=[ENU=Posted Documents without Incoming Document;
+                                 ENG=Posted Documents without Incoming Document];
+                      ToolTipML=[ENU=View posted purchase and sales documents under the G/L account that do not have related incoming document records.;
+                                 ENG=View posted purchase and sales documents under the G/L account that do not have related incoming document records.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Documents;
+                      OnAction=VAR
+                                 PostedDocsWithNoIncBuf@1001 : Record 134;
+                               BEGIN
+                                 COPYFILTER("G/L Account No.",PostedDocsWithNoIncBuf."G/L Account No. Filter");
+                                 PAGE.RUN(PAGE::"Posted Docs. With No Inc. Doc.",PostedDocsWithNoIncBuf);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the posting date for the entry.;
+                           ENG=Specifies the posting date for the entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Posting Date" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the Document Type that the entry belongs to.;
+                           ENG=Specifies the Document Type that the entry belongs to.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Document Type" }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the entry's Document No.;
+                           ENG=Specifies the entry's Document No.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Document No." }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the account that the entry has been posted to.;
+                           ENG=Specifies the number of the account that the entry has been posted to.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="G/L Account No." }
+
+    { 40  ;2   ;Field     ;
+                DrillDown=No;
+                ToolTipML=[ENU=Specifies the name of the account that the entry has been posted to.;
+                           ENG=Specifies the name of the account that the entry has been posted to.];
+                SourceExpr="G/L Account Name";
+                Visible=FALSE }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description of the entry.;
+                           ENG=Specifies a description of the entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Description }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the Job No. corresponding the to G/L entry.;
+                           ENG=Specifies the Job No. corresponding the to G/L entry.];
+                SourceExpr="Job No.";
+                Visible=FALSE }
+
+    { 28  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code that the entry is linked to.;
+                           ENG=Specifies the dimension value code that the entry is linked to.];
+                SourceExpr="Global Dimension 1 Code";
+                Visible=FALSE }
+
+    { 30  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code that the entry is linked to.;
+                           ENG=Specifies the dimension value code that the entry is linked to.];
+                SourceExpr="Global Dimension 2 Code";
+                Visible=FALSE }
+
+    { 51  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the intercompany partner that the transaction is with if the entry was posted from an intercompany transaction.;
+                           ENG=Specifies the code of the intercompany partner that the transaction is with if the entry was posted from an intercompany transaction.];
+                SourceExpr="IC Partner Code";
+                Visible=FALSE }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the Gen. Posting Type that applies to the entry.;
+                           ENG=Specifies the Gen. Posting Type that applies to the entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Gen. Posting Type" }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general business posting group that applies to the entry.;
+                           ENG=Specifies the general business posting group that applies to the entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Gen. Bus. Posting Group" }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general product posting group that applies to the entry.;
+                           ENG=Specifies the general product posting group that applies to the entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Gen. Prod. Posting Group" }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity that was posted on the entry.;
+                           ENG=Specifies the quantity that was posted on the entry.];
+                SourceExpr=Quantity;
+                Visible=False }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the Amount of the entry.;
+                           ENG=Specifies the Amount of the entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amount }
+
+    { 54  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger entry that is posted if you post in an additional reporting currency.;
+                           ENG=Specifies the general ledger entry that is posted if you post in an additional reporting currency.];
+                SourceExpr="Additional-Currency Amount";
+                Visible=FALSE }
+
+    { 36  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the VAT Amount that was posted as a result of the entry.;
+                           ENG=Specifies the VAT Amount that was posted as a result of the entry.];
+                SourceExpr="VAT Amount";
+                Visible=FALSE }
+
+    { 52  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of balancing account used in the entry: G/L Account, Bank Account, Vendor, Customer, or Fixed Asset.;
+                           ENG=Specifies the type of balancing account used in the entry: G/L Account, Bank Account, Vendor, Customer, or Fixed Asset.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Bal. Account Type" }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the G/L account or the bank account, that a balancing entry has been posted to.;
+                           ENG=Specifies the number of the G/L account or the bank account, that a balancing entry has been posted to.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Bal. Account No." }
+
+    { 46  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the ID of the user that is associated with the entry.;
+                           ENG=Specifies the ID of the user that is associated with the entry.];
+                SourceExpr="User ID";
+                Visible=FALSE }
+
+    { 42  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the Source Code that is linked to the entry.;
+                           ENG=Specifies the Source Code that is linked to the entry.];
+                SourceExpr="Source Code";
+                Visible=FALSE }
+
+    { 44  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the reason code on the entry.;
+                           ENG=Specifies the reason code on the entry.];
+                SourceExpr="Reason Code";
+                Visible=FALSE }
+
+    { 58  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies if the entry has been part of a reverse transaction (correction) made by the Reverse function.;
+                           ENG=Specifies if the entry has been part of a reverse transaction (correction) made by the Reverse function.];
+                SourceExpr=Reversed;
+                Visible=FALSE }
+
+    { 60  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the correcting entry. If the field Specifies a number, the entry cannot be reversed again.;
+                           ENG=Specifies the number of the correcting entry. If the field Specifies a number, the entry cannot be reversed again.];
+                SourceExpr="Reversed by Entry No.";
+                Visible=FALSE }
+
+    { 62  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the original entry that was undone by the reverse transaction.;
+                           ENG=Specifies the number of the original entry that was undone by the reverse transaction.];
+                SourceExpr="Reversed Entry No.";
+                Visible=FALSE }
+
+    { 34  ;2   ;Field     ;
+                ToolTipML=[ENU=This field is automatically updated.;
+                           ENG=This field is automatically updated.];
+                SourceExpr="FA Entry Type";
+                Visible=FALSE }
+
+    { 38  ;2   ;Field     ;
+                ToolTipML=[ENU=This field is automatically updated.;
+                           ENG=This field is automatically updated.];
+                SourceExpr="FA Entry No.";
+                Visible=FALSE }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the Entry No. that the program has given the entry.;
+                           ENG=Specifies the Entry No. that the program has given the entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Entry No." }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 7   ;1   ;Part      ;
+                Name=IncomingDocAttachFactBox;
+                ApplicationArea=#Basic,#Suite;
+                PagePartID=Page193;
+                PartType=Page;
+                ShowFilter=No }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      GLAcc@1000 : Record 15;
+      HasIncomingDocument@1001 : Boolean;
+
+    LOCAL PROCEDURE GetCaption@2() : Text[250];
+    BEGIN
+      IF GLAcc."No." <> "G/L Account No." THEN
+        IF NOT GLAcc.GET("G/L Account No.") THEN
+          IF GETFILTER("G/L Account No.") <> '' THEN
+            IF GLAcc.GET(GETRANGEMIN("G/L Account No.")) THEN;
+      EXIT(STRSUBSTNO('%1 %2',GLAcc."No.",GLAcc.Name))
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

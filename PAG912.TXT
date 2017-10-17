@@ -1,0 +1,56 @@
+OBJECT Page 912 Component - Resource Details
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Component - Resource Details;
+               ENG=Component - Resource Details];
+    SourceTable=Table156;
+    PageType=CardPart;
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Field     ;
+                CaptionML=[ENU=Resource No.;
+                           ENG=Resource No.];
+                ToolTipML=[ENU=Specifies a number for the resource.;
+                           ENG=Specifies a number for the resource.];
+                SourceExpr="No." }
+
+    { 3   ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies whether the resource is a person or a machine.;
+                           ENG=Specifies whether the resource is a person or a machine.];
+                SourceExpr=Type }
+
+    { 4   ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the person's job title.;
+                           ENG=Specifies the person's job title.];
+                SourceExpr="Job Title" }
+
+    { 5   ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the base unit used to measure the resource, such as hour, piece, or kilometer.;
+                           ENG=Specifies the base unit used to measure the resource, such as hour, piece, or kilometer.];
+                SourceExpr="Base Unit of Measure" }
+
+    { 6   ;1   ;Field     ;
+                ToolTipML=[ENU=Specifies the cost of one unit of the resource.;
+                           ENG=Specifies the cost of one unit of the resource.];
+                SourceExpr="Unit Cost" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

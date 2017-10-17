@@ -1,0 +1,318 @@
+OBJECT Page 6300 Azure AD App Setup Wizard
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=SETUP AZURE ACTIVE DIRECTORY;
+               ENG=SETUP AZURE ACTIVE DIRECTORY];
+    PageType=NavigatePage;
+    OnInit=VAR
+             AzureADAppSetup@1000 : Record 6300;
+           BEGIN
+             // Checks user permissions and closes the wizard with an error message if necessary.
+             IF NOT AzureADAppSetup.WRITEPERMISSION THEN
+               ERROR(PermissionsErr);
+             LoadTopBanners;
+           END;
+
+    OnOpenPage=BEGIN
+                 // Always start on the introduction step
+                 SetStep(CurrentStep::Intro);
+               END;
+
+    ActionList=ACTIONS
+    {
+      { 10      ;    ;ActionContainer;
+                      Name=Actions;
+                      ActionContainerType=ActionItems }
+      { 11      ;1   ;Action    ;
+                      Name=ActionBack;
+                      CaptionML=[ENU=Back;
+                                 ENG=Back];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=BackEnabled;
+                      InFooterBar=Yes;
+                      Image=PreviousRecord;
+                      OnAction=BEGIN
+                                 GoToNextStep(FALSE);
+                               END;
+                                }
+      { 12      ;1   ;Action    ;
+                      Name=ActionNext;
+                      CaptionML=[ENU=Next;
+                                 ENG=Next];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=NextEnabled;
+                      InFooterBar=Yes;
+                      Image=NextRecord;
+                      OnAction=BEGIN
+                                 GoToNextStep(TRUE);
+                               END;
+                                }
+      { 13      ;1   ;Action    ;
+                      Name=ActionFinish;
+                      CaptionML=[ENU=Finish;
+                                 ENG=Finish];
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=FinishEnabled;
+                      InFooterBar=Yes;
+                      Image=Approve;
+                      OnAction=BEGIN
+                                 CurrPage.AzureAdSetup.PAGE.Save;
+
+                                 // notify Assisted Setup that this setup has been completed
+                                 AssistedSetup.SetStatus(PAGE::"Azure AD App Setup Wizard",AssistedSetup.Status::Completed);
+                                 CurrPage.UPDATE(FALSE);
+                                 CurrPage.CLOSE;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                Name=Azure AD Application Setup;
+                CaptionML=[ENU=Azure AD Application Setup;
+                           ENG=Azure AD Application Setup];
+                ContainerType=ContentArea }
+
+    { 14  ;1   ;Group     ;
+                Visible=TopBannerVisible AND NOT DoneVisible;
+                Editable=FALSE;
+                GroupType=Group }
+
+    { 5   ;2   ;Field     ;
+                Name=<MediaRepositoryStandard>;
+                CaptionML=[ENU="";
+                           ENG=""];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=MediaRepositoryStandard.Image;
+                Editable=FALSE }
+
+    { 4   ;1   ;Group     ;
+                Visible=TopBannerVisible AND DoneVisible;
+                Editable=FALSE;
+                GroupType=Group }
+
+    { 15  ;2   ;Field     ;
+                Name=<MediaRepositoryDone>;
+                CaptionML=[ENU="";
+                           ENG=""];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=MediaRepositoryDone.Image;
+                Editable=FALSE }
+
+    { 8   ;1   ;Group     ;
+                Name=Intro;
+                CaptionML=[ENU=Intro;
+                           ENG=Intro];
+                Visible=IntroVisible;
+                GroupType=Group }
+
+    { 16  ;2   ;Group     ;
+                Name=Para1.1;
+                CaptionML=[ENU=Welcome to Azure Active Directory (Azure AD) Setup;
+                           ENG=Welcome to Azure Active Directory (Azure AD) Setup];
+                GroupType=Group }
+
+    { 9   ;3   ;Group     ;
+                Name=Para1.1.1;
+                CaptionML=[ENU="";
+                           ENG=""];
+                GroupType=Group;
+                InstructionalTextML=[ENU=When you register an application in the Azure Portal, it enables on premise applications to communicate with Power BI Services, Office 365 Exchange Online and other Azure services directly.;
+                                     ENG=When you register an application in the Azure Portal, it enables on premise applications to communicate with Power BI Services, Office 365 Exchange Online and other Azure services directly.] }
+
+    { 17  ;3   ;Group     ;
+                Name=Para1.1.2;
+                CaptionML=[ENU="";
+                           ENG=""];
+                GroupType=Group;
+                InstructionalTextML=[ENU=This wizard will guide you through the steps required to register Microsoft Dynamics NAV in the Azure Portal, how to select the Azure services you want to use and what permissions to grant to each of the services you selected.;
+                                     ENG=This wizard will guide you through the steps required to register Microsoft Dynamics NAV in the Azure Portal, how to select the Azure services you want to use and what permissions to grant to each of the services you selected.] }
+
+    { 18  ;3   ;Group     ;
+                Name=Paral1.1.3;
+                CaptionML=[ENU="";
+                           ENG=""];
+                GroupType=Group;
+                InstructionalTextML=[ENU=At the end of the registration process, the Azure Portal will provide you with an Application ID and Key that will be required to complete this setup.;
+                                     ENG=At the end of the registration process, the Azure Portal will provide you with an Application ID and Key that will be required to complete this setup.] }
+
+    { 19  ;2   ;Group     ;
+                Name=Para1.2;
+                CaptionML=[ENU=Let's go!;
+                           ENG=Let's go!];
+                GroupType=Group;
+                InstructionalTextML=[ENU=Choose Next to step through the process of registering Microsoft Dynamics NAV in the Azure Portal and obtaining the necessary information to complete this setup.;
+                                     ENG=Choose Next to step through the process of registering Microsoft Dynamics NAV in the Azure Portal and obtaining the necessary information to complete this setup.] }
+
+    { 2   ;1   ;Group     ;
+                Name=Step1;
+                CaptionML=[ENU=Step 1;
+                           ENG=Step 1];
+                Visible=Step1Visible;
+                GroupType=Group }
+
+    { 20  ;2   ;Group     ;
+                Name=Para2.1;
+                CaptionML=[ENU=Registering Microsoft Dynamics NAV;
+                           ENG=Registering Microsoft Dynamics NAV];
+                GroupType=Group }
+
+    { 21  ;3   ;Group     ;
+                Name=Para2.1.1;
+                CaptionML=[ENU="";
+                           ENG=""];
+                GroupType=Group;
+                InstructionalTextML=[ENU=To complete the setup process, you will need to obtain an Application ID and Key from the Azure Portal.  Choose the Help icon, or find the topic called "How to: Register Dynamics NAV in the Azure Management Portal" in Help.  If the topic is not available in Help, verify that that this topic has been deployed to your Help server.;
+                                     ENG=To complete the setup process, you will need to obtain an Application ID and Key from the Azure Portal.  Choose the Help icon, or find the topic called "How to: Register Dynamics NAV in the Azure Management Portal" in Help.  If the topic is not available in Help, verify that that this topic has been deployed to your Help server.] }
+
+    { 23  ;3   ;Group     ;
+                Name=Para2.1.2;
+                CaptionML=[ENU="";
+                           ENG=""];
+                GroupType=Group;
+                InstructionalTextML=[ENU=Before closing the Azure Management Portal, copy and paste the Application ID and Key into the associated fields provided below and choose Next.;
+                                     ENG=Before closing the Azure Management Portal, copy and paste the Application ID and Key into the associated fields provided below and choose Next.] }
+
+    { 3   ;4   ;Part      ;
+                Name=AzureAdSetup;
+                CaptionML=[ENU=" ";
+                           ENG=" "];
+                ApplicationArea=#Basic,#Suite;
+                PagePartID=Page6301;
+                PartType=Page }
+
+    { 6   ;1   ;Group     ;
+                Name=Done;
+                CaptionML=[ENU=Done;
+                           ENG=Done];
+                Visible=DoneVisible;
+                GroupType=Group }
+
+    { 25  ;2   ;Group     ;
+                Name=Para3.1;
+                CaptionML=[ENU=That's it!;
+                           ENG=That's it!];
+                GroupType=Group }
+
+    { 7   ;3   ;Group     ;
+                Name=Para3.1.1;
+                CaptionML=[ENU="";
+                           ENG=""];
+                GroupType=Group;
+                InstructionalTextML=[ENU=To begin using the Azure Active Directory services, choose Finish.;
+                                     ENG=To begin using the Azure Active Directory services, choose Finish.] }
+
+  }
+  CODE
+  {
+    VAR
+      MediaRepositoryStandard@1010 : Record 9400;
+      MediaRepositoryDone@1011 : Record 9400;
+      AssistedSetup@1008 : Record 1803;
+      CurrentStep@1000 : 'Intro,AzureAD,Done';
+      IntroVisible@1001 : Boolean;
+      Step1Visible@1002 : Boolean;
+      DoneVisible@1004 : Boolean;
+      NextEnabled@1005 : Boolean;
+      BackEnabled@1006 : Boolean;
+      FinishEnabled@1007 : Boolean;
+      StepOutOfRangeErr@1003 : TextConst 'ENU=Wizard step out of range.;ENG=Wizard step out of range.';
+      PermissionsErr@1009 : TextConst 'ENU=Please contact an administrator to set up your Azure Active Directory application.;ENG=Please contact an administrator to set up your Azure Active Directory application.';
+      TopBannerVisible@1012 : Boolean;
+
+    LOCAL PROCEDURE SetStep@1(NewStep@1000 : Option);
+    BEGIN
+      IF (NewStep < CurrentStep::Intro) OR (NewStep > CurrentStep::Done) THEN
+        ERROR(StepOutOfRangeErr);
+
+      ClearStepControls;
+      CurrentStep := NewStep;
+
+      CASE NewStep OF
+        CurrentStep::Intro:
+          BEGIN
+            IntroVisible := TRUE;
+            NextEnabled := TRUE;
+          END;
+        CurrentStep::AzureAD:
+          BEGIN
+            Step1Visible := TRUE;
+            BackEnabled := TRUE;
+            NextEnabled := TRUE;
+          END;
+        CurrentStep::Done:
+          BEGIN
+            DoneVisible := TRUE;
+            BackEnabled := TRUE;
+            FinishEnabled := TRUE;
+          END;
+      END;
+
+      CurrPage.UPDATE(TRUE);
+    END;
+
+    LOCAL PROCEDURE ClearStepControls@2();
+    BEGIN
+      // hide all tabs
+      IntroVisible := FALSE;
+      Step1Visible := FALSE;
+      DoneVisible := FALSE;
+
+      // disable all buttons
+      BackEnabled := FALSE;
+      NextEnabled := FALSE;
+      FinishEnabled := FALSE;
+    END;
+
+    LOCAL PROCEDURE CalculateNextStep@7(Forward@1000 : Boolean) NextStep : Integer;
+    BEGIN
+      // // Calculates the next step and hides steps based on whether the Power BI setup is enabled or not
+
+      // General cases
+      IF Forward AND (CurrentStep < CurrentStep::Done) THEN
+        // move forward 1 step
+        NextStep := CurrentStep + 1
+      ELSE
+        IF NOT Forward AND (CurrentStep > CurrentStep::Intro) THEN
+          // move backward 1 step
+          NextStep := CurrentStep - 1
+        ELSE
+          // stay on the current step
+          NextStep := CurrentStep;
+    END;
+
+    LOCAL PROCEDURE GoToNextStep@10(Forward@1000 : Boolean);
+    BEGIN
+      IF Forward THEN
+        ValidateStep(CurrentStep);
+
+      SetStep(CalculateNextStep(Forward));
+    END;
+
+    LOCAL PROCEDURE ValidateStep@11(Step@1000 : Option);
+    BEGIN
+      IF Step = CurrentStep::AzureAD THEN
+        CurrPage.AzureAdSetup.PAGE.ValidateFields;
+    END;
+
+    LOCAL PROCEDURE LoadTopBanners@4();
+    BEGIN
+      IF MediaRepositoryStandard.GET('AssistedSetup-NoText-400px.png',FORMAT(CURRENTCLIENTTYPE)) AND
+         MediaRepositoryDone.GET('AssistedSetupDone-NoText-400px.png',FORMAT(CURRENTCLIENTTYPE))
+      THEN
+        TopBannerVisible := MediaRepositoryDone.Image.HASVALUE;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,250 @@
+OBJECT Page 7341 Whse. Shipment Lines
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Whse. Shipment Lines;
+               ENG=Whse. Shipment Lines];
+    SourceTable=Table7321;
+    PageType=List;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 6       ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Line;
+                                 ENG=&Line];
+                      Image=Line }
+      { 7       ;2   ;Action    ;
+                      ShortCutKey=Shift+F7;
+                      CaptionML=[ENU=Show &Whse. Document;
+                                 ENG=Show &Whse. Document];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=ViewOrder;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 WhseShptHeader@1000 : Record 7320;
+                               BEGIN
+                                 WhseShptHeader.GET("No.");
+                                 PAGE.RUN(PAGE::"Warehouse Shipment",WhseShptHeader);
+                               END;
+                                }
+      { 8       ;2   ;Action    ;
+                      Name=ShowSourceDocumentLine;
+                      CaptionML=[ENU=&Show Source Document Line;
+                                 ENG=&Show Source Document Line];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=ViewDocumentLine;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 WMSMgt@1001 : Codeunit 7302;
+                               BEGIN
+                                 WMSMgt.ShowSourceDocLine(
+                                   "Source Type","Source Subtype","Source No.","Source Line No.",0)
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of document to which the line relates.;
+                           ENG=Specifies the type of document to which the line relates.];
+                SourceExpr="Source Document";
+                Visible=FALSE }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the source number of the document from which the line originates.;
+                           ENG=Specifies the source number of the document from which the line originates.];
+                SourceExpr="Source No." }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the source line number of the document from which the entry originates.;
+                           ENG=Specifies the source line number of the document from which the entry originates.];
+                SourceExpr="Source Line No." }
+
+    { 37  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of destination associated with the warehouse shipment line.;
+                           ENG=Specifies the type of destination associated with the warehouse shipment line.];
+                SourceExpr="Destination Type";
+                Visible=FALSE }
+
+    { 66  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the customer, vendor, or location to which the items should be shipped.;
+                           ENG=Specifies the number of the customer, vendor, or location to which the items should be shipped.];
+                SourceExpr="Destination No.";
+                Visible=FALSE }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the location from which the items on the line are being shipped.;
+                           ENG=Specifies the code of the location from which the items on the line are being shipped.];
+                SourceExpr="Location Code";
+                Visible=FALSE }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the zone where the bin on this shipment line is located.;
+                           ENG=Specifies the code of the zone where the bin on this shipment line is located.];
+                SourceExpr="Zone Code";
+                Visible=FALSE }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the bin in which the items will be placed before shipment.;
+                           ENG=Specifies the code of the bin in which the items will be placed before shipment.];
+                SourceExpr="Bin Code";
+                Visible=FALSE }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the shelf number of the item for informational use.;
+                           ENG=Specifies the shelf number of the item for informational use.];
+                SourceExpr="Shelf No.";
+                Visible=FALSE }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the item that should be shipped.;
+                           ENG=Specifies the number of the item that should be shipped.];
+                SourceExpr="Item No." }
+
+    { 50  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the variant code of the item in the line, if any.;
+                           ENG=Specifies the variant code of the item in the line, if any.];
+                SourceExpr="Variant Code" }
+
+    { 52  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the description of the item in the line.;
+                           ENG=Specifies the description of the item in the line.];
+                SourceExpr=Description }
+
+    { 54  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a second description of the item in the line, if any.;
+                           ENG=Specifies a second description of the item in the line, if any.];
+                SourceExpr="Description 2";
+                Visible=FALSE }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity that should be shipped.;
+                           ENG=Specifies the quantity that should be shipped.];
+                SourceExpr=Quantity }
+
+    { 28  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity that should be shipped, in the base unit of measure.;
+                           ENG=Specifies the quantity that should be shipped, in the base unit of measure.];
+                SourceExpr="Qty. (Base)";
+                Visible=FALSE }
+
+    { 30  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity that still needs to be handled.;
+                           ENG=Specifies the quantity that still needs to be handled.];
+                SourceExpr="Qty. Outstanding" }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity that still needs to be handled, expressed in the base unit of measure.;
+                           ENG=Specifies the quantity that still needs to be handled, expressed in the base unit of measure.];
+                SourceExpr="Qty. Outstanding (Base)";
+                Visible=FALSE }
+
+    { 9   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity in pick instructions assigned to be picked for the warehouse shipment line.;
+                           ENG=Specifies the quantity in pick instructions assigned to be picked for the warehouse shipment line.];
+                SourceExpr="Pick Qty.";
+                Visible=FALSE }
+
+    { 35  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity, in the base unit of measure, in pick instructions, that is assigned to be picked for the warehouse shipment line.;
+                           ENG=Specifies the quantity, in the base unit of measure, in pick instructions, that is assigned to be picked for the warehouse shipment line.];
+                SourceExpr="Pick Qty. (Base)";
+                Visible=FALSE }
+
+    { 38  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how many of the total shipment quantity have been registered as picked.;
+                           ENG=Specifies how many of the total shipment quantity have been registered as picked.];
+                SourceExpr="Qty. Picked" }
+
+    { 40  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how many of the total shipment quantity in the base unit of measure have been registered as picked.;
+                           ENG=Specifies how many of the total shipment quantity in the base unit of measure have been registered as picked.];
+                SourceExpr="Qty. Picked (Base)";
+                Visible=FALSE }
+
+    { 42  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity of the item on the line that is posted as shipped.;
+                           ENG=Specifies the quantity of the item on the line that is posted as shipped.];
+                SourceExpr="Qty. Shipped";
+                Visible=FALSE }
+
+    { 44  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity that is posted as shipped expressed in the base unit of measure.;
+                           ENG=Specifies the quantity that is posted as shipped expressed in the base unit of measure.];
+                SourceExpr="Qty. Shipped (Base)";
+                Visible=FALSE }
+
+    { 46  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit of measure code of the item on the line.;
+                           ENG=Specifies the unit of measure code of the item on the line.];
+                SourceExpr="Unit of Measure Code" }
+
+    { 48  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of base units of measure that are in the unit of measure specified for the item on the line.;
+                           ENG=Specifies the number of base units of measure that are in the unit of measure specified for the item on the line.];
+                SourceExpr="Qty. per Unit of Measure" }
+
+    { 56  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the status of the shipment line.;
+                           ENG=Specifies the status of the shipment line.];
+                SourceExpr=Status }
+
+    { 58  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date when the related warehouse activity, such as a pick, must be completed to ensure items can be shipped by the shipment date.;
+                           ENG=Specifies the date when the related warehouse activity, such as a pick, must be completed to ensure items can be shipped by the shipment date.];
+                SourceExpr="Due Date" }
+
+    { 60  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the shipment date of the warehouse shipment and the source document.;
+                           ENG=Specifies the shipment date of the warehouse shipment and the source document.];
+                SourceExpr="Shipment Date" }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document number of the shipment to which the line belongs.;
+                           ENG=Specifies the document number of the shipment to which the line belongs.];
+                SourceExpr="No." }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the warehouse shipment line.;
+                           ENG=Specifies the number of the warehouse shipment line.];
+                SourceExpr="Line No." }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

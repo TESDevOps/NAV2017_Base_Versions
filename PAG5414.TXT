@@ -1,0 +1,234 @@
+OBJECT Page 5414 Item Availability by Variant
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00,NAVGB10.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Item Availability by Variant;
+               ENG=Item Availability by Variant];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    LinksAllowed=No;
+    SourceTable=Table27;
+    DataCaptionFields=No.,Description;
+    PageType=ListPlus;
+    RefreshOnActivate=Yes;
+    OnOpenPage=BEGIN
+                 SETRANGE("No.");
+                 SETRANGE("Drop Shipment Filter",FALSE);
+                 PeriodFormMgt.SetCalendarSource(CalendarSource);
+                 FindPeriod('');
+               END;
+
+    OnClosePage=VAR
+                  ItemVariant@1000 : Record 5401;
+                BEGIN
+                  CurrPage.ItemAvailLocLines.PAGE.GETRECORD(ItemVariant);
+                  LastVariant := ItemVariant.Code;
+                END;
+
+    OnAfterGetRecord=BEGIN
+                       SETRANGE("Drop Shipment Filter",FALSE);
+                       FindPeriod('');
+                       UpdateSubForm;
+                     END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 10      ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Item;
+                                 ENG=&Item];
+                      Image=Item }
+      { 11      ;2   ;ActionGroup;
+                      CaptionML=[ENU=&Item Availability by;
+                                 ENG=&Item Availability by];
+                      Image=ItemAvailability }
+      { 3       ;3   ;Action    ;
+                      Name=<Action4>;
+                      CaptionML=[ENU=Event;
+                                 ENG=Event];
+                      Image=Event;
+                      OnAction=BEGIN
+                                 ItemAvailFormsMgt.ShowItemAvailFromItem(Rec,ItemAvailFormsMgt.ByEvent);
+                               END;
+                                }
+      { 14      ;3   ;Action    ;
+                      CaptionML=[ENU=Period;
+                                 ENG=Period];
+                      RunObject=Page 157;
+                      RunPageLink=No.=FIELD(No.),
+                                  Global Dimension 1 Filter=FIELD(Global Dimension 1 Filter),
+                                  Global Dimension 2 Filter=FIELD(Global Dimension 2 Filter),
+                                  Location Filter=FIELD(Location Filter),
+                                  Drop Shipment Filter=FIELD(Drop Shipment Filter),
+                                  Variant Filter=FIELD(Variant Filter);
+                      Image=Period }
+      { 15      ;3   ;Action    ;
+                      CaptionML=[ENU=Variant;
+                                 ENG=Variant];
+                      RunObject=Page 5414;
+                      RunPageLink=No.=FIELD(No.),
+                                  Global Dimension 1 Filter=FIELD(Global Dimension 1 Filter),
+                                  Global Dimension 2 Filter=FIELD(Global Dimension 2 Filter),
+                                  Location Filter=FIELD(Location Filter),
+                                  Drop Shipment Filter=FIELD(Drop Shipment Filter),
+                                  Variant Filter=FIELD(Variant Filter);
+                      Image=ItemVariant }
+      { 16      ;3   ;Action    ;
+                      CaptionML=[ENU=Location;
+                                 ENG=Location];
+                      RunObject=Page 492;
+                      RunPageLink=No.=FIELD(No.),
+                                  Global Dimension 1 Filter=FIELD(Global Dimension 1 Filter),
+                                  Global Dimension 2 Filter=FIELD(Global Dimension 2 Filter),
+                                  Location Filter=FIELD(Location Filter),
+                                  Drop Shipment Filter=FIELD(Drop Shipment Filter),
+                                  Variant Filter=FIELD(Variant Filter);
+                      Image=Warehouse }
+      { 5       ;3   ;Action    ;
+                      CaptionML=[ENU=BOM Level;
+                                 ENG=BOM Level];
+                      Image=BOMLevel;
+                      OnAction=BEGIN
+                                 ItemAvailFormsMgt.ShowItemAvailFromItem(Rec,ItemAvailFormsMgt.ByBOM);
+                               END;
+                                }
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 27      ;1   ;Action    ;
+                      CaptionML=[ENU=Previous Period;
+                                 ENG=Previous Period];
+                      ToolTipML=[ENU=Previous Period;
+                                 ENG=Previous Period];
+                      Promoted=Yes;
+                      Image=PreviousRecord;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 FindPeriod('<=');
+                                 UpdateSubForm;
+                               END;
+                                }
+      { 26      ;1   ;Action    ;
+                      CaptionML=[ENU=Next Period;
+                                 ENG=Next Period];
+                      ToolTipML=[ENU=Next Period;
+                                 ENG=Next Period];
+                      Promoted=Yes;
+                      Image=NextRecord;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 FindPeriod('>=');
+                                 UpdateSubForm;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                CaptionML=[ENU=Options;
+                           ENG=Options] }
+
+    { 33  ;2   ;Field     ;
+                CaptionML=[ENU=View by;
+                           ENG=View by];
+                ToolTipML=[ENU=Specifies by which period amounts are displayed.;
+                           ENG=Specifies by which period amounts are displayed.];
+                OptionCaptionML=[ENU=Day,Week,Month,Quarter,Year;
+                                 ENG=Day,Week,Month,Quarter,Year];
+                SourceExpr=PeriodType;
+                OnValidate=BEGIN
+                             FindPeriod('');
+                             UpdateSubForm;
+                           END;
+                            }
+
+    { 1040000;2;Field     ;
+                CaptionML=[ENU=Calendar;
+                           ENG=Calendar];
+                ToolTipML=[ENU=Specifies calendar to be used (System or Accounting Period).;
+                           ENG=Specifies calendar to be used (System or Accounting Period).];
+                OptionCaptionML=[ENU=,System Calendar,Acc. Period Calendar;
+                                 ENG=,System Calendar,Acc. Period Calendar];
+                SourceExpr=CalendarSource;
+                OnValidate=BEGIN
+                             PeriodFormMgt.SetCalendarSource(CalendarSource);
+                             FindPeriod('');
+                             UpdateSubForm;
+                           END;
+                            }
+
+    { 34  ;2   ;Field     ;
+                CaptionML=[ENU=View as;
+                           ENG=View as];
+                ToolTipML=[ENU=Specifies how amounts are displayed. Net Change: The net change in the balance for the selected period. Balance at Date: The balance as of the last day in the selected period.;
+                           ENG=Specifies how amounts are displayed. Net Change: The net change in the balance for the selected period. Balance at Date: The balance as of the last day in the selected period.];
+                OptionCaptionML=[ENU=Net Change,Balance at Date;
+                                 ENG=Net Change,Balance at Date];
+                SourceExpr=AmountType;
+                OnValidate=BEGIN
+                             FindPeriod('');
+                             UpdateSubForm;
+                           END;
+                            }
+
+    { 1   ;1   ;Part      ;
+                Name=ItemAvailLocLines;
+                SubPageLink=Item No.=FIELD(No.);
+                PagePartID=Page5415;
+                Editable=FALSE }
+
+  }
+  CODE
+  {
+    VAR
+      Calendar@1000 : Record 2000000007;
+      ItemAvailFormsMgt@1004 : Codeunit 353;
+      PeriodType@1001 : 'Day,Week,Month,Quarter,Year,Period';
+      PeriodFormMgt@1040001 : Codeunit 359;
+      AmountType@1002 : 'Net Change,Balance at Date';
+      LastVariant@1003 : Code[10];
+      CalendarSource@1040000 : ' ,System,AccPeriod';
+
+    LOCAL PROCEDURE FindPeriod@2(SearchText@1000 : Text[3]);
+    BEGIN
+      IF GETFILTER("Date Filter") <> '' THEN BEGIN
+        Calendar.SETFILTER("Period Start",GETFILTER("Date Filter"));
+        IF NOT PeriodFormMgt.FindDate('+',Calendar,PeriodType) THEN
+          PeriodFormMgt.FindDate('+',Calendar,PeriodType::Day);
+        Calendar.SETRANGE("Period Start");
+      END;
+      PeriodFormMgt.FindDate(SearchText,Calendar,PeriodType);
+      IF AmountType = AmountType::"Net Change" THEN BEGIN
+        SETRANGE("Date Filter",Calendar."Period Start",Calendar."Period End");
+        IF GETRANGEMIN("Date Filter") = GETRANGEMAX("Date Filter") THEN
+          SETRANGE("Date Filter",GETRANGEMIN("Date Filter"));
+      END ELSE
+        SETRANGE("Date Filter",0D,Calendar."Period End");
+    END;
+
+    LOCAL PROCEDURE UpdateSubForm@1();
+    BEGIN
+      CurrPage.ItemAvailLocLines.PAGE.Set(Rec,AmountType);
+    END;
+
+    PROCEDURE GetLastVariant@3() : Code[10];
+    BEGIN
+      EXIT(LastVariant);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

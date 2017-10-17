@@ -1,0 +1,371 @@
+OBJECT Page 5200 Employee Card
+{
+  OBJECT-PROPERTIES
+  {
+    Date=28/04/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16585,NAVGB10.00.00.16585;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Employee Card;
+               ENG=Employee Card];
+    SourceTable=Table5200;
+    PageType=Card;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 19      ;1   ;ActionGroup;
+                      CaptionML=[ENU=E&mployee;
+                                 ENG=E&mployee];
+                      Image=Employee }
+      { 81      ;2   ;Action    ;
+                      CaptionML=[ENU=Co&mments;
+                                 ENG=Co&mments];
+                      RunObject=Page 5222;
+                      RunPageLink=Table Name=CONST(Employee),
+                                  No.=FIELD(No.);
+                      Image=ViewComments }
+      { 184     ;2   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      RunObject=Page 540;
+                      RunPageLink=Table ID=CONST(5200),
+                                  No.=FIELD(No.);
+                      Image=Dimensions }
+      { 76      ;2   ;Action    ;
+                      CaptionML=[ENU=&Picture;
+                                 ENG=&Picture];
+                      RunObject=Page 5202;
+                      RunPageLink=No.=FIELD(No.);
+                      Image=Picture }
+      { 75      ;2   ;Action    ;
+                      Name=AlternativeAddresses;
+                      CaptionML=[ENU=&Alternative Addresses;
+                                 ENG=&Alternative Addresses];
+                      RunObject=Page 5204;
+                      RunPageLink=Employee No.=FIELD(No.);
+                      Image=Addresses }
+      { 83      ;2   ;Action    ;
+                      CaptionML=[ENU=&Relatives;
+                                 ENG=&Relatives];
+                      RunObject=Page 5209;
+                      RunPageLink=Employee No.=FIELD(No.);
+                      Image=Relatives }
+      { 84      ;2   ;Action    ;
+                      CaptionML=[ENU=Mi&sc. Article Information;
+                                 ENG=Mi&sc. Article Information];
+                      RunObject=Page 5219;
+                      RunPageLink=Employee No.=FIELD(No.);
+                      Image=Filed }
+      { 88      ;2   ;Action    ;
+                      CaptionML=[ENU=&Confidential Information;
+                                 ENG=&Confidential Information];
+                      RunObject=Page 5221;
+                      RunPageLink=Employee No.=FIELD(No.);
+                      Image=Lock }
+      { 41      ;2   ;Action    ;
+                      CaptionML=[ENU=Q&ualifications;
+                                 ENG=Q&ualifications];
+                      RunObject=Page 5206;
+                      RunPageLink=Employee No.=FIELD(No.);
+                      Image=Certificate }
+      { 87      ;2   ;Action    ;
+                      CaptionML=[ENU=A&bsences;
+                                 ENG=A&bsences];
+                      RunObject=Page 5211;
+                      RunPageLink=Employee No.=FIELD(No.);
+                      Image=Absence }
+      { 23      ;2   ;Separator  }
+      { 95      ;2   ;Action    ;
+                      CaptionML=[ENU=Absences by Ca&tegories;
+                                 ENG=Absences by Ca&tegories];
+                      RunObject=Page 5226;
+                      RunPageLink=No.=FIELD(No.),
+                                  Employee No. Filter=FIELD(No.);
+                      Image=AbsenceCategory }
+      { 70      ;2   ;Action    ;
+                      CaptionML=[ENU=Misc. Articles &Overview;
+                                 ENG=Misc. Articles &Overview];
+                      RunObject=Page 5228;
+                      Image=FiledOverview }
+      { 71      ;2   ;Action    ;
+                      CaptionML=[ENU=Co&nfidential Info. Overview;
+                                 ENG=Co&nfidential Info. Overview];
+                      RunObject=Page 5229;
+                      Image=ConfidentialOverview }
+      { 61      ;2   ;Separator  }
+      { 62      ;2   ;Action    ;
+                      CaptionML=[ENU=Online Map;
+                                 ENG=Online Map];
+                      Image=Map;
+                      OnAction=BEGIN
+                                 DisplayMap;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                CaptionML=[ENU=General;
+                           ENG=General] }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a number for the employee.;
+                           ENG=Specifies a number for the employee.];
+                SourceExpr="No.";
+                Importance=Promoted;
+                OnAssistEdit=BEGIN
+                               IF AssistEdit(xRec) THEN
+                                 CurrPage.UPDATE;
+                             END;
+                              }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's job title.;
+                           ENG=Specifies the employee's job title.];
+                SourceExpr="Job Title";
+                Importance=Promoted }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's first name.;
+                           ENG=Specifies the employee's first name.];
+                SourceExpr="First Name";
+                Importance=Promoted }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's last name.;
+                           ENG=Specifies the employee's last name.];
+                SourceExpr="Last Name" }
+
+    { 6   ;2   ;Field     ;
+                CaptionML=[ENU=Middle Name/Initials;
+                           ENG=Middle Name/Initials];
+                ToolTipML=[ENU=Specifies the employee's middle name.;
+                           ENG=Specifies the employee's middle name.];
+                SourceExpr="Middle Name" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's initials.;
+                           ENG=Specifies the employee's initials.];
+                SourceExpr=Initials }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's address.;
+                           ENG=Specifies the employee's address.];
+                SourceExpr=Address }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies another line of the address.;
+                           ENG=Specifies another line of the address.];
+                SourceExpr="Address 2" }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code of the address.;
+                           ENG=Specifies the postcode of the address.];
+                SourceExpr="Post Code" }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the city of the address.;
+                           ENG=Specifies the city of the address.];
+                SourceExpr=City }
+
+    { 1040003;2;Field     ;
+                SourceExpr=County }
+
+    { 1040000;2;Field     ;
+                SourceExpr="Country/Region Code" }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's telephone number.;
+                           ENG=Specifies the employee's telephone number.];
+                SourceExpr="Phone No.";
+                Importance=Promoted }
+
+    { 30  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a search name for the employee.;
+                           ENG=Specifies a search name for the employee.];
+                SourceExpr="Search Name" }
+
+    { 11  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's gender.;
+                           ENG=Specifies the employee's gender.];
+                SourceExpr=Gender }
+
+    { 38  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the last day this entry was modified.;
+                           ENG=Specifies the last day this entry was modified.];
+                SourceExpr="Last Date Modified";
+                Importance=Promoted }
+
+    { 1902768601;1;Group  ;
+                CaptionML=[ENU=Communication;
+                           ENG=Communication] }
+
+    { 72  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's telephone extension.;
+                           ENG=Specifies the employee's telephone extension.];
+                SourceExpr=Extension;
+                Importance=Promoted }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's mobile telephone number.;
+                           ENG=Specifies the employee's mobile telephone number.];
+                SourceExpr="Mobile Phone No.";
+                Importance=Promoted }
+
+    { 93  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's pager number.;
+                           ENG=Specifies the employee's pager number.];
+                SourceExpr=Pager }
+
+    { 74  ;2   ;Field     ;
+                Name=Phone No.2;
+                ToolTipML=[ENU=Specifies the employee's telephone number.;
+                           ENG=Specifies the employee's telephone number.];
+                SourceExpr="Phone No." }
+
+    { 28  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's email address.;
+                           ENG=Specifies the employee's email address.];
+                SourceExpr="E-Mail";
+                Importance=Promoted }
+
+    { 48  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's email address at the company.;
+                           ENG=Specifies the employee's email address at the company.];
+                SourceExpr="Company E-Mail" }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a code for an alternate address.;
+                           ENG=Specifies a code for an alternate address.];
+                SourceExpr="Alt. Address Code" }
+
+    { 34  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the starting date when the alternate address is valid.;
+                           ENG=Specifies the starting date when the alternate address is valid.];
+                SourceExpr="Alt. Address Start Date" }
+
+    { 36  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the last day when the alternate address is valid.;
+                           ENG=Specifies the last day when the alternate address is valid.];
+                SourceExpr="Alt. Address End Date" }
+
+    { 1900121501;1;Group  ;
+                CaptionML=[ENU=Administration;
+                           ENG=Administration] }
+
+    { 46  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date when the employee began to work for the company.;
+                           ENG=Specifies the date when the employee began to work for the company.];
+                SourceExpr="Employment Date";
+                Importance=Promoted }
+
+    { 50  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employment status of the employee.;
+                           ENG=Specifies the employment status of the employee.];
+                SourceExpr=Status;
+                Importance=Promoted }
+
+    { 52  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date when the employee became inactive, due to disability or maternity leave, for example.;
+                           ENG=Specifies the date when the employee became inactive, due to disability or maternity leave, for example.];
+                SourceExpr="Inactive Date" }
+
+    { 54  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a code for the cause of inactivity by the employee.;
+                           ENG=Specifies a code for the cause of inactivity by the employee.];
+                SourceExpr="Cause of Inactivity Code" }
+
+    { 56  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date when the employee was terminated, due to retirement or dismissal, for example.;
+                           ENG=Specifies the date when the employee was terminated, due to retirement or dismissal, for example.];
+                SourceExpr="Termination Date" }
+
+    { 58  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a termination code for the employee who has been terminated.;
+                           ENG=Specifies a termination code for the employee who has been terminated.];
+                SourceExpr="Grounds for Term. Code" }
+
+    { 42  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employment contract code for the employee.;
+                           ENG=Specifies the employment contract code for the employee.];
+                SourceExpr="Emplymt. Contract Code" }
+
+    { 44  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a statistics group code to assign to the employee for statistical purposes.;
+                           ENG=Specifies a statistics group code to assign to the employee for statistical purposes.];
+                SourceExpr="Statistics Group Code" }
+
+    { 64  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a resource number for the employee, if the employee is a resource in Resources Planning.;
+                           ENG=Specifies a resource number for the employee, if the employee is a resource in Resources Planning.];
+                SourceExpr="Resource No." }
+
+    { 77  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a salesperson or purchaser code for the employee, if the employee is a salesperson or purchaser in the company.;
+                           ENG=Specifies a salesperson or purchaser code for the employee, if the employee is a salesperson or purchaser in the company.];
+                SourceExpr="Salespers./Purch. Code" }
+
+    { 1901160401;1;Group  ;
+                CaptionML=[ENU=Personal;
+                           ENG=Personal] }
+
+    { 66  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's date of birth.;
+                           ENG=Specifies the employee's date of birth.];
+                SourceExpr="Birth Date";
+                Importance=Promoted }
+
+    { 68  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the Social Security number of the employee.;
+                           ENG=Specifies the Social Security number of the employee.];
+                SourceExpr="Social Security No.";
+                Importance=Promoted }
+
+    { 89  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's labor union membership code.;
+                           ENG=Specifies the employee's labour union membership code.];
+                SourceExpr="Union Code" }
+
+    { 91  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the employee's labor union membership number.;
+                           ENG=Specifies the employee's labour union membership number.];
+                SourceExpr="Union Membership No." }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 3   ;1   ;Part      ;
+                ApplicationArea=#Basic,#Suite;
+                SubPageLink=No.=FIELD(No.);
+                PagePartID=Page5202;
+                PartType=Page }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=TRUE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

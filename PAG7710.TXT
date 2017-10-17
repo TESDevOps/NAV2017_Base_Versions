@@ -1,0 +1,51 @@
+OBJECT Page 7710 ADCS Users
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=ADCS Users;
+               ENG=ADCS Users];
+    SourceTable=Table7710;
+    DelayedInsert=Yes;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                CaptionML=[ENU=Group;
+                           ENG=Group];
+                GroupType=Repeater }
+
+    { 4   ;2   ;Field     ;
+                CaptionML=[ENU=Name;
+                           ENG=Name];
+                ToolTipML=[ENU=Specifies the name of an ADCS user.;
+                           ENG=Specifies the name of an ADCS user.];
+                SourceExpr=Name }
+
+    { 5   ;2   ;Field     ;
+                ExtendedDatatype=Masked;
+                CaptionML=[ENU=Password;
+                           ENG=Password];
+                ToolTipML=[ENU=Specifies the password of an ADCS user.;
+                           ENG=Specifies the password of an ADCS user.];
+                SourceExpr=Password }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

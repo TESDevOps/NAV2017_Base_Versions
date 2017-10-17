@@ -1,0 +1,269 @@
+OBJECT Page 1638 Booking Items
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Bookings Not Invoiced;
+               ENG=Bookings Not Invoiced];
+    LinksAllowed=No;
+    SourceTable=Table6707;
+    PageType=List;
+    SourceTableTemporary=Yes;
+    PromotedActionCategoriesML=[ENU=New,Process,Report,Invoicing;
+                                ENG=New,Process,Report,Invoicing];
+    OnInit=VAR
+             BookingManager@1000 : Codeunit 6721;
+           BEGIN
+             IF ISEMPTY THEN BEGIN
+               BookingManager.GetBookingItems(Rec);
+               SETRANGE(Invoiced,FALSE);
+               CurrPage.UPDATE;
+             END;
+           END;
+
+    OnAfterGetRecord=VAR
+                       InvoicedBookingItem@1001 : Record 1638;
+                     BEGIN
+                       IF InvoicedBookingItem.GET("Item ID") THEN
+                         InvoiceNo := InvoicedBookingItem."Document No."
+                       ELSE
+                         InvoiceNo := '';
+                     END;
+
+    ActionList=ACTIONS
+    {
+      { 9       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 10      ;1   ;Action    ;
+                      Name=Invoice;
+                      CaptionML=[ENU=Create Invoice;
+                                 ENG=Create Invoice];
+                      ToolTipML=[ENU=Create a new sales invoice for the selected booking.;
+                                 ENG=Create a new sales invoice for the selected booking.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=NewSalesInvoice;
+                      PromotedCategory=Category4;
+                      Scope=Repeater;
+                      OnAction=VAR
+                                 SalesHeader@1000 : Record 36;
+                               BEGIN
+                                 IF NOT ActionAllowed THEN
+                                   EXIT;
+
+                                 CreateSalesHeader(SalesHeader,Rec);
+                                 CreateSalesLine(SalesHeader,Rec);
+                                 COMMIT;
+                                 PAGE.RUN(PAGE::"Sales Invoice",SalesHeader);
+                               END;
+                                }
+      { 11      ;1   ;Action    ;
+                      Name=Invoice Customer;
+                      CaptionML=[ENU=Create Invoice for Customer;
+                                 ENG=Create Invoice for Customer];
+                      ToolTipML=[ENU=Create a new sales invoice for all items booked by the customer on the selected booking.;
+                                 ENG=Create a new sales invoice for all items booked by the customer on the selected booking.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=SuggestCustomerBill;
+                      PromotedCategory=Category4;
+                      OnAction=VAR
+                                 SalesHeader@1000 : Record 36;
+                               BEGIN
+                                 IF NOT ActionAllowed THEN
+                                   EXIT;
+
+                                 SETRANGE("Customer Email","Customer Email");
+                                 SETRANGE(Invoiced,FALSE);
+                                 IF FINDSET THEN BEGIN
+                                   CreateSalesHeader(SalesHeader,Rec);
+                                   REPEAT
+                                     CreateSalesLine(SalesHeader,Rec);
+                                   UNTIL NEXT = 0;
+                                 END;
+                                 COMMIT;
+                                 SETRANGE("Customer Email");
+                                 PAGE.RUN(PAGE::"Sales Invoice",SalesHeader);
+                               END;
+                                }
+      { 4       ;1   ;Action    ;
+                      Name=MarkInvoiced;
+                      CaptionML=[ENU=Mark as Invoiced;
+                                 ENG=Mark as Invoiced];
+                      ToolTipML=[ENU=Mark the bookings that you have selected as invoiced. This removes the bookings from this view.;
+                                 ENG=Mark the bookings that you have selected as invoiced. This removes the bookings from this view.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=ClearLog;
+                      PromotedCategory=Category4;
+                      Scope=Repeater;
+                      OnAction=VAR
+                                 TempBookingItem@1004 : TEMPORARY Record 6707;
+                                 InstructionMgt@1000 : Codeunit 1330;
+                               BEGIN
+                                 IF NOT ActionAllowed THEN
+                                   EXIT;
+
+                                 IF InstructionMgt.ShowConfirm(ConfirmMarkQst,InstructionMgt.MarkBookingAsInvoicedWarningCode) THEN BEGIN
+                                   GetSelectedRecords(TempBookingItem);
+                                   IF TempBookingItem.FINDSET THEN
+                                     REPEAT
+                                       TempBookingItem.Invoiced := TRUE;
+                                       TempBookingItem.MODIFY;
+                                     UNTIL TempBookingItem.NEXT = 0;
+                                 END;
+                               END;
+
+                      Gesture=None }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 7   ;2   ;Field     ;
+                Name=From;
+                ToolTipML=[ENU=Specifies the start date and time of the booking.;
+                           ENG=Specifies the start date and time of the booking.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Start }
+
+    { 6   ;2   ;Field     ;
+                Name=To;
+                ToolTipML=[ENU=Specifies the end date and time of the booking.;
+                           ENG=Specifies the end date and time of the booking.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="End" }
+
+    { 5   ;2   ;Field     ;
+                Name=Customer;
+                CaptionML=[ENU=Customer;
+                           ENG=Customer];
+                ToolTipML=[ENU=Specifies the name of the customer that the booking is for.;
+                           ENG=Specifies the name of the customer that the booking is for.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Customer Name" }
+
+    { 3   ;2   ;Field     ;
+                Name=Service;
+                ToolTipML=[ENU=Specifies the subject of the booking.;
+                           ENG=Specifies the subject of the booking.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Service Name" }
+
+    { 8   ;2   ;Field     ;
+                Name=Invoice No.;
+                CaptionML=[ENU=Invoice No.;
+                           ENG=Invoice No.];
+                ToolTipML=[ENU=Specifies the invoice. If the field is blank, the customer has not been invoiced for the booking.;
+                           ENG=Specifies the invoice. If the field is blank, the customer has not been invoiced for the booking.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=InvoiceNo;
+                OnDrillDown=VAR
+                              SalesHeader@1000 : Record 36;
+                            BEGIN
+                              SalesHeader.SETRANGE("No.",InvoiceNo);
+                              SalesHeader.SETRANGE("Document Type",SalesHeader."Document Type"::Invoice);
+                              IF SalesHeader.FINDFIRST THEN
+                                PAGE.RUN(PAGE::"Sales Invoice",SalesHeader);
+                            END;
+                             }
+
+  }
+  CODE
+  {
+    VAR
+      InvoiceNo@1001 : Code[20];
+      ConfirmMarkQst@1002 : TextConst 'ENU=The bookings that you mark as invoiced will be removed from this view. You will no longer be able to manage them in this window. Do you want to continue?;ENG=The bookings that you mark as invoiced will be removed from this view. You will no longer be able to manage them in this window. Do you want to continue?';
+
+    LOCAL PROCEDURE CreateSalesHeader@2(VAR SalesHeader@1000 : Record 36;TempBookingItem@1001 : TEMPORARY Record 6707);
+    VAR
+      Customer@1002 : Record 18;
+      BookingManager@1003 : Codeunit 6721;
+    BEGIN
+      Customer.SETRANGE("E-Mail",TempBookingItem."Customer Email");
+      IF NOT Customer.FINDFIRST THEN BEGIN
+        BookingManager.Synchronize(TempBookingItem);
+        Customer.FINDFIRST;
+      END;
+
+      SalesHeader.INIT;
+      SalesHeader.VALIDATE("Document Type",SalesHeader."Document Type"::Invoice);
+      SalesHeader.VALIDATE("Sell-to Customer No.",Customer."No.");
+      SalesHeader.INSERT(TRUE);
+    END;
+
+    LOCAL PROCEDURE CreateSalesLine@1(SalesHeader@1004 : Record 36;TempBookingItem@1000 : TEMPORARY Record 6707);
+    VAR
+      SalesLine@1003 : Record 37;
+      InvoicedBookingItem@1006 : Record 1638;
+      BookingServiceMapping@1009 : Record 6706;
+      BookingManager@1008 : Codeunit 6721;
+      LineNo@1002 : Integer;
+    BEGIN
+      IF NOT BookingServiceMapping.GET(TempBookingItem."Service ID") THEN BEGIN
+        BookingManager.Synchronize(TempBookingItem);
+        BookingServiceMapping.GET(TempBookingItem."Service ID");
+      END;
+
+      SalesLine.SETRANGE("Document Type",SalesHeader."Document Type"::Invoice);
+      SalesLine.SETRANGE("Document No.",SalesHeader."No.");
+      IF SalesLine.FINDLAST THEN
+        LineNo := SalesLine."Line No." + 10000
+      ELSE
+        LineNo := 10000;
+      CLEAR(SalesLine);
+
+      SalesLine.INIT;
+      SalesLine.VALIDATE("Document Type",SalesHeader."Document Type"::Invoice);
+      SalesLine.VALIDATE("Document No.",SalesHeader."No.");
+      SalesLine.VALIDATE("Line No.",LineNo);
+      SalesLine.VALIDATE("Sell-to Customer No.",SalesHeader."Sell-to Customer No.");
+      SalesLine.VALIDATE(Type,SalesLine.Type::Item);
+      SalesLine.VALIDATE("No.",BookingServiceMapping."Item No.");
+      SalesLine.VALIDATE(Quantity,(TempBookingItem."End" - TempBookingItem.Start) / 3600000);
+      SalesLine.VALIDATE("Unit Price",TempBookingItem.Price);
+      SalesLine.VALIDATE(Description,STRSUBSTNO('%1 - %2',TempBookingItem."Service Name",DT2DATE(TempBookingItem.Start)));
+      SalesLine.INSERT(TRUE);
+
+      InvoicedBookingItem.INIT;
+      InvoicedBookingItem."Booking Item ID" := TempBookingItem."Item ID";
+      InvoicedBookingItem."Document No." := SalesHeader."No.";
+      IF NOT InvoicedBookingItem.INSERT THEN
+        InvoicedBookingItem.MODIFY;
+    END;
+
+    LOCAL PROCEDURE GetSelectedRecords@3(VAR TempBookingItem@1000 : TEMPORARY Record 6707);
+    VAR
+      BookingManager@1001 : Codeunit 6721;
+    BEGIN
+      IF MARKEDONLY THEN BEGIN
+        TempBookingItem.COPY(Rec,TRUE);
+        TempBookingItem.MARKEDONLY(TRUE);
+      END ELSE BEGIN
+        BookingManager.GetBookingItems(TempBookingItem);
+        CurrPage.SETSELECTIONFILTER(TempBookingItem);
+      END;
+    END;
+
+    LOCAL PROCEDURE ActionAllowed@10() Allowed : Boolean;
+    BEGIN
+      Allowed := ("Service Name" <> '') AND NOT ISEMPTY;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

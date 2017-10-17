@@ -1,0 +1,104 @@
+OBJECT Table 1430 Role Center Notifications
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Role Center Notifications;
+               ENG=Role Centre Notifications];
+  }
+  FIELDS
+  {
+    { 1   ;   ;User SID            ;GUID          ;CaptionML=[ENU=User SID;
+                                                              ENG=User SID] }
+    { 2   ;   ;First Session ID    ;Integer       ;CaptionML=[ENU=First Session ID;
+                                                              ENG=First Session ID] }
+    { 3   ;   ;Last Session ID     ;Integer       ;CaptionML=[ENU=Last Session ID;
+                                                              ENG=Last Session ID] }
+    { 4   ;   ;Evaluation Notification State;Option;
+                                                   CaptionML=[ENU=Evaluation Notification State;
+                                                              ENG=Evaluation Notification State];
+                                                   OptionCaptionML=[ENU=Disabled,Enabled,Clicked;
+                                                                    ENG=Disabled,Enabled,Clicked];
+                                                   OptionString=Disabled,Enabled,Clicked }
+    { 5   ;   ;Buy Notification State;Option      ;CaptionML=[ENU=Buy Notification State;
+                                                              ENG=Buy Notification State];
+                                                   OptionCaptionML=[ENU=Disabled,Enabled,Clicked;
+                                                                    ENG=Disabled,Enabled,Clicked];
+                                                   OptionString=Disabled,Enabled,Clicked }
+  }
+  KEYS
+  {
+    {    ;User SID                                ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    LOCAL PROCEDURE Initialize@1();
+    BEGIN
+      IF NOT GET(USERSECURITYID) THEN BEGIN
+        INIT;
+        "User SID" := USERSECURITYID;
+        "First Session ID" := SESSIONID;
+        "Last Session ID" := SESSIONID;
+        "Evaluation Notification State" := "Evaluation Notification State"::Disabled;
+        "Buy Notification State" := "Buy Notification State"::Disabled;
+        INSERT;
+      END ELSE
+        IF SESSIONID <> "Last Session ID" THEN BEGIN
+          "Last Session ID" := SESSIONID;
+          "Evaluation Notification State" := "Evaluation Notification State"::Enabled;
+          "Buy Notification State" := "Buy Notification State"::Enabled;
+          MODIFY;
+        END;
+    END;
+
+    PROCEDURE IsFirstLogon@2() : Boolean;
+    BEGIN
+      Initialize;
+      EXIT(SESSIONID = "First Session ID");
+    END;
+
+    PROCEDURE GetEvaluationNotificationState@4() : Integer;
+    BEGIN
+      IF GET(USERSECURITYID) THEN
+        EXIT("Evaluation Notification State");
+      EXIT("Evaluation Notification State"::Disabled);
+    END;
+
+    PROCEDURE SetEvaluationNotificationState@3(NewState@1000 : Option);
+    BEGIN
+      IF GET(USERSECURITYID) THEN BEGIN
+        "Evaluation Notification State" := NewState;
+        MODIFY;
+      END;
+    END;
+
+    PROCEDURE GetBuyNotificationState@7() : Integer;
+    BEGIN
+      IF GET(USERSECURITYID) THEN
+        EXIT("Buy Notification State");
+      EXIT("Buy Notification State"::Disabled);
+    END;
+
+    PROCEDURE SetBuyNotificationState@6(NewState@1000 : Option);
+    BEGIN
+      IF GET(USERSECURITYID) THEN BEGIN
+        "Buy Notification State" := NewState;
+        MODIFY;
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

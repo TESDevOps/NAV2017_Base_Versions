@@ -1,0 +1,57 @@
+OBJECT Table 2000000196 Object Options
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/09/17;
+    Time=12:00:00;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Object Options;
+               ENG=Object Options];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Parameter Name      ;Text50        ;CaptionML=[ENU=Parameter Name;
+                                                              ENG=Parameter Name] }
+    { 2   ;   ;Object ID           ;Integer       ;CaptionML=[ENU=Object ID;
+                                                              ENG=Object ID] }
+    { 3   ;   ;Object Type         ;Option        ;CaptionML=[ENU=Object Type;
+                                                              ENG=Object Type];
+                                                   OptionCaptionML=[ENU=,,,Report,,,XMLport;
+                                                                    ENG=,,,Report,,,XMLport];
+                                                   OptionString=,,,Report,,,XMLport }
+    { 4   ;   ;Company Name        ;Text30        ;TableRelation=Company.Name;
+                                                   CaptionML=[ENU=Company Name;
+                                                              ENG=Company Name] }
+    { 5   ;   ;User Name           ;Code50        ;CaptionML=[ENU=User Name;
+                                                              ENG=User Name] }
+    { 6   ;   ;Option Data         ;BLOB          ;CaptionML=[ENU=Option Data;
+                                                              ENG=Option Data];
+                                                   SubType=User-Defined }
+    { 7   ;   ;Public Visible      ;Boolean       ;CaptionML=[ENU=Public Visible;
+                                                              ENG=Public Visible] }
+    { 8   ;   ;Temporary           ;Boolean       ;CaptionML=[ENU=Temporary;
+                                                              ENG=Temporary] }
+    { 9   ;   ;Created By          ;Code50        ;CaptionML=[ENU=Created By;
+                                                              ENG=Created By] }
+  }
+  KEYS
+  {
+    {    ;Parameter Name,Object ID,Object Type,User Name,Company Name;
+                                                   Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;Parameter Name                           }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

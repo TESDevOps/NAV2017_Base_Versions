@@ -1,0 +1,89 @@
+OBJECT Page 2104 O365 Sales Item List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=Yes;
+    CaptionML=[ENU=Item List;
+               ENG=Item List];
+    ModifyAllowed=Yes;
+    SourceTable=Table27;
+    SourceTableView=SORTING(Description);
+    PageType=ListPart;
+    CardPageID=O365 Item Card;
+    RefreshOnActivate=Yes;
+    ActionList=ACTIONS
+    {
+      { 10      ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                CaptionML=[ENU=Item;
+                           ENG=Item];
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the item.;
+                           ENG=Specifies the number of the item.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="No." }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description of the item. You can enter a maximum of 30 characters, both numbers and letters.;
+                           ENG=Specifies a description of the item. You can enter a maximum of 30 characters, both numbers and letters.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Description }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit in which the item is held in inventory.;
+                           ENG=Specifies the unit in which the item is held in inventory.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Base Unit of Measure";
+                Visible=FALSE }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies if the item card represents a physical item (Inventory) or a service (Service).;
+                           ENG=Specifies if the item card represents a physical item (Inventory) or a service (Service).];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Type;
+                Visible=FALSE }
+
+    { 7   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the price for one unit of the item, in LCY.;
+                           ENG=Specifies the price for one unit of the item, in LCY.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Unit Price" }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how many units, such as pieces, boxes, or cans, of the item are in inventory.;
+                           ENG=Specifies how many units, such as pieces, boxes, or cans, of the item are in inventory.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Inventory;
+                Visible=FALSE }
+
+    { 9   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the item picture.;
+                           ENG=Specifies the item picture.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Picture }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,111 @@
+OBJECT Codeunit 1327 Adjust Item Inventory
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      CantFindTemplateOrBatchErr@1001 : TextConst 'ENU=Unable to find the correct Item Journal template or batch to post this change. Use the Item Journal instead.;ENG=Unable to find the correct Item Journal template or batch to post this change. Use the Item Journal instead.';
+      SimpleInvJnlNameTxt@1000 : TextConst '@@@=The default name of the item journal;ENU=DEFAULT;ENG=DEFAULT';
+
+    PROCEDURE PostAdjustmentToItemLedger@96(Item@1004 : Record 27;NewInventory@1003 : Decimal) LastErrorText : Text;
+    VAR
+      ItemJnlLine@1001 : Record 83;
+      Completed@1000 : Boolean;
+    BEGIN
+      Item.CALCFIELDS(Inventory);
+      IF Item.Inventory = NewInventory THEN
+        EXIT;
+
+      ItemJnlLine.INIT;
+      ItemJnlLine.VALIDATE("Journal Template Name",SelectItemTemplateForAdjustment);
+      ItemJnlLine.VALIDATE("Journal Batch Name",CreateItemBatch(ItemJnlLine."Journal Template Name"));
+      ItemJnlLine.VALIDATE("Posting Date",WORKDATE);
+      ItemJnlLine."Document No." := Item."No.";
+
+      IF Item.Inventory < NewInventory THEN
+        ItemJnlLine.VALIDATE("Entry Type",ItemJnlLine."Entry Type"::"Positive Adjmt.")
+      ELSE
+        ItemJnlLine.VALIDATE("Entry Type",ItemJnlLine."Entry Type"::"Negative Adjmt.");
+
+      ItemJnlLine.VALIDATE("Item No.",Item."No.");
+      ItemJnlLine.VALIDATE(Description,Item.Description);
+      ItemJnlLine.VALIDATE(Quantity,ABS(NewInventory - Item.Inventory));
+      ItemJnlLine.INSERT(TRUE);
+      COMMIT;
+
+      Completed := CODEUNIT.RUN(CODEUNIT::"Item Jnl.-Post Batch",ItemJnlLine);
+
+      DeleteItemBatch(ItemJnlLine."Journal Template Name",ItemJnlLine."Journal Batch Name");
+
+      IF NOT Completed THEN BEGIN
+        LastErrorText := GETLASTERRORTEXT;
+        COMMIT;
+      END;
+    END;
+
+    LOCAL PROCEDURE SelectItemTemplateForAdjustment@95() : Code[10];
+    VAR
+      ItemJnlTemplate@1002 : Record 82;
+      ItemJnlLine@1170000001 : Record 83;
+      ItemJnlManagement@1001 : Codeunit 240;
+      JnlSelected@1000 : Boolean;
+    BEGIN
+      ItemJnlManagement.TemplateSelection(PAGE::"Item Journal",0,FALSE,ItemJnlLine,JnlSelected);
+
+      ItemJnlTemplate.SETRANGE("Page ID",PAGE::"Item Journal");
+      ItemJnlTemplate.SETRANGE(Recurring,FALSE);
+      ItemJnlTemplate.SETRANGE(Type,ItemJnlTemplate.Type::Item);
+      IF NOT ItemJnlTemplate.FINDFIRST THEN
+        ERROR(CantFindTemplateOrBatchErr);
+
+      EXIT(ItemJnlTemplate.Name);
+    END;
+
+    LOCAL PROCEDURE CreateItemBatch@93(TemplateName@1001 : Code[10]) : Code[10];
+    VAR
+      ItemJnlBatch@1002 : Record 233;
+    BEGIN
+      ItemJnlBatch.INIT;
+      ItemJnlBatch."Journal Template Name" := TemplateName;
+      ItemJnlBatch.Name := CreateBatchName;
+      ItemJnlBatch.Description := SimpleInvJnlNameTxt;
+      ItemJnlBatch.INSERT;
+
+      EXIT(ItemJnlBatch.Name);
+    END;
+
+    LOCAL PROCEDURE DeleteItemBatch@84(TemplateName@1001 : Code[10];BatchName@1000 : Code[10]);
+    VAR
+      ItemJnlBatch@1002 : Record 233;
+    BEGIN
+      IF ItemJnlBatch.GET(TemplateName,BatchName) THEN
+        ItemJnlBatch.DELETE(TRUE);
+    END;
+
+    LOCAL PROCEDURE CreateBatchName@60() : Code[10];
+    VAR
+      GuidStr@1213 : Text;
+      BatchName@1423 : Text;
+    BEGIN
+      GuidStr := FORMAT(CREATEGUID);
+      // Remove numbers to avoid batch name change by INCSTR in codeunit 23
+      BatchName := CONVERTSTR(GuidStr,'1234567890-','GHIJKLMNOPQ');
+      EXIT(COPYSTR(BatchName,2,10));
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

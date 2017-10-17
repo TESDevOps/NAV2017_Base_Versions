@@ -1,0 +1,36 @@
+OBJECT Table 2000000198 Page Documentation
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/09/17;
+    Time=12:00:00;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Page Documentation;
+               ENG=Page Documentation];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Page ID             ;Integer       ;CaptionML=[ENU=Page ID;
+                                                              ENG=Page ID] }
+    { 2   ;   ;Relative Path       ;Text250       ;CaptionML=[ENU=Relative Path;
+                                                              ENG=Relative Path] }
+  }
+  KEYS
+  {
+    {    ;Page ID                                 ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

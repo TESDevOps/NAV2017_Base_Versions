@@ -1,0 +1,176 @@
+OBJECT Codeunit 312 Cust-Check Cr. Limit
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Permissions=TableData 1518=rimd;
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      InstructionMgt@1003 : Codeunit 1330;
+      CustCheckCreditLimit@1001 : Page 343;
+      InstructionTypeTxt@1004 : TextConst 'ENU=Check Cr. Limit;ENG=Check Cr. Limit';
+      GetDetailsTxt@1006 : TextConst 'ENU=Details...;ENG=Details...';
+      ShowNotificationDetailsTxt@1007 : TextConst '@@@={Locked};ENU=ShowNotificationDetails;ENG=ShowNotificationDetails';
+      CreditLimitNotificationTxt@1012 : TextConst 'ENU=Customer exceeds credit limit.;ENG=Customer exceeds credit limit.';
+      CreditLimitNotificationDescriptionTxt@1011 : TextConst 'ENU=Show warning when a sales document will exceed the customer''s credit limit.;ENG=Show warning when a sales document will exceed the customer''s credit limit.';
+      OverdueBalanceNotificationTxt@1010 : TextConst 'ENU=Customer has overdue balance.;ENG=Customer has overdue balance.';
+      OverdueBalanceNotificationDescriptionTxt@1009 : TextConst 'ENU=Show warning when a sales document is for a customer with an overdue balance.;ENG=Show warning when a sales document is for a customer with an overdue balance.';
+
+    PROCEDURE GenJnlLineCheck@1(GenJnlLine@1000 : Record 81);
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF CustCheckCreditLimit.GenJnlLineShowWarning(GenJnlLine) THEN
+        CreateAndSendNotification;
+    END;
+
+    PROCEDURE SalesHeaderCheck@2(SalesHeader@1000 : Record 36) CreditLimitExceeded : Boolean;
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF NOT CustCheckCreditLimit.SalesHeaderShowWarning(SalesHeader) THEN
+        SalesHeader.OnCustomerCreditLimitNotExceeded
+      ELSE
+        IF InstructionMgt.IsEnabled(GetInstructionType(FORMAT(SalesHeader."Document Type"),SalesHeader."No.")) THEN BEGIN
+          CreditLimitExceeded := TRUE;
+          CreateAndSendNotification;
+          SalesHeader.OnCustomerCreditLimitExceeded;
+        END;
+    END;
+
+    PROCEDURE SalesLineCheck@3(SalesLine@1000 : Record 37);
+    VAR
+      SalesHeader@1001 : Record 36;
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      SalesHeader.GET(SalesLine."Document Type",SalesLine."Document No.");
+
+      IF NOT CustCheckCreditLimit.SalesLineShowWarning(SalesLine) THEN
+        SalesHeader.OnCustomerCreditLimitNotExceeded
+      ELSE
+        IF InstructionMgt.IsEnabled(GetInstructionType(FORMAT(SalesLine."Document Type"),SalesLine."Document No.")) THEN BEGIN
+          CreateAndSendNotification;
+          SalesHeader.OnCustomerCreditLimitExceeded;
+        END;
+    END;
+
+    PROCEDURE ServiceHeaderCheck@5(ServiceHeader@1000 : Record 5900);
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF CustCheckCreditLimit.ServiceHeaderShowWarning(ServiceHeader) THEN
+        CreateAndSendNotification;
+    END;
+
+    PROCEDURE ServiceLineCheck@6(ServiceLine@1000 : Record 5902);
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF CustCheckCreditLimit.ServiceLineShowWarning(ServiceLine) THEN
+        CreateAndSendNotification;
+    END;
+
+    PROCEDURE ServiceContractHeaderCheck@7(ServiceContractHeader@1001 : Record 5965);
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF CustCheckCreditLimit.ServiceContractHeaderShowWarning(ServiceContractHeader) THEN
+        CreateAndSendNotification;
+    END;
+
+    PROCEDURE GetInstructionType@32(DocumentType@1000 : Code[30];DocumentNumber@1001 : Code[20]) : Code[50];
+    BEGIN
+      EXIT(COPYSTR(STRSUBSTNO('%1 %2 %3',DocumentType,DocumentNumber,InstructionTypeTxt),1,50));
+    END;
+
+    PROCEDURE BlanketSalesOrderToOrderCheck@4(SalesOrderHeader@1000 : Record 36);
+    BEGIN
+      IF NOT GUIALLOWED THEN
+        EXIT;
+
+      IF CustCheckCreditLimit.SalesHeaderShowWarning(SalesOrderHeader) THEN
+        CreateAndSendNotification;
+    END;
+
+    PROCEDURE ShowNotificationDetails@10(CreditLimitNotification@1000 : Notification);
+    VAR
+      CreditLimitNotificationPage@1005 : Page 1870;
+    BEGIN
+      CreditLimitNotificationPage.SetHeading(CreditLimitNotification.MESSAGE);
+      CreditLimitNotificationPage.InitializeFromNotificationVar(CreditLimitNotification);
+      CreditLimitNotificationPage.RUNMODAL;
+    END;
+
+    LOCAL PROCEDURE CreateAndSendNotification@8();
+    VAR
+      CreditLimitNotification@1000 : Notification;
+    BEGIN
+      CreditLimitNotification.ID(CustCheckCreditLimit.GetNotificationId);
+      CreditLimitNotification.MESSAGE(CustCheckCreditLimit.GetHeading);
+      CreditLimitNotification.SCOPE(NOTIFICATIONSCOPE::LocalScope);
+      CreditLimitNotification.ADDACTION(GetDetailsTxt,CODEUNIT::"Cust-Check Cr. Limit",ShowNotificationDetailsTxt);
+      CustCheckCreditLimit.PopulateDataOnNotification(CreditLimitNotification);
+      CreditLimitNotification.SEND;
+    END;
+
+    PROCEDURE GetCreditLimitNotificationId@11() : GUID;
+    BEGIN
+      EXIT('C80FEEDA-802C-4879-B826-34A10FB77087');
+    END;
+
+    PROCEDURE GetOverdueBalanceNotificationId@9() : GUID;
+    BEGIN
+      EXIT('EC8348CB-07C1-499A-9B70-B3B081A33C99');
+    END;
+
+    PROCEDURE IsCreditLimitNotificationEnabled@14(Customer@1000 : Record 18) : Boolean;
+    VAR
+      MyNotifications@1001 : Record 1518;
+    BEGIN
+      EXIT(MyNotifications.IsEnabledForRecord(GetCreditLimitNotificationId,Customer));
+    END;
+
+    PROCEDURE IsOverdueBalanceNotificationEnabled@12(Customer@1000 : Record 18) : Boolean;
+    VAR
+      MyNotifications@1001 : Record 1518;
+    BEGIN
+      EXIT(MyNotifications.IsEnabledForRecord(GetOverdueBalanceNotificationId,Customer));
+    END;
+
+    [EventSubscriber(Page,1518,OnInitializingNotificationWithDefaultState)]
+    LOCAL PROCEDURE OnInitializingNotificationWithDefaultState@15();
+    VAR
+      MyNotifications@1000 : Record 1518;
+    BEGIN
+      MyNotifications.InsertDefaultWithTableNum(GetCreditLimitNotificationId,
+        CreditLimitNotificationTxt,
+        CreditLimitNotificationDescriptionTxt,
+        DATABASE::Customer);
+      MyNotifications.InsertDefaultWithTableNum(GetOverdueBalanceNotificationId,
+        OverdueBalanceNotificationTxt,
+        OverdueBalanceNotificationDescriptionTxt,
+        DATABASE::Customer);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

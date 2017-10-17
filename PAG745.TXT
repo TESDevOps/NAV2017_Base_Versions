@@ -1,0 +1,45 @@
+OBJECT Page 745 VAT Report Error Log
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=VAT Report Error Log;
+               ENG=VAT Report Error Log];
+    SourceTable=Table745;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the error number, such as 1.;
+                           ENG=Specifies the error number, such as 1.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Entry No." }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the error message that is the result of validating a VAT report.;
+                           ENG=Specifies the error message that is the result of validating a VAT report.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Error Message" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

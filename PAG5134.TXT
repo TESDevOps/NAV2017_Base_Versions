@@ -1,0 +1,213 @@
+OBJECT Page 5134 Contact Duplicates
+{
+  OBJECT-PROPERTIES
+  {
+    Date=28/04/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16585;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Contact Duplicates;
+               ENG=Contact Duplicates];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    SourceTable=Table5085;
+    DataCaptionFields=Contact No.;
+    PageType=List;
+    OnAfterGetCurrRecord=BEGIN
+                           Cont.GET("Contact No.");
+                           Cont2.GET("Duplicate Contact No.");
+                         END;
+
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the contact for which a duplicate has been found.;
+                           ENG=Specifies the number of the contact for which a duplicate has been found.];
+                ApplicationArea=#All;
+                SourceExpr="Contact No." }
+
+    { 4   ;2   ;Field     ;
+                DrillDown=No;
+                ToolTipML=[ENU=Specifies the name of the contact for which a duplicate has been found.;
+                           ENG=Specifies the name of the contact for which a duplicate has been found.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Contact Name" }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the contact number of the duplicate that was found.;
+                           ENG=Specifies the contact number of the duplicate that was found.];
+                ApplicationArea=#All;
+                SourceExpr="Duplicate Contact No." }
+
+    { 8   ;2   ;Field     ;
+                DrillDown=No;
+                ToolTipML=[ENU=Specifies the name of the contact that has been identified as a possible duplicate.;
+                           ENG=Specifies the name of the contact that has been identified as a possible duplicate.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Duplicate Contact Name";
+                DrillDownPageID=Contact Card }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies that the two contacts are not true duplicates, but separate contacts.;
+                           ENG=Specifies that the two contacts are not true duplicates, but separate contacts.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr="Separate Contacts";
+                OnValidate=BEGIN
+                             SeparateContactsOnAfterValidat;
+                           END;
+                            }
+
+    { 18  ;1   ;Group      }
+
+    { 1902205101;2;Group  ;
+                GroupType=FixedLayout }
+
+    { 1900206201;3;Group  ;
+                CaptionML=[ENU=Address;
+                           ENG=Address] }
+
+    { 19  ;4   ;Field     ;
+                CaptionML=[ENU=Contact;
+                           ENG=Contact];
+                ToolTipML=[ENU=Specifies the contact.;
+                           ENG=Specifies the contact.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr=Cont.Address;
+                Editable=FALSE }
+
+    { 21  ;4   ;Field     ;
+                CaptionML=[ENU=Duplicate;
+                           ENG=Duplicate];
+                ToolTipML=[ENU=Specifies information for the duplicate.;
+                           ENG=Specifies information for the duplicate.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr=Cont2.Address;
+                Editable=FALSE }
+
+    { 1900545401;3;Group  ;
+                CaptionML=[ENU=Post Code;
+                           ENG=Postcode] }
+
+    { 27  ;4   ;Field     ;
+                CaptionML=[ENU=Post Code;
+                           ENG=Postcode];
+                ToolTipML=[ENU=Specifies the post code of the contact duplicate.;
+                           ENG=Specifies the postcode of the contact duplicate.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr=Cont."Post Code";
+                Editable=FALSE }
+
+    { 28  ;4   ;Field     ;
+                CaptionML=[ENU=Post Code;
+                           ENG=Postcode];
+                ToolTipML=[ENU=Specifies the post code of the contact duplicate.;
+                           ENG=Specifies the postcode of the contact duplicate.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr=Cont2."Post Code";
+                Editable=FALSE }
+
+    { 1903098901;3;Group  ;
+                CaptionML=[ENU=City;
+                           ENG=City] }
+
+    { 36  ;4   ;Field     ;
+                CaptionML=[ENU=City;
+                           ENG=City];
+                ToolTipML=[ENU=Specifies the city of the contact duplicate.;
+                           ENG=Specifies the city of the contact duplicate.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr=Cont.City;
+                Editable=FALSE }
+
+    { 37  ;4   ;Field     ;
+                CaptionML=[ENU=City;
+                           ENG=City];
+                ToolTipML=[ENU=Specifies the city of the contact duplicate.;
+                           ENG=Specifies the city of the contact duplicate.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr=Cont2.City;
+                Editable=FALSE }
+
+    { 1901742201;3;Group  ;
+                CaptionML=[ENU=Phone No.;
+                           ENG=Phone No.] }
+
+    { 30  ;4   ;Field     ;
+                CaptionML=[ENU=Phone No.;
+                           ENG=Phone No.];
+                ToolTipML=[ENU=Specifies the phone number of the contact duplicate.;
+                           ENG=Specifies the phone number of the contact duplicate.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr=Cont."Phone No.";
+                Editable=FALSE }
+
+    { 31  ;4   ;Field     ;
+                CaptionML=[ENU=Phone No.;
+                           ENG=Phone No.];
+                ToolTipML=[ENU=Specifies the phone number of the contact duplicate.;
+                           ENG=Specifies the phone number of the contact duplicate.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr=Cont2."Phone No.";
+                Editable=FALSE }
+
+    { 1903867001;3;Group  ;
+                CaptionML=[ENU=VAT Registration No.;
+                           ENG=VAT Registration No.] }
+
+    { 22  ;4   ;Field     ;
+                CaptionML=[ENU=VAT Registration No.;
+                           ENG=VAT Registration No.];
+                ToolTipML=[ENU=Specifies the VAT registration number of the contact duplicate.;
+                           ENG=Specifies the VAT registration number of the contact duplicate.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr=Cont."VAT Registration No.";
+                Editable=FALSE }
+
+    { 32  ;4   ;Field     ;
+                CaptionML=[ENU=VAT Registration No.;
+                           ENG=VAT Registration No.];
+                ToolTipML=[ENU=Specifies the VAT registration number of the contact duplicate.;
+                           ENG=Specifies the VAT registration number of the contact duplicate.];
+                ApplicationArea=#RelationshipMgmt;
+                SourceExpr=Cont2."VAT Registration No.";
+                Editable=FALSE }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      Cont@1000 : Record 5050;
+      Cont2@1001 : Record 5050;
+
+    LOCAL PROCEDURE SeparateContactsOnAfterValidat@19026038();
+    BEGIN
+      CurrPage.UPDATE;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,101 @@
+OBJECT Table 2105 O365 Payment History Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=O365 Payment History Buffer;
+               ENG=O365 Payment History Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Ledger Entry No.    ;Integer       ;TableRelation="G/L Entry";
+                                                   CaptionML=[ENU=Ledger Entry No.;
+                                                              ENG=Ledger Entry No.] }
+    { 2   ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ENG=Type];
+                                                   OptionCaptionML=[ENU=" ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund";
+                                                                    ENG=" ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund"];
+                                                   OptionString=[ ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder,Refund] }
+    { 3   ;   ;Amount              ;Decimal       ;CaptionML=[ENU=Amount;
+                                                              ENG=Amount] }
+    { 4   ;   ;Date Received       ;Date          ;CaptionML=[ENU=Date Received;
+                                                              ENG=Date Received] }
+  }
+  KEYS
+  {
+    {    ;Ledger Entry No.                        ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;Brick               ;Date Received,Type,Amount                }
+  }
+  CODE
+  {
+    VAR
+      CanOnlyCancelPaymentsErr@1002 : TextConst 'ENU=Only payments can be marked as unpaid.;ENG=Only payments can be marked as unpaid.';
+      CanOnlyCancelLastPaymentErr@1001 : TextConst 'ENU=Only the last payment can be marked as unpaid.;ENG=Only the last payment can be marked as unpaid.';
+      DevMsgNotTemporaryErr@1000 : TextConst 'ENU=This function can only be used when the record is temporary.;ENG=This function can only be used when the record is temporary.';
+      O365SalesInvoicePayment@1003 : Codeunit 2105;
+
+    PROCEDURE FillPaymentHistory@1(SalesInvoiceDocumentNo@1000 : Code[20];IncludeSalesInvoice@1001 : Boolean);
+    VAR
+      InvoiceCustLedgerEntry@1002 : Record 21;
+      PaymentCustLedgerEntry@1003 : Record 21;
+    BEGIN
+      IF NOT ISTEMPORARY THEN
+        ERROR(DevMsgNotTemporaryErr);
+
+      RESET;
+      DELETEALL;
+      InvoiceCustLedgerEntry.SETRANGE("Document Type",InvoiceCustLedgerEntry."Document Type"::Invoice);
+      InvoiceCustLedgerEntry.SETRANGE("Document No.",SalesInvoiceDocumentNo);
+      IF NOT InvoiceCustLedgerEntry.FINDFIRST THEN
+        EXIT;
+
+      IF IncludeSalesInvoice THEN
+        CopyFromCustomerLedgerEntry(InvoiceCustLedgerEntry);
+
+      IF PaymentCustLedgerEntry.GET(InvoiceCustLedgerEntry."Closed by Entry No.") THEN
+        CopyFromCustomerLedgerEntry(PaymentCustLedgerEntry);
+
+      PaymentCustLedgerEntry.SETCURRENTKEY("Closed by Entry No.");
+      PaymentCustLedgerEntry.SETRANGE("Closed by Entry No.",InvoiceCustLedgerEntry."Entry No.");
+      IF PaymentCustLedgerEntry.FINDSET THEN
+        REPEAT
+          CopyFromCustomerLedgerEntry(PaymentCustLedgerEntry);
+        UNTIL PaymentCustLedgerEntry.NEXT = 0;
+    END;
+
+    LOCAL PROCEDURE CopyFromCustomerLedgerEntry@6(CustLedgerEntry@1000 : Record 21);
+    BEGIN
+      CustLedgerEntry.CALCFIELDS("Amount (LCY)");
+      INIT;
+      "Ledger Entry No." := CustLedgerEntry."Entry No.";
+      Type := CustLedgerEntry."Document Type";
+      Amount := CustLedgerEntry."Amount (LCY)";
+      IF Type = Type::Payment THEN
+        Amount := -Amount;
+      "Date Received" := CustLedgerEntry."Posting Date";
+      INSERT(TRUE);
+    END;
+
+    PROCEDURE CancelPayment@2();
+    BEGIN
+      IF Type <> Type::Payment THEN
+        ERROR(CanOnlyCancelPaymentsErr);
+      SETFILTER("Ledger Entry No.",'>%1',"Ledger Entry No.");
+      IF NOT ISEMPTY THEN
+        ERROR(CanOnlyCancelLastPaymentErr);
+      O365SalesInvoicePayment.CancelCustLedgerEntry("Ledger Entry No.");
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,109 @@
+OBJECT Page 5800 Item Charges
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00,NAVGB10.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Item Charges;
+               ENG=Item Charges];
+    SourceTable=Table5800;
+    PageType=List;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 15      ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Item Charge;
+                                 ENG=&Item Charge];
+                      Image=Add }
+      { 17      ;2   ;Action    ;
+                      ShortCutKey=Ctrl+F7;
+                      CaptionML=[ENU=Value E&ntries;
+                                 ENG=Value E&ntries];
+                      RunObject=Page 5802;
+                      RunPageView=SORTING(Item Charge No.);
+                      RunPageLink=Entry Type=CONST(Direct Cost),
+                                  Item Charge No.=FIELD(No.);
+                      Image=ValueLedger }
+      { 19      ;2   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      RunObject=Page 540;
+                      RunPageLink=Table ID=CONST(5800),
+                                  No.=FIELD(No.);
+                      Image=Dimensions }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number used for identifying a specific kind of item charge.;
+                           ENG=Specifies the number used for identifying a specific kind of item charge.];
+                SourceExpr="No." }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description of the item charge number that you are setting up.;
+                           ENG=Specifies a description of the item charge number that you are setting up.];
+                SourceExpr=Description }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general product posting group to which this item charge belongs.;
+                           ENG=Specifies the general product posting group to which this item charge belongs.];
+                SourceExpr="Gen. Prod. Posting Group" }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the sales tax group code that this item charge belongs to.;
+                           ENG=Specifies the VAT group code that this item charge belongs to.];
+                SourceExpr="Tax Group Code";
+                Visible=FALSE }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the VAT product posting group to which this item charge belongs.;
+                           ENG=Specifies the VAT product posting group to which this item charge belongs.];
+                SourceExpr="VAT Prod. Posting Group" }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies text to search for when you do not know the number of the item.;
+                           ENG=Specifies text to search for when you do not know the number of the item.];
+                SourceExpr="Search Description" }
+
+    { 1000000;2;Field     ;
+                ToolTipML=[ENU=Specifies if you require this item charge to be included for Intrastat reporting.;
+                           ENG=Specifies if you require this item charge to be included for Intrastat reporting.];
+                SourceExpr="Freight/Insurance" }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

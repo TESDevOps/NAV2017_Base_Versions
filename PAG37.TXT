@@ -1,0 +1,98 @@
+OBJECT Page 37 Where-Used List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Where-Used List;
+               ENG=Where-Used List];
+    SourceTable=Table90;
+    DataCaptionFields=No.;
+    PageType=List;
+    RefreshOnActivate=Yes;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the assembly item that the assembly BOM component belongs to.;
+                           ENG=Specifies the number of the assembly item that the assembly BOM component belongs to.];
+                SourceExpr="Parent Item No." }
+
+    { 23  ;2   ;Field     ;
+                DrillDown=No;
+                ToolTipML=[ENU=Specifies a description of the assembly BOM if the item on the line is an assembly BOM.;
+                           ENG=Specifies a description of the assembly BOM if the item on the line is an assembly BOM.];
+                SourceExpr="BOM Description" }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how many units of the assembly BOM component are required in the assembly BOM.;
+                           ENG=Specifies how many units of the assembly BOM component are required in the assembly BOM.];
+                SourceExpr="Quantity per" }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the assembly BOM component's unit of measure.;
+                           ENG=Specifies the assembly BOM component's unit of measure.];
+                SourceExpr="Unit of Measure Code" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the component's position in the assembly BOM structure.;
+                           ENG=Specifies the component's position in the assembly BOM structure.];
+                SourceExpr=Position }
+
+    { 15  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the component's position in the assembly BOM structure.;
+                           ENG=Specifies the component's position in the assembly BOM structure.];
+                SourceExpr="Position 2";
+                Visible=FALSE }
+
+    { 21  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the component's position in the assembly BOM structure.;
+                           ENG=Specifies the component's position in the assembly BOM structure.];
+                SourceExpr="Position 3";
+                Visible=FALSE }
+
+    { 19  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a machine that should be used when processing the component on this line of the assembly BOM.;
+                           ENG=Specifies a machine that should be used when processing the component on this line of the assembly BOM.];
+                SourceExpr="Machine No.";
+                Visible=FALSE }
+
+    { 17  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the total number of days required to assemble the item on the assembly BOM line.;
+                           ENG=Specifies the total number of days required to assemble the item on the assembly BOM line.];
+                SourceExpr="Lead-Time Offset";
+                Visible=FALSE }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

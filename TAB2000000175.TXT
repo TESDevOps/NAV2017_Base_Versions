@@ -1,0 +1,59 @@
+OBJECT Table 2000000175 Scheduled Task
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/09/17;
+    Time=12:00:00;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Scheduled Task;
+               ENG=Scheduled Task];
+  }
+  FIELDS
+  {
+    { 1   ;   ;ID                  ;GUID          ;CaptionML=[ENU=ID;
+                                                              ENG=ID] }
+    { 2   ;   ;User ID             ;GUID          ;CaptionML=[ENU=User ID;
+                                                              ENG=User ID] }
+    { 3   ;   ;User Name           ;Text50        ;CaptionML=[ENU=User Name;
+                                                              ENG=User Name] }
+    { 4   ;   ;User Language ID    ;Integer       ;CaptionML=[ENU=User Language ID;
+                                                              ENG=User Language ID] }
+    { 5   ;   ;User Format ID      ;Integer       ;CaptionML=[ENU=User Format ID;
+                                                              ENG=User Format ID] }
+    { 6   ;   ;User Time Zone      ;Text32        ;CaptionML=[ENU=User Time Zone;
+                                                              ENG=User Time Zone] }
+    { 10  ;   ;Company             ;Text30        ;TableRelation=Company.Name;
+                                                   CaptionML=[ENU=Company;
+                                                              ENG=Company] }
+    { 11  ;   ;Is Ready            ;Boolean       ;CaptionML=[ENU=Is Ready;
+                                                              ENG=Is Ready] }
+    { 12  ;   ;Not Before          ;DateTime      ;CaptionML=[ENU=Not Before;
+                                                              ENG=Not Before] }
+    { 20  ;   ;Run Codeunit        ;Integer       ;TableRelation=AllObjWithCaption."Object ID" WHERE (Object Type=CONST(Codeunit));
+                                                   CaptionML=[ENU=Run Codeunit;
+                                                              ENG=Run Codeunit] }
+    { 21  ;   ;Failure Codeunit    ;Integer       ;TableRelation=AllObjWithCaption."Object ID" WHERE (Object Type=CONST(Codeunit));
+                                                   CaptionML=[ENU=Failure Codeunit;
+                                                              ENG=Failure Codeunit] }
+    { 22  ;   ;Record              ;RecordID      ;CaptionML=[ENU=Record;
+                                                              ENG=Record] }
+  }
+  KEYS
+  {
+    {    ;ID                                      ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,103 @@
+OBJECT Page 9194 Madeira Rebranding Dialog
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Thanks!;
+               ENG=Thanks!];
+    PageType=NavigatePage;
+    OnQueryClosePage=BEGIN
+                       IF NOT TermsAndConditionsAccepted THEN
+                         ERROR(DialogNotConfirmedErr);
+                     END;
+
+    ActionList=ACTIONS
+    {
+      { 11      ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 8       ;1   ;Action    ;
+                      Name=ActionOK;
+                      CaptionML=[ENU=Close;
+                                 ENG=Close];
+                      ToolTipML=;
+                      ApplicationArea=#Basic,#Suite;
+                      Enabled=TermsAndConditionsAccepted;
+                      InFooterBar=Yes;
+                      OnAction=BEGIN
+                                 CurrPage.CLOSE;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                ContainerType=ContentArea }
+
+    { 3   ;1   ;Group     ;
+                CaptionML=[ENU=Welcome to Dynamics 365 for Financials;
+                           ENG=Welcome to Dynamics 365 for Financials];
+                GroupType=Group;
+                InstructionalTextML=[ENU=Thanks for evaluating Dynamics 365 for Financials. We hope you've enjoyed the experience and want to continue to use the service to manage your business.;
+                                     ENG=Thanks for evaluating Dynamics 365 for Financials. We hope you've enjoyed the experience and want to continue to use the service to manage your business.] }
+
+    { 7   ;1   ;Group     ;
+                GroupType=Group;
+                InstructionalTextML=[ENU=This message is to inform you that Project "Madeira" has been rebranded, and is now called Dynamics 365 for Financials. The terms and conditions have also been updated.;
+                                     ENG=This message is to inform you that Project "Madeira" has been rebranded, and is now called Dynamics 365 for Financials. The terms and conditions have also been updated.] }
+
+    { 6   ;1   ;Group     ;
+                Visible=ProductionCompanyOpened;
+                GroupType=Group;
+                InstructionalTextML=[ENU=You are now running in a free 30-day trial period. To continue to use this company after the trial period expires, you will need to purchase Dynamics 365 for Financials.;
+                                     ENG=You are now running in a free 30-day trial period. To continue to use this company after the trial period expires, you will need to purchase Dynamics 365 for Financials.] }
+
+    { 2   ;1   ;Group     ;
+                GroupType=Group;
+                InstructionalTextML=[ENU=To get going, read and accept the Terms & Conditions, and then choose Close.;
+                                     ENG=To get going, read and accept the Terms & Conditions, and then choose Close.] }
+
+    { 4   ;1   ;Field     ;
+                ExtendedDatatype=URL;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=LinkLbl;
+                Editable=FALSE;
+                MultiLine=No;
+                OnDrillDown=BEGIN
+                              HYPERLINK(UrlTxt);
+                            END;
+
+                ShowCaption=No }
+
+    { 5   ;1   ;Field     ;
+                Name=TermsAndConditionsCheckBox;
+                CaptionML=[ENU=I accept the Terms & Conditions;
+                           ENG=I accept the Terms & Conditions];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=TermsAndConditionsAccepted }
+
+  }
+  CODE
+  {
+    VAR
+      LinkLbl@1001 : TextConst 'ENU=Terms & Conditions;ENG=Terms & Conditions';
+      UrlTxt@1002 : TextConst '@@@={locked};ENU="http://go.microsoft.com/fwlink/?LinkId=828977";ENG="http://go.microsoft.com/fwlink/?LinkId=828977"';
+      ProductionCompanyOpened@1003 : Boolean;
+      TermsAndConditionsAccepted@1000 : Boolean;
+      DialogNotConfirmedErr@1004 : TextConst 'ENU=To continue, confirm youÂre aware that Project ÃMadeiraÄ is now named Microsoft Dynamics 365 for Financials, and that the terms and conditions have changed.;ENG=To continue, confirm youÂre aware that Project ÃMadeiraÄ is now named Microsoft Dynamics 365 for Financials, and that the terms and conditions have changed.';
+
+    PROCEDURE SetProductionCompanyOpened@1(ProductionCompany@1000 : Boolean);
+    BEGIN
+      ProductionCompanyOpened := ProductionCompany;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

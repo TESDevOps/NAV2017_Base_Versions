@@ -1,0 +1,54 @@
+OBJECT Table 851 Cortana Intelligence
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Cortana Intelligence;
+               ENG=Cortana Intelligence];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Group Id            ;Text100       ;CaptionML=[ENU=Group Id;
+                                                              ENG=Group Id] }
+    { 2   ;   ;Period No.          ;Integer       ;CaptionML=[ENU=Period No.;
+                                                              ENG=Period No.] }
+    { 3   ;   ;Amount              ;Decimal       ;CaptionML=[ENU=Amount;
+                                                              ENG=Amount] }
+    { 4   ;   ;Delta               ;Decimal       ;CaptionML=[ENU=Delta;
+                                                              ENG=Delta] }
+    { 5   ;   ;Delta %             ;Decimal       ;CaptionML=[ENU=Delta %;
+                                                              ENG=Delta %] }
+    { 6   ;   ;Period Start        ;Date          ;CaptionML=[ENU=Period Start;
+                                                              ENG=Period Start] }
+    { 7   ;   ;Period Type         ;Option        ;CaptionML=[ENU=Period Type;
+                                                              ENG=Period Type];
+                                                   OptionCaptionML=[ENU=Day,Week,Month,Quarter,Year;
+                                                                    ENG=Day,Week,Month,Quarter,Year];
+                                                   OptionString=Day,Week,Month,Quarter,Year }
+    { 8   ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ENG=Type];
+                                                   OptionCaptionML=[ENU=History,Forecast,Correction;
+                                                                    ENG=History,Forecast,Correction];
+                                                   OptionString=History,Forecast,Correction }
+  }
+  KEYS
+  {
+    {    ;Period Start,Group Id                   ;Clustered=Yes }
+    { No ;                                         }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

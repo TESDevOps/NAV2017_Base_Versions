@@ -1,0 +1,64 @@
+OBJECT Page 6704 Booking Mailbox List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Booking Mailbox List;
+               ENG=Booking Mailbox List];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    SourceTable=Table6704;
+    PageType=List;
+    SourceTableTemporary=Yes;
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                Name=Service Address;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=SmtpAddress }
+
+    { 4   ;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Name }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the full name of the booking mailbox.;
+                           ENG=Specifies the full name of the booking mailbox.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Display Name" }
+
+  }
+  CODE
+  {
+
+    PROCEDURE SetMailboxes@1(VAR TempBookingMailbox@1000 : TEMPORARY Record 6704);
+    BEGIN
+      TempBookingMailbox.RESET;
+      IF TempBookingMailbox.FINDSET THEN
+        REPEAT
+          INIT;
+          TRANSFERFIELDS(TempBookingMailbox);
+          INSERT;
+        UNTIL TempBookingMailbox.NEXT = 0;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

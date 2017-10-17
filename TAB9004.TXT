@@ -1,0 +1,39 @@
+OBJECT Table 9004 Plan
+{
+  OBJECT-PROPERTIES
+  {
+    Date=23/01/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.15052;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Subscription Plan;
+               ENG=Subscription Plan];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Plan ID             ;GUID          ;CaptionML=[ENU=Plan ID;
+                                                              ENG=Plan ID] }
+    { 2   ;   ;Name                ;Text50        ;CaptionML=[ENU=Name;
+                                                              ENG=Name] }
+    { 3   ;   ;Role Center ID      ;Integer       ;CaptionML=[ENU=Role Center ID;
+                                                              ENG=Role Centre ID] }
+  }
+  KEYS
+  {
+    {    ;Plan ID                                 ;Clustered=Yes }
+    {    ;Name                                     }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,117 @@
+OBJECT Table 99008535 TempBlob
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=TempBlob;
+               ENG=TempBlob];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Integer       ;CaptionML=[ENU=Primary Key;
+                                                              ENG=Primary Key] }
+    { 2   ;   ;Blob                ;BLOB          ;CaptionML=[ENU=Blob;
+                                                              ENG=Blob] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      GlobalInStream@1000 : InStream;
+      ReadLinesInitialized@1001 : Boolean;
+
+    PROCEDURE WriteAsText@3(Content@1001 : Text;Encoding@1000 : TextEncoding);
+    VAR
+      OutStr@1002 : OutStream;
+    BEGIN
+      CLEAR(Blob);
+      IF Content = '' THEN
+        EXIT;
+      Blob.CREATEOUTSTREAM(OutStr,Encoding);
+      OutStr.WRITETEXT(Content);
+    END;
+
+    PROCEDURE ReadAsText@5(LineSeparator@1001 : Text;Encoding@1000 : TextEncoding) Content : Text;
+    VAR
+      InStream@1002 : InStream;
+      ContentLine@1003 : Text;
+    BEGIN
+      Blob.CREATEINSTREAM(InStream,Encoding);
+
+      InStream.READTEXT(Content);
+      WHILE NOT InStream.EOS DO BEGIN
+        InStream.READTEXT(ContentLine);
+        Content += LineSeparator + ContentLine;
+      END;
+    END;
+
+    PROCEDURE StartReadingTextLines@8(Encoding@1000 : TextEncoding);
+    BEGIN
+      Blob.CREATEINSTREAM(GlobalInStream,Encoding);
+      ReadLinesInitialized := TRUE;
+    END;
+
+    PROCEDURE MoreTextLines@9() : Boolean;
+    BEGIN
+      IF NOT ReadLinesInitialized THEN
+        StartReadingTextLines(TEXTENCODING::Windows);
+      EXIT(NOT GlobalInStream.EOS);
+    END;
+
+    PROCEDURE ReadTextLine@7() : Text;
+    VAR
+      ContentLine@1003 : Text;
+    BEGIN
+      IF NOT MoreTextLines THEN
+        EXIT('');
+      GlobalInStream.READTEXT(ContentLine);
+      EXIT(ContentLine);
+    END;
+
+    PROCEDURE ToBase64String@1() : Text;
+    VAR
+      IStream@1000 : InStream;
+      Convert@1003 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Convert";
+      MemoryStream@1002 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.MemoryStream";
+      Base64String@1001 : Text;
+    BEGIN
+      IF NOT Blob.HASVALUE THEN
+        EXIT('');
+      Blob.CREATEINSTREAM(IStream);
+      MemoryStream := MemoryStream.MemoryStream;
+      COPYSTREAM(MemoryStream,IStream);
+      Base64String := Convert.ToBase64String(MemoryStream.ToArray);
+      MemoryStream.Close;
+      EXIT(Base64String);
+    END;
+
+    PROCEDURE FromBase64String@2(Base64String@1000 : Text);
+    VAR
+      OStream@1001 : OutStream;
+      Convert@1003 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Convert";
+      MemoryStream@1002 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.MemoryStream";
+    BEGIN
+      IF Base64String = '' THEN
+        EXIT;
+      MemoryStream := MemoryStream.MemoryStream(Convert.FromBase64String(Base64String));
+      Blob.CREATEOUTSTREAM(OStream);
+      MemoryStream.WriteTo(OStream);
+      MemoryStream.Close;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

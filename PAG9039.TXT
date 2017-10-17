@@ -1,0 +1,188 @@
+OBJECT Page 9039 O365 Sales Activities
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=O365 Sales Activities;
+               ENG=O365 Sales Activities];
+    Description=ENU=Activites;
+    SourceTable=Table9069;
+    PageType=CardPart;
+    RefreshOnActivate=Yes;
+    OnInit=BEGIN
+             CODEUNIT.RUN(CODEUNIT::"O365 Sales Initial Setup");
+           END;
+
+    OnOpenPage=VAR
+                 AccountingPeriod@1001 : Record 50;
+                 GLSetup@1002 : Record 98;
+                 O365SalesStatistics@1000 : Codeunit 2100;
+                 RoleCenterNotificationMgt@1003 : Codeunit 1430;
+               BEGIN
+                 RESET;
+                 IF NOT GET THEN BEGIN
+                   INIT;
+                   INSERT;
+                 END;
+
+                 O365SalesStatistics.GetCurrentAccountingPeriod(AccountingPeriod);
+
+                 SETFILTER("Due Date Filter",'..%1',WORKDATE);
+                 SETFILTER("Overdue Date Filter",'<%1',WORKDATE);
+                 SETFILTER("YTD Date Filter",'%1..%2',AccountingPeriod."Starting Date",WORKDATE);
+                 SETFILTER("CM Date Filter",'%1..%2',CALCDATE('<CM+1D-1M>',WORKDATE),WORKDATE);
+
+                 GLSetup.GET;
+
+                 CurrencyFormatTxt := STRSUBSTNO('%1<precision, 0:0><standard format, 0>',GLSetup.GetCurrencySymbol);
+                 RoleCenterNotificationMgt.ShowNotifications;
+               END;
+
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                CaptionML=[ENU=Invoiced;
+                           ENG=Invoiced];
+                GroupType=CueGroup }
+
+    { 3   ;2   ;Field     ;
+                CaptionML=[ENU=Year to Date;
+                           ENG=Year to Date];
+                ToolTipML=[ENU=Specifies the total invoiced amount for this year.;
+                           ENG=Specifies the total invoiced amount for this year.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Invoiced YTD";
+                AutoFormatType=10;
+                AutoFormatExpr=CurrencyFormatTxt;
+                OnDrillDown=BEGIN
+                              ShowYearlySalesOverview;
+                            END;
+                             }
+
+    { 4   ;2   ;Field     ;
+                CaptionML=[ENU=This Month;
+                           ENG=This Month];
+                ToolTipML=[ENU=Specifies the total amount invoiced for the current month.;
+                           ENG=Specifies the total amount invoiced for the current month.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Invoiced CM";
+                AutoFormatType=10;
+                AutoFormatExpr=CurrencyFormatTxt;
+                OnDrillDown=BEGIN
+                              ShowMonthlySalesOverview;
+                            END;
+                             }
+
+    { 5   ;1   ;Group     ;
+                CaptionML=[ENU=Payments;
+                           ENG=Payments];
+                GroupType=CueGroup }
+
+    { 6   ;2   ;Field     ;
+                CaptionML=[ENU=Outstanding;
+                           ENG=Outstanding];
+                ToolTipML=[ENU=Specifies the total amount that has not yet been paid.;
+                           ENG=Specifies the total amount that has not yet been paid.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sales Invoices Outstanding";
+                AutoFormatType=10;
+                AutoFormatExpr=CurrencyFormatTxt;
+                OnDrillDown=BEGIN
+                              ShowInvoices(FALSE);
+                            END;
+                             }
+
+    { 7   ;2   ;Field     ;
+                CaptionML=[ENU=Overdue;
+                           ENG=Overdue];
+                ToolTipML=[ENU=Specifies the total amount that has not been paid and is after the due date.;
+                           ENG=Specifies the total amount that has not been paid and is after the due date.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sales Invoices Overdue";
+                AutoFormatType=10;
+                AutoFormatExpr=CurrencyFormatTxt;
+                OnDrillDown=BEGIN
+                              ShowInvoices(TRUE);
+                            END;
+                             }
+
+    { 8   ;1   ;Group     ;
+                CaptionML=[ENU=Invoice Now;
+                           ENG=Invoice Now];
+                GroupType=CueGroup;
+                ActionList=ACTIONS
+                {
+                  { 13      ;    ;Action    ;
+                                  CaptionML=[ENU=New Invoice;
+                                             ENG=New Invoice];
+                                  ApplicationArea=#Basic,#Suite;
+                                  RunObject=Page 2110;
+                                  Image=TileBrickNew;
+                                  RunPageMode=Create }
+                }
+                 }
+
+  }
+  CODE
+  {
+    VAR
+      CurrencyFormatTxt@1000 : Text;
+      NoOutstandingMsg@1002 : TextConst 'ENU=There are no outstanding invoices.;ENG=There are no outstanding invoices.';
+      NoOverdueMsg@1003 : TextConst 'ENU=There are no overdue invoices.;ENG=There are no overdue invoices.';
+
+    LOCAL PROCEDURE ShowInvoices@3(OnlyOverdue@1000 : Boolean);
+    VAR
+      CustLedgerEntry@1001 : Record 21;
+      Customer@1003 : Record 18;
+      O365SalesStatistics@1002 : Codeunit 2100;
+    BEGIN
+      CustLedgerEntry.SETRANGE(Open,TRUE);
+      IF OnlyOverdue THEN
+        CustLedgerEntry.SETFILTER("Due Date",'<%1',WORKDATE);
+
+      IF O365SalesStatistics.GetCustomersFromCustLedgerEntries(CustLedgerEntry,Customer) THEN
+        PAGE.RUN(PAGE::"O365 Outstanding Customer List",Customer)
+      ELSE // no customers
+        IF OnlyOverdue THEN
+          MESSAGE(NoOverdueMsg)
+        ELSE
+          MESSAGE(NoOutstandingMsg);
+    END;
+
+    LOCAL PROCEDURE ShowMonthlySalesOverview@4();
+    VAR
+      TempNameValueBuffer@1002 : TEMPORARY Record 823;
+      Month@1000 : Integer;
+    BEGIN
+      Month := DATE2DMY(WORKDATE,2);
+      TempNameValueBuffer.INIT;
+      TempNameValueBuffer.ID := Month;
+      TempNameValueBuffer.INSERT;
+
+      PAGE.RUN(PAGE::"O365 Sales Month Summary",TempNameValueBuffer);
+    END;
+
+    LOCAL PROCEDURE ShowYearlySalesOverview@5();
+    VAR
+      O365SalesStatistics@1000 : Codeunit 2100;
+    BEGIN
+      IF O365SalesStatistics.GetRelativeMonthToFY <> 1 THEN
+        PAGE.RUN(PAGE::"O365 Sales Year Summary")
+      ELSE
+        ShowMonthlySalesOverview; // the current month is the first month in the FY
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

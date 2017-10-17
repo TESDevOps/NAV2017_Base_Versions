@@ -1,0 +1,57 @@
+OBJECT Page 1391 Chart List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Key Performance Indicators;
+               ENG=Key Performance Indicators];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    SourceTable=Table1310;
+    PageType=List;
+    OnQueryClosePage=BEGIN
+                       IF (CloseAction = ACTION::LookupOK) AND NOT Enabled THEN
+                         DIALOG.ERROR(DisabledChartSelectedErr);
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 6000;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 6001;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 6002;2   ;Field     ;
+                CaptionML=[ENU=Chart Name;
+                           ENG=Chart Name];
+                ToolTipML=[ENU=Specifies the name of the chart.;
+                           ENG=Specifies the name of the chart.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Chart Name";
+                Editable=False }
+
+    { 1   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies that the chart is enabled.;
+                           ENG=Specifies that the chart is enabled.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Enabled }
+
+  }
+  CODE
+  {
+    VAR
+      DisabledChartSelectedErr@1000 : TextConst 'ENU=The chart that you selected is disabled and cannot be opened on the role center. Enable the selected chart or select another chart.;ENG=The chart that you selected is disabled and cannot be opened on the role centre. Enable the selected chart or select another chart.';
+
+    BEGIN
+    END.
+  }
+}
+

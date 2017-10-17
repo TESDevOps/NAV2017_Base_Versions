@@ -1,0 +1,231 @@
+OBJECT Page 202 Resource Ledger Entries
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/09/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.18609;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Resource Ledger Entries;
+               ENG=Resource Ledger Entries];
+    SourceTable=Table203;
+    SourceTableView=SORTING(Resource No.,Posting Date)
+                    ORDER(Descending);
+    DataCaptionFields=Resource No.;
+    PageType=List;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 50      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Ent&ry;
+                                 ENG=Ent&ry];
+                      Image=Entry }
+      { 51      ;2   ;Action    ;
+                      AccessByPermission=TableData 348=R;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edits dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edits dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      ApplicationArea=#Jobs;
+                      Image=Dimensions;
+                      OnAction=BEGIN
+                                 ShowDimensions;
+                               END;
+                                }
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 49      ;1   ;Action    ;
+                      CaptionML=[ENU=&Navigate;
+                                 ENG=&Navigate];
+                      ToolTipML=[ENU=Find all entries and documents that exist for the document number and posting date on the selected entry or document.;
+                                 ENG=Find all entries and documents that exist for the document number and posting date on the selected entry or document.];
+                      ApplicationArea=#Jobs;
+                      Promoted=Yes;
+                      Image=Navigate;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 Navigate.SetDoc("Posting Date","Document No.");
+                                 Navigate.RUN;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date when the entry was posted.;
+                           ENG=Specifies the date when the entry was posted.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Posting Date" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of entry.;
+                           ENG=Specifies the type of entry.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Entry Type" }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document number on the resource ledger entry.;
+                           ENG=Specifies the document number on the resource ledger entry.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Document No." }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the resource.;
+                           ENG=Specifies the number of the resource.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Resource No." }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the resource group.;
+                           ENG=Specifies the number of the resource group.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Resource Group No.";
+                Visible=FALSE }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the description of the posted entry.;
+                           ENG=Specifies the description of the posted entry.];
+                ApplicationArea=#Jobs;
+                SourceExpr=Description }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the assigned job.;
+                           ENG=Specifies the number of the assigned job.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Job No.";
+                Visible=FALSE }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=This field shows the dimension value code that the resource ledger entry is linked to.;
+                           ENG=This field shows the dimension value code that the resource ledger entry is linked to.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Global Dimension 1 Code";
+                Visible=FALSE }
+
+    { 28  ;2   ;Field     ;
+                ToolTipML=[ENU=This field shows the dimension value code that the resource ledger entry is linked to.;
+                           ENG=This field shows the dimension value code that the resource ledger entry is linked to.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Global Dimension 2 Code";
+                Visible=FALSE }
+
+    { 47  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies which work type the resource applies to. Prices are updated based on this entry.;
+                           ENG=Specifies which work type the resource applies to. Prices are updated based on this entry.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Work Type Code" }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of units of measure posted with this entry, for example, the number of hours.;
+                           ENG=Specifies the number of units of measure posted with this entry, for example, the number of hours.];
+                ApplicationArea=#Jobs;
+                SourceExpr=Quantity }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit of measure for the resource posted in the entry.;
+                           ENG=Specifies the unit of measure for the resource posted in the entry.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Unit of Measure Code" }
+
+    { 41  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the direct unit cost of the posted entry.;
+                           ENG=Specifies the direct unit cost of the posted entry.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Direct Unit Cost";
+                Visible=FALSE }
+
+    { 43  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit cost of the posted entry.;
+                           ENG=Specifies the unit cost of the posted entry.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Unit Cost";
+                Visible=FALSE }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the total cost of the posted entry.;
+                           ENG=Specifies the total cost of the posted entry.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Total Cost" }
+
+    { 45  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit price of the posted entry.;
+                           ENG=Specifies the unit price of the posted entry.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Unit Price";
+                Visible=FALSE }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the total price of the posted entry.;
+                           ENG=Specifies the total price of the posted entry.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Total Price" }
+
+    { 30  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies if a resource transaction is chargeable.;
+                           ENG=Specifies if a resource transaction is chargeable.];
+                ApplicationArea=#Jobs;
+                SourceExpr=Chargeable }
+
+    { 39  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the ID of the user who posted the entry.;
+                           ENG=Specifies the ID of the user who posted the entry.];
+                ApplicationArea=#Jobs;
+                SourceExpr="User ID";
+                Visible=FALSE }
+
+    { 35  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the source of the entry.;
+                           ENG=Specifies the source of the entry.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Source Code";
+                Visible=FALSE }
+
+    { 37  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the reason code on the entry.;
+                           ENG=Specifies the reason code on the entry.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Reason Code";
+                Visible=FALSE }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a unique entry number assigned to all entries in ascending order.;
+                           ENG=Specifies a unique entry number assigned to all entries in ascending order.];
+                ApplicationArea=#Jobs;
+                SourceExpr="Entry No." }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      Navigate@1000 : Page 344;
+
+    BEGIN
+    END.
+  }
+}
+

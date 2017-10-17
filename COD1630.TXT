@@ -1,0 +1,347 @@
+OBJECT Codeunit 1630 Office Management
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      AddinDeploymentHelper@1001 : Codeunit 1640;
+      OfficeHostType@1004 : DotNet "'Microsoft.Dynamics.Nav.ClientExtensions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.Client.Hosts.OfficeHostType";
+      UploadSuccessMsg@1000 : TextConst '@@@="%1=number of documents";ENU=Sent %1 document(s) to the OCR service successfully.;ENG=Sent %1 document(s) to the OCR service successfully.';
+      CodeUnitNotFoundErr@1002 : TextConst 'ENU=Cannot find the object that handles integration with Office.;ENG=Cannot find the object that handles integration with Office.';
+
+    PROCEDURE InitializeHost@3(NewOfficeHost@1001 : DotNet "'Microsoft.Dynamics.Nav.ClientExtensions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.Client.Hosts.OfficeHost" RUNONCLIENT;NewHostType@1003 : Text);
+    VAR
+      OfficeHostManagement@1002 : Codeunit 1631;
+    BEGIN
+      OfficeHostManagement.InitializeHost(NewOfficeHost,NewHostType);
+    END;
+
+    PROCEDURE InitializeContext@6(TempNewOfficeAddinContext@1000 : TEMPORARY Record 1600);
+    VAR
+      OfficeHostManagement@1002 : Codeunit 1631;
+    BEGIN
+      OfficeHostManagement.InitializeContext(TempNewOfficeAddinContext);
+      OfficeHostManagement.InitializeExchangeObject;
+      IF AddinDeploymentHelper.CheckVersion(GetHostType,TempNewOfficeAddinContext.Version) THEN
+        HandleRedirection(TempNewOfficeAddinContext);
+    END;
+
+    LOCAL PROCEDURE HandleRedirection@9(TempOfficeAddinContext@1000 : TEMPORARY Record 1600);
+    VAR
+      HandlerCodeunitID@1001 : Integer;
+    BEGIN
+      HandlerCodeunitID := GetHandlerCodeunit(TempOfficeAddinContext);
+      CODEUNIT.RUN(HandlerCodeunitID,TempOfficeAddinContext);
+    END;
+
+    PROCEDURE AddRecipient@5(Name@1000 : Text[50];Email@1001 : Text[80]);
+    BEGIN
+      InvokeExtension('addRecipient',Name,Email,'');
+    END;
+
+    PROCEDURE AttachAvailable@4() : Boolean;
+    VAR
+      OfficeAddinContext@1000 : Record 1600;
+    BEGIN
+      GetContext(OfficeAddinContext);
+      IF IsAvailable AND NOT OfficeAddinContext.IsAppointment THEN
+        EXIT(GetHostType IN [OfficeHostType.OutlookItemRead,
+                             OfficeHostType.OutlookItemEdit,
+                             OfficeHostType.OutlookHyperlink,
+                             OfficeHostType.OutlookTaskPane]);
+    END;
+
+    PROCEDURE AttachDocument@14(ServerFilePath@1007 : Text;FileName@1000 : Text;BodyText@1002 : Text);
+    VAR
+      OfficeAttachmentManager@1003 : Codeunit 1629;
+      FileUrl@1001 : Text;
+    BEGIN
+      FileUrl := GetAuthenticatedUrl(ServerFilePath);
+      WITH OfficeAttachmentManager DO BEGIN
+        Add(FileUrl,FileName,BodyText);
+        IF Ready THEN BEGIN
+          COMMIT;
+          InvokeExtension('sendAttachment',GetUrl,GetName,GetBody);
+          Done;
+        END;
+      END;
+    END;
+
+    PROCEDURE CurrPageCloseWorkaround@20();
+    VAR
+      OfficeHostManagement@1000 : Codeunit 1631;
+    BEGIN
+      OfficeHostManagement.CloseCurrentPage;
+    END;
+
+    PROCEDURE GetContact@10(VAR Contact@1000 : Record 5050;LinkToNo@1001 : Code[20]) : Boolean;
+    VAR
+      TempOfficeAddinContext@1002 : TEMPORARY Record 1600;
+      ContactBusinessRelation@1003 : Record 5054;
+    BEGIN
+      IF IsAvailable THEN BEGIN
+        GetContext(TempOfficeAddinContext);
+        Contact.SETCURRENTKEY("E-Mail");
+        Contact.SETRANGE("E-Mail",TempOfficeAddinContext.Email);
+        IF (Contact.COUNT > 1) AND (LinkToNo <> '') THEN BEGIN
+          ContactBusinessRelation.SETRANGE("No.",LinkToNo);
+          IF ContactBusinessRelation.FINDSET THEN
+            REPEAT
+              Contact.SETRANGE("Company No.",ContactBusinessRelation."Contact No.");
+            UNTIL (ContactBusinessRelation.NEXT = 0) OR Contact.FINDFIRST;
+        END;
+        EXIT(Contact.FINDFIRST);
+      END;
+    END;
+
+    PROCEDURE GetContext@24(VAR TempOfficeAddinContext@1000 : TEMPORARY Record 1600);
+    VAR
+      OfficeHostManagement@1001 : Codeunit 1631;
+    BEGIN
+      OfficeHostManagement.GetTempOfficeAddinContext(TempOfficeAddinContext);
+    END;
+
+    PROCEDURE InitiateSendToOCR@13(VendorNumber@1003 : Code[20]);
+    VAR
+      TempExchangeObject@1000 : TEMPORARY Record 1602;
+      OfficeHostManagement@1001 : Codeunit 1631;
+    BEGIN
+      OfficeHostManagement.GetEmailAndAttachments(TempExchangeObject,
+        TempExchangeObject.InitiatedAction::InitiateSendToOCR,VendorNumber);
+      TempExchangeObject.SETRANGE(Type,TempExchangeObject.Type::Attachment);
+      TempExchangeObject.SETFILTER("Content Type",'application/pdf|image/*');
+      TempExchangeObject.SETRANGE(IsInline,FALSE);
+      IF NOT TempExchangeObject.ISEMPTY THEN
+        PAGE.RUN(PAGE::"Office OCR Incoming Documents",TempExchangeObject);
+    END;
+
+    PROCEDURE InitiateSendToIncomingDocumentsWithPurchaseHeaderLink@23(PurchaseHeader@1002 : Record 38;VendorNumber@1003 : Code[20]);
+    VAR
+      TempExchangeObject@1000 : TEMPORARY Record 1602;
+      IncomingDocumentAttachment@1005 : Record 133;
+      OfficeHostManagement@1001 : Codeunit 1631;
+      OfficeOCRIncomingDocuments@1004 : Page 1626;
+    BEGIN
+      OfficeHostManagement.GetEmailAndAttachments(TempExchangeObject,
+        TempExchangeObject.InitiatedAction::InitiateSendToIncomingDocuments,VendorNumber);
+      TempExchangeObject.SETRANGE(Type,TempExchangeObject.Type::Attachment);
+      TempExchangeObject.SETFILTER("Content Type",'application/pdf|image/*');
+      TempExchangeObject.SETRANGE(IsInline,FALSE);
+      IF NOT TempExchangeObject.ISEMPTY THEN BEGIN
+        IncomingDocumentAttachment.INIT;
+        IncomingDocumentAttachment."Incoming Document Entry No." := PurchaseHeader."Incoming Document Entry No.";
+        IncomingDocumentAttachment."Document Table No. Filter" := DATABASE::"Purchase Header";
+        IncomingDocumentAttachment."Document Type Filter" := PurchaseHeader."Document Type";
+        IncomingDocumentAttachment."Document No. Filter" := PurchaseHeader."No.";
+        OfficeOCRIncomingDocuments.InitializeIncomingDocumentAttachment(IncomingDocumentAttachment);
+        OfficeOCRIncomingDocuments.InitializeExchangeObject(TempExchangeObject);
+        OfficeOCRIncomingDocuments.RUN;
+      END;
+    END;
+
+    PROCEDURE InitiateSendToIncomingDocuments@29(VendorNumber@1003 : Code[20]);
+    VAR
+      TempExchangeObject@1000 : TEMPORARY Record 1602;
+      OfficeHostManagement@1001 : Codeunit 1631;
+    BEGIN
+      OfficeHostManagement.GetEmailAndAttachments(TempExchangeObject,
+        TempExchangeObject.InitiatedAction::InitiateSendToIncomingDocuments,VendorNumber);
+      TempExchangeObject.SETRANGE(Type,TempExchangeObject.Type::Attachment);
+      TempExchangeObject.SETFILTER("Content Type",'application/pdf|image/*');
+      TempExchangeObject.SETRANGE(IsInline,FALSE);
+      IF NOT TempExchangeObject.ISEMPTY THEN
+        PAGE.RUN(PAGE::"Office OCR Incoming Documents",TempExchangeObject);
+    END;
+
+    PROCEDURE InitiateSendApprovalRequest@30(VendorNumber@1003 : Code[20]);
+    VAR
+      TempExchangeObject@1000 : TEMPORARY Record 1602;
+      OfficeHostManagement@1001 : Codeunit 1631;
+    BEGIN
+      OfficeHostManagement.GetEmailAndAttachments(TempExchangeObject,
+        TempExchangeObject.InitiatedAction::InitiateSendToWorkFlow,VendorNumber);
+      TempExchangeObject.SETRANGE(Type,TempExchangeObject.Type::Attachment);
+      TempExchangeObject.SETFILTER("Content Type",'application/pdf|image/*');
+      TempExchangeObject.SETRANGE(IsInline,FALSE);
+      IF NOT TempExchangeObject.ISEMPTY THEN
+        PAGE.RUN(PAGE::"Office OCR Incoming Documents",TempExchangeObject);
+    END;
+
+    PROCEDURE IsAvailable@1() : Boolean;
+    VAR
+      OfficeHostManagement@1000 : Codeunit 1631;
+    BEGIN
+      EXIT(OfficeHostManagement.IsAvailable);
+    END;
+
+    LOCAL PROCEDURE GetAuthenticatedUrl@15(ServerFilePath@1000 : Text) FileUrl : Text;
+    VAR
+      TempBlob@1002 : Record 99008535;
+      FileMgt@1001 : Codeunit 419;
+      DocStream@1003 : InStream;
+      MediaId@1004 : GUID;
+    BEGIN
+      FileMgt.BLOBImportFromServerFile(TempBlob,ServerFilePath);
+      TempBlob.Blob.CREATEINSTREAM(DocStream);
+      MediaId := IMPORTSTREAMWITHURLACCESS(DocStream,FileMgt.GetFileName(ServerFilePath));
+      FileUrl := GETDOCUMENTURL(MediaId);
+    END;
+
+    LOCAL PROCEDURE GetHandlerCodeunit@2(OfficeAddinContext@1002 : Record 1600) : Integer;
+    VAR
+      OfficeJobsHandler@1000 : Codeunit 1638;
+    BEGIN
+      IF OfficeJobsHandler.IsJobsHostType(OfficeAddinContext) THEN
+        EXIT(CODEUNIT::"Office Jobs Handler");
+
+      CASE GetHostType OF
+        OfficeHostType.OutlookItemRead,OfficeHostType.OutlookItemEdit,OfficeHostType.OutlookTaskPane,OfficeHostType.OutlookMobileApp:
+          EXIT(CODEUNIT::"Office Contact Handler");
+        OfficeHostType.OutlookHyperlink:
+          EXIT(CODEUNIT::"Office Document Handler");
+      END;
+
+      ERROR(CodeUnitNotFoundErr);
+    END;
+
+    LOCAL PROCEDURE GetHostType@48() : Text;
+    VAR
+      OfficeHostManagement@1000 : Codeunit 1631;
+    BEGIN
+      EXIT(OfficeHostManagement.GetHostType);
+    END;
+
+    LOCAL PROCEDURE InvokeExtension@16(FunctionName@1000 : Text;Parameter1@1001 : Variant;Parameter2@1002 : Variant;Parameter3@1003 : Variant);
+    VAR
+      OfficeHostManagement@1004 : Codeunit 1631;
+    BEGIN
+      OfficeHostManagement.InvokeExtension(FunctionName,Parameter1,Parameter2,Parameter3);
+    END;
+
+    [EventSubscriber(Table,5050,OnAfterDeleteEvent)]
+    LOCAL PROCEDURE OnDeleteContact@31(VAR Rec@1000 : Record 5050;RunTrigger@1001 : Boolean);
+    VAR
+      TempOfficeAddinContext@1002 : TEMPORARY Record 1600;
+    BEGIN
+      // User has deleted the contact that was just created. Prevent user seeing a blank screen.
+      IF IsAvailable THEN BEGIN
+        GetContext(TempOfficeAddinContext);
+        IF (Rec."E-Mail" = TempOfficeAddinContext.Email) AND (Rec.Type = Rec.Type::Person) AND (NOT Rec.FIND) THEN
+          PAGE.RUN(PAGE::"Office New Contact Dlg")
+      END;
+    END;
+
+    PROCEDURE SendToOCR@8(VAR IncomingDocument@1000 : Record 130);
+    VAR
+      OfficeHostManagement@1005 : Codeunit 1631;
+    BEGIN
+      OfficeHostManagement.SendToOCR(IncomingDocument);
+    END;
+
+    PROCEDURE SendApprovalRequest@22(VAR IncomingDocument@1000 : Record 130);
+    VAR
+      ApprovalsMgmt@1006 : Codeunit 1535;
+    BEGIN
+      IncomingDocument.TestReadyForApproval;
+      IF ApprovalsMgmt.CheckIncomingDocApprovalsWorkflowEnabled(IncomingDocument) THEN
+        ApprovalsMgmt.OnSendIncomingDocForApproval(IncomingDocument);
+    END;
+
+    PROCEDURE SendToIncomingDocument@18(VAR TempExchangeObject@1000 : TEMPORARY Record 1602;VAR IncomingDocument@1007 : Record 130;VAR IncomingDocAttachment@1006 : Record 133) : Boolean;
+    VAR
+      Vendor@1005 : Record 23;
+      IncomingDocumentAttachment@1003 : Record 133;
+      PurchaseHeader@1008 : Record 38;
+      ImportAttachmentIncDoc@1004 : Codeunit 134;
+      InStream@1002 : InStream;
+      OutStream@1001 : OutStream;
+    BEGIN
+      IF TempExchangeObject.Type = TempExchangeObject.Type::Attachment THEN BEGIN
+        TempExchangeObject.CALCFIELDS(Content);
+        TempExchangeObject.Content.CREATEINSTREAM(InStream);
+
+        IncomingDocumentAttachment.INIT;
+        IncomingDocumentAttachment.Content.CREATEOUTSTREAM(OutStream);
+        COPYSTREAM(OutStream,InStream);
+        ImportAttachmentIncDoc.ImportAttachment(IncomingDocumentAttachment,TempExchangeObject.Name);
+        IncomingDocumentAttachment.VALIDATE("Document Table No. Filter",IncomingDocAttachment."Document Table No. Filter");
+        IncomingDocumentAttachment.VALIDATE("Document Type Filter",IncomingDocAttachment."Document Type Filter");
+        IncomingDocumentAttachment.VALIDATE("Document No. Filter",IncomingDocAttachment."Document No. Filter");
+        IncomingDocumentAttachment.MODIFY;
+
+        IF PurchaseHeader.GET(PurchaseHeader."Document Type"::Invoice,IncomingDocumentAttachment."Document No. Filter") THEN BEGIN
+          PurchaseHeader.VALIDATE("Incoming Document Entry No.",IncomingDocumentAttachment."Incoming Document Entry No.");
+          PurchaseHeader.MODIFY;
+        END;
+
+        IncomingDocument.SETRANGE("Entry No.",IncomingDocumentAttachment."Incoming Document Entry No.");
+        IF IncomingDocument.FINDFIRST THEN BEGIN
+          Vendor.SETRANGE("No.",TempExchangeObject.VendorNo);
+          IF Vendor.FINDFIRST THEN BEGIN
+            IncomingDocument.VALIDATE("Vendor Name",Vendor.Name);
+            IncomingDocument.MODIFY;
+            EXIT(TRUE);
+          END;
+        END;
+        EXIT(FALSE);
+      END;
+    END;
+
+    PROCEDURE EmailHasAttachments@7() : Boolean;
+    VAR
+      OfficeHostManagement@1000 : Codeunit 1631;
+    BEGIN
+      IF OCRAvailable THEN
+        EXIT(OfficeHostManagement.EmailHasAttachments);
+    END;
+
+    PROCEDURE CheckForExistingInvoice@17(CustNo@1002 : Code[20]) : Boolean;
+    VAR
+      TempOfficeAddinContext@1001 : TEMPORARY Record 1600;
+      OfficeInvoice@1000 : Record 1606;
+    BEGIN
+      IF IsAvailable THEN BEGIN
+        GetContext(TempOfficeAddinContext);
+        OfficeInvoice.SETRANGE("Item ID",TempOfficeAddinContext."Item ID");
+        IF NOT OfficeInvoice.ISEMPTY THEN BEGIN
+          OfficeInvoice.SetCustomer(CustNo);
+          PAGE.RUN(PAGE::"Office Invoice Selection",OfficeInvoice);
+          EXIT(TRUE);
+        END;
+      END;
+    END;
+
+    PROCEDURE DisplayOCRUploadSuccessMessage@12(UploadedDocumentCount@1000 : Integer);
+    BEGIN
+      MESSAGE(STRSUBSTNO(UploadSuccessMsg,UploadedDocumentCount));
+    END;
+
+    PROCEDURE OCRAvailable@11() : Boolean;
+    BEGIN
+      IF IsAvailable THEN
+        EXIT(NOT (GetHostType IN [OfficeHostType.OutlookPopOut,
+                                  OfficeHostType.OutlookMobileApp]));
+    END;
+
+    PROCEDURE IsOutlookMobileApp@19() : Boolean;
+    BEGIN
+      IF IsAvailable THEN
+        EXIT(GetHostType = OfficeHostType.OutlookMobileApp);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

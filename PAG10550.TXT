@@ -1,0 +1,159 @@
+OBJECT Page 10550 BACS Ledger Entries
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVGB10.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=BACS Ledger Entries;
+               ENG=BACS Ledger Entries];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    SourceTable=Table10550;
+    DataCaptionFields=Bal. Account No.;
+    PageType=List;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 34      ;1   ;ActionGroup;
+                      CaptionML=[ENU=B&ACS;
+                                 ENG=B&ACS];
+                      Image=ElectronicDoc }
+      { 36      ;2   ;Action    ;
+                      CaptionML=[ENU=Void BACS;
+                                 ENG=Void BACS];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=VoidElectronicDocument;
+                      OnAction=BEGIN
+                                 IF CONFIRM(
+                                      Text1040002,FALSE,"Entry No.","Account Type",
+                                      "Account No.")
+                                 THEN
+                                   BACSManagement.FinancialVoidBACS(Rec);
+                               END;
+                                }
+      { 1040000 ;2   ;Action    ;
+                      CaptionML=[ENU=BACS Register;
+                                 ENG=BACS Register];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=ElectronicRegister;
+                      OnAction=BEGIN
+                                 IF BACSRegister.GET("Register No.") THEN ;
+                                 PAGE.RUN(PAGE::"BACS Registers",BACSRegister);
+                               END;
+                                }
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 33      ;1   ;Action    ;
+                      CaptionML=[ENU=&Navigate;
+                                 ENG=&Navigate];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=Navigate;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 Navigate.SetDoc("Posting Date","Document No.");
+                                 Navigate.RUN;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 29  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date when the BACS file was exported.;
+                           ENG=Specifies the date when the BACS file was exported.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="BACS Date" }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the bank account number of the vendor.;
+                           ENG=Specifies the bank account number of the vendor.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Bank Account No." }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a printing description for the BACS ledger entry.;
+                           ENG=Specifies a printing description for the BACS ledger entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Description }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the amount on the BACS ledger entry.;
+                           ENG=Specifies the amount on the BACS ledger entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amount }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of balancing account that was used in the journal that created this entry.;
+                           ENG=Specifies the type of balancing account that was used in the journal that created this entry.];
+                SourceExpr="Bal. Account Type";
+                Visible=FALSE }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the balancing account used in the entry.;
+                           ENG=Specifies the number of the balancing account used in the entry.];
+                SourceExpr="Bal. Account No.";
+                Visible=FALSE }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the exporting (and posting) status of the BACS ledger entry.;
+                           ENG=Specifies the exporting (and posting) status of the BACS ledger entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Entry Status" }
+
+    { 27  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the status of the entry before you changed it, if you have changed the exporting status of a BACS ledger entry.;
+                           ENG=Specifies the status of the entry before you changed it, if you have changed the exporting status of a BACS ledger entry.];
+                SourceExpr="Original Entry Status";
+                Visible=FALSE }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the posting date of the BACS ledger entry.;
+                           ENG=Specifies the posting date of the BACS ledger entry.];
+                SourceExpr="Posting Date";
+                Visible=FALSE }
+
+    { 23  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document type linked to the BACS ledger entry.;
+                           ENG=Specifies the document type linked to the BACS ledger entry.];
+                SourceExpr="Document Type";
+                Visible=FALSE }
+
+    { 25  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document number on the BACS ledger entry.;
+                           ENG=Specifies the document number on the BACS ledger entry.];
+                SourceExpr="Document No.";
+                Visible=FALSE }
+
+    { 31  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number assigned the BACS ledger entry.;
+                           ENG=Specifies the number assigned the BACS ledger entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Entry No." }
+
+  }
+  CODE
+  {
+    VAR
+      BACSRegister@1040003 : Record 10551;
+      BACSManagement@1040000 : Codeunit 10550;
+      Navigate@1040001 : Page 344;
+      Text1040002@1040002 : TextConst 'ENU=Financially void BACS %1 to %2 %3?;ENG=Financially void BACS %1 to %2 %3?';
+
+    BEGIN
+    END.
+  }
+}
+

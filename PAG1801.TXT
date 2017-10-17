@@ -1,0 +1,103 @@
+OBJECT Page 1801 Assisted Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Assisted Setup;
+               ENG=Assisted Setup];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    LinksAllowed=No;
+    SourceTable=Table1803;
+    SourceTableView=SORTING(Order,Visible)
+                    WHERE(Visible=FILTER(Yes),
+                          Assisted Setup Page ID=FILTER(<>0));
+    PageType=List;
+    RefreshOnActivate=Yes;
+    ShowFilter=No;
+    OnOpenPage=BEGIN
+                 Initialize;
+               END;
+
+    OnAfterGetRecord=BEGIN
+                       SetStyle;
+                     END;
+
+    ActionList=ACTIONS
+    {
+      { 5       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 6       ;1   ;Action    ;
+                      Name=Start Setup;
+                      ShortCutKey=Return;
+                      CaptionML=[ENU=Start Setup;
+                                 ENG=Start Setup];
+                      ToolTipML=[ENU=Start setting up the selected functionality. You will be guided through one or more pages where you need to fill in information to get things up an running.;
+                                 ENG=Start setting up the selected functionality. You will be guided through one or more pages where you need to fill in information to get things up an running.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Setup;
+                      Scope=Repeater;
+                      OnAction=BEGIN
+                                 Run;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Name;
+                OnLookup=BEGIN
+                           Run;
+                           CurrPage.UPDATE(FALSE);
+                         END;
+                          }
+
+    { 4   ;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Status;
+                StyleExpr=StyleText;
+                OnLookup=BEGIN
+                           Run;
+                           CurrPage.UPDATE(FALSE);
+                         END;
+                          }
+
+  }
+  CODE
+  {
+    VAR
+      StyleText@1000 : Text;
+
+    LOCAL PROCEDURE SetStyle@1();
+    BEGIN
+      CASE Status OF
+        Status::"Not Completed":
+          StyleText := 'Standard';
+        Status::Completed:
+          StyleText := 'Favorable';
+        ELSE
+          StyleText := 'Standard';
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

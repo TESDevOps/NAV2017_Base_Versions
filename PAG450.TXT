@@ -1,0 +1,290 @@
+OBJECT Page 450 Issued Finance Charge Memo
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00,NAVGB10.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Issued Finance Charge Memo;
+               ENG=Issued Finance Charge Memo];
+    InsertAllowed=No;
+    ModifyAllowed=No;
+    SourceTable=Table304;
+    PageType=Document;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 31      ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Memo;
+                                 ENG=&Memo];
+                      Image=Notes }
+      { 34      ;2   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+L;
+                      CaptionML=[ENU=List;
+                                 ENG=List];
+                      Image=OpportunitiesList;
+                      OnAction=BEGIN
+                                 IssuedFinChrgMemoHeader.COPY(Rec);
+                                 IF PAGE.RUNMODAL(0,IssuedFinChrgMemoHeader) = ACTION::LookupOK THEN
+                                   Rec := IssuedFinChrgMemoHeader;
+                               END;
+                                }
+      { 36      ;2   ;Action    ;
+                      CaptionML=[ENU=Co&mments;
+                                 ENG=Co&mments];
+                      RunObject=Page 454;
+                      RunPageLink=Type=CONST(Issued Finance Charge Memo),
+                                  No.=FIELD(No.);
+                      Image=ViewComments }
+      { 35      ;2   ;Action    ;
+                      CaptionML=[ENU=C&ustomer;
+                                 ENG=C&ustomer];
+                      RunObject=Page 22;
+                      RunPageLink=No.=FIELD(Customer No.);
+                      Image=Customer }
+      { 26      ;2   ;Action    ;
+                      AccessByPermission=TableData 348=R;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edit dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      Image=Dimensions;
+                      OnAction=BEGIN
+                                 ShowDimensions;
+                               END;
+                                }
+      { 6       ;2   ;Separator  }
+      { 7       ;2   ;Action    ;
+                      ShortCutKey=F7;
+                      CaptionML=[ENU=Statistics;
+                                 ENG=Statistics];
+                      RunObject=Page 453;
+                      RunPageLink=No.=FIELD(No.);
+                      Promoted=Yes;
+                      Image=Statistics;
+                      PromotedCategory=Process }
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 15      ;1   ;Action    ;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=&Print;
+                                 ENG=&Print];
+                      ToolTipML=[ENU=Prepare to print the document. The report request window for the document opens where you can specify what to include on the print-out.;
+                                 ENG=Prepare to print the document. The report request window for the document opens where you can specify what to include on the print-out.];
+                      Promoted=Yes;
+                      Image=Print;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 CurrPage.SETSELECTIONFILTER(IssuedFinChrgMemoHeader);
+                                 IssuedFinChrgMemoHeader.PrintRecords(TRUE,FALSE,FALSE);
+                               END;
+                                }
+      { 3       ;1   ;Action    ;
+                      CaptionML=[ENU=Send by &Email;
+                                 ENG=Send by &Email];
+                      ToolTipML=[ENU=Prepare to send the document by email. The Send Email window opens prefilled for the customer where you can add or change information before you send the email.;
+                                 ENG=Prepare to send the document by email. The Send Email window opens prefilled for the customer where you can add or change information before you send the email.];
+                      Promoted=Yes;
+                      Image=Email;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 IssuedFinChrgMemoHeader := Rec;
+                                 CurrPage.SETSELECTIONFILTER(IssuedFinChrgMemoHeader);
+                                 IssuedFinChrgMemoHeader.PrintRecords(FALSE,TRUE,FALSE);
+                               END;
+                                }
+      { 30      ;1   ;Action    ;
+                      CaptionML=[ENU=&Navigate;
+                                 ENG=&Navigate];
+                      ToolTipML=[ENU=Find all entries and documents that exist for the document number and posting date on the selected entry or document.;
+                                 ENG=Find all entries and documents that exist for the document number and posting date on the selected entry or document.];
+                      Promoted=Yes;
+                      Image=Navigate;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 Navigate;
+                               END;
+                                }
+      { 1900000006;0 ;ActionContainer;
+                      ActionContainerType=Reports }
+      { 1902355906;1 ;Action    ;
+                      CaptionML=[ENU=Finance Charge Memo Nos.;
+                                 ENG=Finance Charge Memo Nos.];
+                      RunObject=Report 127;
+                      Promoted=No;
+                      Image=Report;
+                      PromotedCategory=Report }
+      { 1903158706;1 ;Action    ;
+                      CaptionML=[ENU=Finance Charge Memo;
+                                 ENG=Finance Charge Memo];
+                      RunObject=Report 118;
+                      Promoted=Yes;
+                      Image=FinChargeMemo;
+                      PromotedCategory=Report }
+      { 1902299006;1 ;Action    ;
+                      CaptionML=[ENU=Customer - Balance to Date;
+                                 ENG=Customer - Balance to Date];
+                      RunObject=Report 121;
+                      Promoted=Yes;
+                      Image=Report;
+                      PromotedCategory=Report }
+      { 1906871306;1 ;Action    ;
+                      CaptionML=[ENU=Customer - Detail Trial Bal.;
+                                 ENG=Customer - Detail Trial Bal.];
+                      RunObject=Report 104;
+                      Promoted=No;
+                      Image=Report;
+                      PromotedCategory=Report }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                CaptionML=[ENU=General;
+                           ENG=General] }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the issued finance charge memo number.;
+                           ENG=Specifies the issued finance charge memo number.];
+                SourceExpr="No.";
+                Importance=Promoted }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the customer number the finance charge memo is for.;
+                           ENG=Specifies the customer number the finance charge memo is for.];
+                SourceExpr="Customer No.";
+                Importance=Promoted }
+
+    { 41  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the customer the finance charge memo is for.;
+                           ENG=Specifies the name of the customer the finance charge memo is for.];
+                SourceExpr=Name;
+                Importance=Promoted }
+
+    { 39  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the address of the customer the finance charge memo is for.;
+                           ENG=Specifies the address of the customer the finance charge memo is for.];
+                SourceExpr=Address }
+
+    { 13  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies additional address information.;
+                           ENG=Specifies additional address information.];
+                SourceExpr="Address 2" }
+
+    { 1040002;2;Field     ;
+                SourceExpr=City }
+
+    { 1040001;2;Field     ;
+                SourceExpr=County }
+
+    { 1040000;2;Field     ;
+                SourceExpr="Post Code" }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the person you regularly contact when you communicate with the customer the finance charge memo is for.;
+                           ENG=Specifies the name of the person you regularly contact when you communicate with the customer the finance charge memo is for.];
+                SourceExpr=Contact }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the posting date that the finance charge memo was issued on.;
+                           ENG=Specifies the posting date that the finance charge memo was issued on.];
+                SourceExpr="Posting Date";
+                Importance=Promoted }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document date on which the finance charge memo was created.;
+                           ENG=Specifies the document date on which the finance charge memo was created.];
+                SourceExpr="Document Date" }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the finance charge memo.;
+                           ENG=Specifies the number of the finance charge memo.];
+                SourceExpr="Pre-Assigned No." }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how many times the finance charge memo has been printed.;
+                           ENG=Specifies how many times the finance charge memo has been printed.];
+                SourceExpr="No. Printed" }
+
+    { 29  ;1   ;Part      ;
+                Name=FinChrgMemoLines;
+                SubPageLink=Finance Charge Memo No.=FIELD(No.);
+                PagePartID=Page451 }
+
+    { 1904784501;1;Group  ;
+                CaptionML=[ENU=Posting;
+                           ENG=Posting] }
+
+    { 43  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the terms code for the finance charge memo.;
+                           ENG=Specifies the terms code for the finance charge memo.];
+                SourceExpr="Fin. Charge Terms Code";
+                Importance=Promoted }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date when payment of the finance charge memo is due.;
+                           ENG=Specifies the date when payment of the finance charge memo is due.];
+                SourceExpr="Due Date";
+                Importance=Promoted }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the currency that the issued finance charge memo is in.;
+                           ENG=Specifies the code of the currency that the issued finance charge memo is in.];
+                SourceExpr="Currency Code";
+                Importance=Promoted;
+                OnAssistEdit=BEGIN
+                               ChangeExchangeRate.SetParameter(
+                                 "Currency Code",
+                                 CurrExchRate.ExchangeRate("Posting Date","Currency Code"),
+                                 "Posting Date");
+                               ChangeExchangeRate.EDITABLE(FALSE);
+                               IF ChangeExchangeRate.RUNMODAL = ACTION::OK THEN;
+                               CLEAR(ChangeExchangeRate);
+                             END;
+                              }
+
+    { 55  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code associated with the finance charge memo.;
+                           ENG=Specifies the dimension value code associated with the finance charge memo.];
+                SourceExpr="Shortcut Dimension 1 Code" }
+
+    { 57  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code associated with the finance charge memo.;
+                           ENG=Specifies the dimension value code associated with the finance charge memo.];
+                SourceExpr="Shortcut Dimension 2 Code" }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=TRUE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      IssuedFinChrgMemoHeader@1000 : Record 304;
+      CurrExchRate@1001 : Record 330;
+      ChangeExchangeRate@1002 : Page 511;
+
+    BEGIN
+    END.
+  }
+}
+

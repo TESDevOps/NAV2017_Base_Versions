@@ -1,0 +1,90 @@
+OBJECT Codeunit 6722 Booking Manager Handler
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      BookingSync@1001 : Record 6702;
+      O365SyncManagement@1000 : Codeunit 6700;
+
+    LOCAL PROCEDURE CanHandle@2() : Boolean;
+    VAR
+      BookingMgrSetup@1000 : Record 6721;
+    BEGIN
+      IF BookingMgrSetup.GET THEN
+        IF BookingSync.IsSetup THEN
+          EXIT(BookingMgrSetup."Booking Mgr. Codeunit" = CODEUNIT::"Booking Manager Handler");
+
+      EXIT(FALSE);
+    END;
+
+    [EventSubscriber(Codeunit,6721,OnGetBookingItems)]
+    LOCAL PROCEDURE OnGetBookingItems@1(VAR TempBookingItem@1000 : TEMPORARY Record 6707);
+    VAR
+      BookingItem@1003 : Record 6707;
+      O365SyncManagement@1002 : Codeunit 6700;
+    BEGIN
+      IF NOT CanHandle THEN
+        EXIT;
+
+      O365SyncManagement.RegisterBookingsConnection(BookingSync);
+      BookingItem.SETRANGE(Invoiced,FALSE);
+      IF BookingItem.FINDFIRST THEN
+        TempBookingItem.COPY(BookingItem,FALSE);
+    END;
+
+    [EventSubscriber(Codeunit,6721,OnGetBookingMailboxes)]
+    LOCAL PROCEDURE OnGetBookingMailboxes@3(VAR TempBookingMailbox@1000 : TEMPORARY Record 6704);
+    BEGIN
+      IF NOT CanHandle THEN
+        EXIT;
+
+      O365SyncManagement.GetBookingMailboxes(BookingSync,TempBookingMailbox,'');
+    END;
+
+    [EventSubscriber(Codeunit,6721,OnSetBookingItemInvoiced)]
+    LOCAL PROCEDURE OnSetBookingItemInvoiced@4(InvoicedBookingItem@1000 : Record 1638);
+    VAR
+      BookingItem@1001 : Record 6707;
+    BEGIN
+      IF NOT CanHandle THEN
+        EXIT;
+
+      // Logic here to update booking item to invoiced and possibly set invoice link
+      O365SyncManagement.RegisterBookingsConnection(BookingSync);
+      BookingItem.SETRANGE("Item ID",InvoicedBookingItem."Booking Item ID");
+      BookingItem.FINDFIRST;
+      BookingItem.Invoiced := TRUE;
+      BookingItem."Invoice No." := InvoicedBookingItem."Document No.";
+      BookingItem.MODIFY;
+    END;
+
+    [EventSubscriber(Codeunit,6721,OnSynchronize)]
+    LOCAL PROCEDURE OnSynchronize@5(TempBookingItem@1000 : TEMPORARY Record 6707);
+    VAR
+      BookingSync@1002 : Record 6702;
+      O365SyncManagement@1001 : Codeunit 6700;
+    BEGIN
+      IF NOT CanHandle THEN
+        EXIT;
+
+      O365SyncManagement.SyncBookingCustomers(BookingSync);
+      O365SyncManagement.SyncBookingServices(BookingSync);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,328 @@
+OBJECT Codeunit 9002 Permission Manager
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Permissions=TableData 9007=rimd,
+                TableData 9008=rimd;
+    SingleInstance=Yes;
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      OfficePortalUserAdministrationUrlTxt@1002 : TextConst '@@@={Locked};ENU=https://portal.office.com/admin/default.aspx#ActiveUsersPage;ENG=https://portal.office.com/admin/default.aspx#ActiveUsersPage';
+      TestabilitySoftwareAsAService@1003 : Boolean;
+      SUPERPermissionSetTxt@1004 : TextConst '@@@={Locked};ENU=SUPER;ENG=SUPER';
+
+    PROCEDURE AddUserToUserGroup@77(UserSecurityID@1001 : GUID;UserGroupCode@1000 : Code[20];Company@1002 : Text[30]);
+    VAR
+      UserGroupMember@1003 : Record 9001;
+    BEGIN
+      IF NOT UserGroupMember.GET(UserGroupCode,UserSecurityID,Company) THEN BEGIN
+        UserGroupMember.INIT;
+        UserGroupMember."Company Name" := Company;
+        UserGroupMember."User Security ID" := UserSecurityID;
+        UserGroupMember."User Group Code" := UserGroupCode;
+        UserGroupMember.INSERT(TRUE);
+      END;
+    END;
+
+    PROCEDURE AddUserToDefaultUserGroups@13(UserSecurityID@1001 : GUID) UserGroupsAdded : Boolean;
+    VAR
+      UserPlan@1000 : Record 9005;
+    BEGIN
+      // Add the new user to all user groups of the plan
+
+      // No plan is assigned to this user
+      UserPlan.SETRANGE("User Security ID",UserSecurityID);
+      IF NOT UserPlan.FINDSET THEN BEGIN
+        UserGroupsAdded := FALSE;
+        EXIT;
+      END;
+
+      // There is at least a plan assigned (and probably only one)
+      REPEAT
+        IF AddUserToAllUserGroupsOfThePlan(UserSecurityID,UserPlan."Plan ID") THEN
+          UserGroupsAdded := TRUE;
+      UNTIL UserPlan.NEXT = 0;
+    END;
+
+    LOCAL PROCEDURE AddUserToAllUserGroupsOfThePlan@3(UserSecurityID@1000 : GUID;PlanID@1001 : GUID) : Boolean;
+    VAR
+      UserGroupPlan@1002 : Record 9007;
+    BEGIN
+      // Get all User Groups in plan
+      UserGroupPlan.SETRANGE("Plan ID",PlanID);
+      IF NOT UserGroupPlan.FINDSET THEN
+        EXIT(FALSE); // nothing to add
+
+      // Assign groups to the current user (if not assigned already)
+      REPEAT
+        AddUserToUserGroup(UserSecurityID,UserGroupPlan."User Group Code",COMPANYNAME);
+      UNTIL UserGroupPlan.NEXT = 0;
+      EXIT(TRUE);
+    END;
+
+    LOCAL PROCEDURE RemoveUserFromAllPermissionSets@1(UserSecurityID@1001 : GUID);
+    VAR
+      AccessControl@1000 : Record 2000000053;
+    BEGIN
+      AccessControl.SETRANGE("User Security ID",UserSecurityID);
+      AccessControl.DELETEALL(TRUE);
+    END;
+
+    LOCAL PROCEDURE RemoveUserFromAllUserGroups@32(UserSecurityID@1001 : GUID);
+    VAR
+      UserGroupMember@1000 : Record 9001;
+    BEGIN
+      UserGroupMember.SETRANGE("User Security ID",UserSecurityID);
+      UserGroupMember.DELETEALL(TRUE);
+    END;
+
+    PROCEDURE ResetUserToDefaultUserGroups@35(UserSecurityID@1001 : GUID);
+    BEGIN
+      // Remove the user from all assigned user groups and their related permission sets
+      RemoveUserFromAllUserGroups(UserSecurityID);
+
+      // Remove the user from any additional, manually assigned permission sets
+      RemoveUserFromAllPermissionSets(UserSecurityID);
+
+      // Add the user to all the user groups (and their permission sets) which are
+      // defined in the user's assigned subscription plan
+      AddUserToDefaultUserGroups(UserSecurityID);
+    END;
+
+    PROCEDURE GetOfficePortalUserAdminUrl@11() : Text;
+    BEGIN
+      EXIT(OfficePortalUserAdministrationUrlTxt);
+    END;
+
+    PROCEDURE SetTestabilitySoftwareAsAService@18(EnableSoftwareAsAServiceForTest@1000 : Boolean);
+    BEGIN
+      TestabilitySoftwareAsAService := EnableSoftwareAsAServiceForTest;
+    END;
+
+    PROCEDURE SoftwareAsAService@7() : Boolean;
+    VAR
+      MembershipEntitlement@1000 : Record 2000000195;
+    BEGIN
+      IF TestabilitySoftwareAsAService THEN
+        EXIT(TRUE);
+
+      EXIT(NOT MembershipEntitlement.ISEMPTY);
+    END;
+
+    PROCEDURE UpdateUserAccessForSaaS@16(UserSID@1000 : GUID);
+    BEGIN
+      IF NOT AllowUpdateUserAccessForSaaS(UserSID) THEN
+        EXIT;
+
+      // Only remove SUPER if other permissions are granted (to avoid user lockout)
+      IF AddUserToDefaultUserGroups(UserSID) THEN BEGIN
+        AssignDefaultRoleCenterToUser(UserSID);
+        RemoveSUPERPermissionSetFromUserIfMoreSupersExist(UserSID);
+        StoreUserFirstLogin(UserSID);
+      END;
+    END;
+
+    LOCAL PROCEDURE AllowUpdateUserAccessForSaaS@15(UserSID@1000 : GUID) : Boolean;
+    VAR
+      User@1003 : Record 2000000120;
+      UserPlan@1004 : Record 9005;
+      UserLogin@1001 : Record 9008;
+    BEGIN
+      IF NOT SoftwareAsAService THEN
+        EXIT(FALSE);
+
+      IF ISNULLGUID(UserSID) THEN
+        EXIT(FALSE);
+
+      // Only update first-time login users
+      IF NOT UserLogin.GET(UserSID) THEN
+        EXIT(TRUE); // This user had never logged in before
+      IF UserLogin."First Login Date" = 0D THEN
+        EXIT(TRUE); // This user had never logged in before
+
+      // Some users come from an upgrade (when table UserLogin didn't exist),
+      // but they have personalization which proves they have been logged on before
+      IF UserHasPersonalization(UserSID) THEN
+        EXIT(FALSE);
+
+      // Don't demote external users (like the sync daemon)
+      User.GET(UserSID);
+      IF User."License Type" = User."License Type"::"External User" THEN
+        EXIT(FALSE);
+
+      // Don't demote users which don't come from Office365 (have no plans assigned)
+      // Note: all users who come from O365, if they don't have a plan, they don't get a license (hence, no SUPER role)
+      UserPlan.SETRANGE("User Security ID",User."User Security ID");
+      IF UserPlan.ISEMPTY THEN
+        EXIT(FALSE);
+
+      EXIT(TRUE);
+    END;
+
+    LOCAL PROCEDURE UserHasNoUserGroups@14(UserID@1000 : GUID) : Boolean;
+    VAR
+      UserGroupMember@1001 : Record 9001;
+    BEGIN
+      UserGroupMember.SETRANGE("User Security ID",UserID);
+      UserGroupMember.SETRANGE("Company Name",COMPANYNAME);
+      EXIT(NOT UserGroupMember.FINDFIRST);
+    END;
+
+    [EventSubscriber(Table,9005,OnAfterDeleteEvent)]
+    LOCAL PROCEDURE RemoveUserFromUserGroupsOfThePlan@4(VAR Rec@1000 : Record 9005;RunTrigger@1001 : Boolean);
+    VAR
+      UserGroupPlan@1002 : Record 9007;
+      UserGroupMember@1003 : Record 9001;
+    BEGIN
+      IF Rec.ISTEMPORARY THEN
+        EXIT;
+
+      IF UserHasNoUserGroups(Rec."User Security ID") THEN
+        EXIT; // nothing to remove
+
+      // Get list of all user groups of removed plan
+      UserGroupPlan.SETRANGE("Plan ID",Rec."Plan ID");
+      IF NOT UserGroupPlan.FIND('-') THEN
+        EXIT; // nothing to remove
+
+      REPEAT
+        IF UserGroupMember.GET(UserGroupPlan."User Group Code",Rec."User Security ID",COMPANYNAME) THEN
+          UserGroupMember.DELETE(TRUE);
+      UNTIL UserGroupPlan.NEXT = 0;
+    END;
+
+    PROCEDURE AddUserGroupFromExtension@10(UserGroupCode@1000 : Code[20];RoleID@1002 : Code[20];AppGuid@1003 : GUID);
+    VAR
+      UserGroupPermissionSet@1001 : Record 9003;
+      UserGroup@1004 : Record 9000;
+    BEGIN
+      IF NOT SoftwareAsAService THEN
+        IF NOT UserGroup.GET(UserGroupCode) THEN
+          EXIT;
+
+      UserGroupPermissionSet.INIT;
+      UserGroupPermissionSet."User Group Code" := UserGroupCode;
+      UserGroupPermissionSet."Role ID" := RoleID;
+      UserGroupPermissionSet."App ID" := AppGuid;
+      UserGroupPermissionSet.Scope := UserGroupPermissionSet.Scope::Tenant;
+      IF NOT UserGroupPermissionSet.FIND THEN
+        UserGroupPermissionSet.INSERT(TRUE);
+    END;
+
+    LOCAL PROCEDURE DeleteSuperFromUser@8(UserSID@1000 : GUID);
+    VAR
+      AccessControl@1001 : Record 2000000053;
+    BEGIN
+      AccessControl.SETRANGE("Role ID",SUPERPermissionSetTxt);
+      AccessControl.SETRANGE("Company Name",'');
+      AccessControl.SETRANGE("User Security ID",UserSID);
+      AccessControl.DELETEALL(TRUE);
+    END;
+
+    LOCAL PROCEDURE IsExternalUser@9(UserSID@1000 : GUID) : Boolean;
+    VAR
+      User@1001 : Record 2000000120;
+    BEGIN
+      IF User.GET(UserSID) THEN
+        EXIT(User."License Type" = User."License Type"::"External User");
+
+      EXIT(FALSE);
+    END;
+
+    LOCAL PROCEDURE IsSomeoneElseSuper@5(UserSID@1000 : GUID) : Boolean;
+    VAR
+      AccessControl@1001 : Record 2000000053;
+    BEGIN
+      AccessControl.LOCKTABLE;
+      AccessControl.SETRANGE("Role ID",SUPERPermissionSetTxt);
+      AccessControl.SETRANGE("Company Name",'');
+      AccessControl.SETFILTER("User Security ID",'<>%1',UserSID);
+
+      IF NOT AccessControl.FINDSET THEN
+        EXIT;
+
+      REPEAT
+        // Sync Deamon should not count as a super user and he has a external license
+        IF NOT IsExternalUser(AccessControl."User Security ID") THEN
+          EXIT(TRUE);
+      UNTIL AccessControl.NEXT = 0;
+
+      EXIT(FALSE);
+    END;
+
+    LOCAL PROCEDURE RemoveSUPERPermissionSetFromUserIfMoreSupersExist@2(UserSID@1000 : GUID);
+    BEGIN
+      IF IsSomeoneElseSuper(UserSID) THEN
+        DeleteSuperFromUser(UserSID);
+    END;
+
+    LOCAL PROCEDURE StoreUserFirstLogin@28(UserSecurityID@1000 : GUID);
+    VAR
+      UserLogin@1001 : Record 9008;
+    BEGIN
+      IF UserLogin.GET(UserSecurityID) THEN
+        EXIT; // the user has already been logged in before
+      UserLogin.INIT;
+      UserLogin.VALIDATE("User SID",UserSecurityID);
+      UserLogin.VALIDATE("First Login Date",TODAY);
+      UserLogin.INSERT;
+    END;
+
+    LOCAL PROCEDURE UserHasPersonalization@6(UserSecurityID@1000 : GUID) : Boolean;
+    VAR
+      UserPersonalization@1001 : Record 2000000073;
+    BEGIN
+      IF UserPersonalization.GET(UserSecurityID) THEN BEGIN
+        StoreUserFirstLogin(UserSecurityID); // This user probably comes from an upgrade
+        EXIT(TRUE);
+      END;
+      EXIT(FALSE);
+    END;
+
+    LOCAL PROCEDURE AssignDefaultRoleCenterToUser@17(UserSercurityID@1000 : GUID);
+    VAR
+      UserPlan@1001 : Record 9005;
+      UserPersonalization@1002 : Record 2000000073;
+      Plan@1003 : Record 9004;
+      Profile@1004 : Record 2000000072;
+    BEGIN
+      UserPlan.SETRANGE("User Security ID",UserSercurityID);
+
+      IF NOT UserPlan.FINDFIRST THEN
+        EXIT; // this user has no plans assigned, so they'll get the app-wide default role center
+
+      Plan.GET(UserPlan."Plan ID");
+      Profile.SETRANGE("Role Center ID",Plan."Role Center ID");
+      Profile.FINDFIRST;
+
+      // Create the user personalization record
+      IF NOT UserPersonalization.GET(UserSercurityID) THEN BEGIN
+        UserPersonalization.INIT;
+        UserPersonalization.VALIDATE("User SID",UserSercurityID);
+        UserPersonalization.VALIDATE("Profile ID",Profile."Profile ID");
+        UserPersonalization.INSERT;
+        EXIT;
+      END;
+
+      // This user already has personalization, update it
+      UserPersonalization.VALIDATE("User SID",UserSercurityID);
+      UserPersonalization.VALIDATE("Profile ID",Profile."Profile ID");
+      UserPersonalization.MODIFY(TRUE);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

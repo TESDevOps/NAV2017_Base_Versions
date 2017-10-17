@@ -1,0 +1,61 @@
+OBJECT Table 9042 Team Member Cue
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Team Member Cue;
+               ENG=Team Member Cue];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=[ENU=Primary Key;
+                                                              ENG=Primary Key] }
+    { 2   ;   ;Open Time Sheets    ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Time Sheet Header" WHERE (Open Exists=FILTER(=Yes),
+                                                                                                Owner User ID=FIELD(User ID Filter)));
+                                                   CaptionML=[ENU=Open Time Sheets;
+                                                              ENG=Open Time Sheets] }
+    { 3   ;   ;Submitted Time Sheets;Integer      ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Time Sheet Header" WHERE (Submitted Exists=FILTER(=Yes),
+                                                                                                Owner User ID=FIELD(User ID Filter)));
+                                                   CaptionML=[ENU=Submitted Time Sheets;
+                                                              ENG=Submitted Time Sheets] }
+    { 4   ;   ;Rejected Time Sheets;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Time Sheet Header" WHERE (Rejected Exists=FILTER(=Yes),
+                                                                                                Owner User ID=FIELD(User ID Filter)));
+                                                   CaptionML=[ENU=Rejected Time Sheets;
+                                                              ENG=Rejected Time Sheets] }
+    { 5   ;   ;Approved Time Sheets;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Time Sheet Header" WHERE (Approved Exists=FILTER(=Yes),
+                                                                                                Owner User ID=FIELD(User ID Filter)));
+                                                   CaptionML=[ENU=Approved Time Sheets;
+                                                              ENG=Approved Time Sheets] }
+    { 6   ;   ;Requests to Approve ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Approval Entry" WHERE (Approver ID=FIELD(User ID Filter),
+                                                                                             Status=FILTER(Open)));
+                                                   CaptionML=[ENU=Requests to Approve;
+                                                              ENG=Requests to Approve] }
+    { 28  ;   ;User ID Filter      ;Code50        ;FieldClass=FlowFilter;
+                                                   CaptionML=[ENU=User ID Filter;
+                                                              ENG=User ID Filter] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

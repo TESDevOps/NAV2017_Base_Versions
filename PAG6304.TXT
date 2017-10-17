@@ -1,0 +1,105 @@
+OBJECT Page 6304 Power BI Report Selection
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Power BI Reports Selection;
+               ENG=Power BI Reports Selection];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    SourceTable=Table6302;
+    PageType=List;
+    SourceTableTemporary=Yes;
+    OnQueryClosePage=BEGIN
+                       SaveAndClose;
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                Name=ReportName;
+                CaptionML=[ENU=Report Name;
+                           ENG=Report Name];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=ReportName;
+                Editable=FALSE }
+
+    { 4   ;2   ;Field     ;
+                Name=Enabled;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Enabled }
+
+  }
+  CODE
+  {
+    VAR
+      DisabledReportSelectedErr@1000 : TextConst 'ENU=The report that you selected is disabled and cannot be opened on the role center. Enable the selected report or select another report.;ENG=The report that you selected is disabled and cannot be opened on the role centre. Enable the selected report or select another report.';
+      Context@1001 : Text[30];
+
+    PROCEDURE SetContext@2(ParentContext@1000 : Text[30]);
+    BEGIN
+      // Sets the ID of the parent page that reports are being selected for.
+      Context := ParentContext;
+    END;
+
+    PROCEDURE SetReportBuffer@1(VAR TempPowerBiReportBuffer@1000 : TEMPORARY Record 6302);
+    BEGIN
+      // clear the current record and shallow copy the buffer to it
+      DELETEALL;
+      COPY(TempPowerBiReportBuffer,TRUE);
+      RESET;
+    END;
+
+    LOCAL PROCEDURE SaveAndClose@5();
+    VAR
+      PowerBiReportConfiguration@1001 : Record 6301;
+      TempPowerBiReportBuffer@1000 : TEMPORARY Record 6302;
+    BEGIN
+      // use a temp buffer record for saving to not disturb the position, filters, etc. of the source table
+      // ShareTable = TRUE makes a shallow copy of the record, which is OK since no modifications are made to the records themselves
+      TempPowerBiReportBuffer.COPY(Rec,TRUE);
+
+      IF NOT Enabled THEN BEGIN
+        // Let the user disable all reports - only throw an error if the selected report is disabled but others are enabled.
+        TempPowerBiReportBuffer.SETRANGE(Enabled,TRUE);
+        IF NOT TempPowerBiReportBuffer.ISEMPTY THEN
+          ERROR(DisabledReportSelectedErr);
+        TempPowerBiReportBuffer.RESET;
+      END;
+
+      IF TempPowerBiReportBuffer.FIND('-') THEN
+        REPEAT
+          IF PowerBiReportConfiguration.GET(USERSECURITYID,TempPowerBiReportBuffer.ReportID,Context) THEN BEGIN
+            IF NOT TempPowerBiReportBuffer.Enabled THEN
+              PowerBiReportConfiguration.DELETE;
+          END ELSE
+            IF TempPowerBiReportBuffer.Enabled THEN BEGIN
+              PowerBiReportConfiguration.INIT;
+              PowerBiReportConfiguration."User Security ID" := USERSECURITYID;
+              PowerBiReportConfiguration."Report ID" := TempPowerBiReportBuffer.ReportID;
+              PowerBiReportConfiguration.Context := Context;
+              PowerBiReportConfiguration.INSERT;
+            END;
+        UNTIL TempPowerBiReportBuffer.NEXT = 0;
+
+      CurrPage.CLOSE;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

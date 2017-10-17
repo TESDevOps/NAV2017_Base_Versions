@@ -1,0 +1,87 @@
+OBJECT Table 2000000160 NAV App
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/09/17;
+    Time=12:00:00;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=NAV App;
+               ENG=NAV App];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Package ID          ;GUID          ;CaptionML=[ENU=Package ID;
+                                                              ENG=Package ID] }
+    { 2   ;   ;ID                  ;GUID          ;CaptionML=[ENU=ID;
+                                                              ENG=ID] }
+    { 3   ;   ;Name                ;Text250       ;CaptionML=[ENU=Name;
+                                                              ENG=Name] }
+    { 4   ;   ;Publisher           ;Text250       ;CaptionML=[ENU=Publisher;
+                                                              ENG=Publisher] }
+    { 5   ;   ;Version Major       ;Integer       ;CaptionML=[ENU=Version Major;
+                                                              ENG=Version Major] }
+    { 6   ;   ;Version Minor       ;Integer       ;CaptionML=[ENU=Version Minor;
+                                                              ENG=Version Minor] }
+    { 7   ;   ;Version Build       ;Integer       ;CaptionML=[ENU=Version Build;
+                                                              ENG=Version Build] }
+    { 8   ;   ;Version Revision    ;Integer       ;CaptionML=[ENU=Version Revision;
+                                                              ENG=Version Revision] }
+    { 9   ;   ;Compatibility Major ;Integer       ;CaptionML=[ENU=Compatibility Major;
+                                                              ENG=Compatibility Major] }
+    { 10  ;   ;Compatibility Minor ;Integer       ;CaptionML=[ENU=Compatibility Minor;
+                                                              ENG=Compatibility Minor] }
+    { 11  ;   ;Compatibility Build ;Integer       ;CaptionML=[ENU=Compatibility Build;
+                                                              ENG=Compatibility Build] }
+    { 12  ;   ;Compatibility Revision;Integer     ;CaptionML=[ENU=Compatibility Revision;
+                                                              ENG=Compatibility Revision] }
+    { 13  ;   ;Brief               ;Text250       ;CaptionML=[ENU=Brief;
+                                                              ENG=Brief] }
+    { 14  ;   ;Description         ;BLOB          ;CaptionML=[ENU=Description;
+                                                              ENG=Description] }
+    { 15  ;   ;Privacy Statement   ;Text250       ;CaptionML=[ENU=Privacy Statement;
+                                                              ENG=Privacy Statement] }
+    { 16  ;   ;EULA                ;Text250       ;CaptionML=[ENU=EULA;
+                                                              ENG=EULA] }
+    { 17  ;   ;Url                 ;Text250       ;CaptionML=[ENU=Url;
+                                                              ENG=Url] }
+    { 18  ;   ;Help                ;Text250       ;CaptionML=[ENU=Help;
+                                                              ENG=Help] }
+    { 19  ;   ;Logo                ;Media         ;CaptionML=[ENU=Logo;
+                                                              ENG=Logo] }
+    { 20  ;   ;Screenshots         ;MediaSet      ;CaptionML=[ENU=Screenshots;
+                                                              ENG=Screenshots] }
+    { 21  ;   ;Blob                ;BLOB          ;CaptionML=[ENU=Blob;
+                                                              ENG=Blob] }
+    { 22  ;   ;responseUrl         ;Text250       ;FieldClass=FlowField;
+                                                   CaptionML=[ENU=responseUrl;
+                                                              ENG=responseUrl] }
+    { 23  ;   ;requestId           ;Text250       ;FieldClass=FlowField;
+                                                   CaptionML=[ENU=requestId;
+                                                              ENG=requestId] }
+    { 24  ;   ;Installed           ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("NAV App Installed App" WHERE (Package ID=FIELD(Package ID)));
+                                                   CaptionML=[ENU=Installed;
+                                                              ENG=Installed] }
+  }
+  KEYS
+  {
+    {    ;Package ID                              ;Clustered=Yes }
+    {    ;Name                                     }
+    {    ;Publisher                                }
+    {    ;Name,Version Major,Version Minor,Version Build,Version Revision }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

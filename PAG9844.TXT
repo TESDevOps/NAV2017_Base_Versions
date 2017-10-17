@@ -1,0 +1,48 @@
+OBJECT Page 9844 Plan Permission Set
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Plan Permission Set;
+               ENG=Plan Permission Set];
+    SourceTable=Table9006;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                CaptionML=[ENU=Plan;
+                           ENG=Plan];
+                ToolTipML=[ENU=Specifies the name of the subscription plan.;
+                           ENG=Specifies the name of the subscription plan.];
+                SourceExpr="Plan Name" }
+
+    { 4   ;2   ;Field     ;
+                CaptionML=[ENU=Permission Set;
+                           ENG=Permission Set];
+                ToolTipML=[ENU=Specifies the ID of the permission set.;
+                           ENG=Specifies the ID of the permission set.];
+                SourceExpr="Permission Set ID" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

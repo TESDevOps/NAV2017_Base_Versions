@@ -1,0 +1,556 @@
+OBJECT Page 1310 O365 Activities
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Activities;
+               ENG=Activities];
+    SourceTable=Table1313;
+    PageType=CardPart;
+    RefreshOnActivate=Yes;
+    ShowFilter=No;
+    OnInit=BEGIN
+             O365GettingStartedMgt.UpdateGettingStartedVisible(TileGettingStartedVisible,ReplayGettingStartedVisible);
+           END;
+
+    OnOpenPage=VAR
+                 OCRServiceMgt@1000 : Codeunit 1294;
+                 RoleCenterNotificationMgt@1001 : Codeunit 1430;
+               BEGIN
+                 RESET;
+                 IF NOT GET THEN BEGIN
+                   INIT;
+                   INSERT;
+                 END;
+                 SETFILTER("Due Date Filter",'>=%1',WORKDATE);
+                 SETFILTER("Overdue Date Filter",'<%1',WORKDATE);
+                 SETFILTER("Due Next Week Filter",'%1..%2',CALCDATE('<1D>',WORKDATE),CALCDATE('<1W>',WORKDATE));
+                 SETRANGE("User ID Filter",USERID);
+
+                 HasCamera := CameraProvider.IsAvailable;
+                 IF HasCamera THEN
+                   CameraProvider := CameraProvider.Create;
+
+                 IF UserTours.IsAvailable THEN BEGIN
+                   UserTours := UserTours.Create;
+                   UserTours.NotifyShowTourWizard;
+                   IF O365GettingStartedMgt.IsGettingStartedSupported THEN
+                     UserTours.ShowPlayer
+                   ELSE
+                     UserTours.HidePlayer;
+                 END ELSE
+                   IF PageNotifier.IsAvailable THEN BEGIN
+                     PageNotifier := PageNotifier.Create;
+                     PageNotifier.NotifyPageReady;
+                   END;
+
+                 ShowCamera := TRUE;
+                 ShowStartActivities := TRUE;
+                 ShowSalesActivities := TRUE;
+                 ShowPurchasesActivities := TRUE;
+                 ShowPaymentsActivities := TRUE;
+                 ShowIncomingDocuments := TRUE;
+                 ShowAwaitingIncomingDoc := OCRServiceMgt.OcrServiceIsEnable;
+
+                 RoleCenterNotificationMgt.ShowNotifications;
+               END;
+
+    OnAfterGetRecord=VAR
+                       DocExchServiceSetup@1000 : Record 1275;
+                     BEGIN
+                       CalculateCueFieldValues;
+                       ShowDocumentsPendingDocExchService := FALSE;
+                       IF DocExchServiceSetup.GET THEN
+                         ShowDocumentsPendingDocExchService := DocExchServiceSetup.Enabled;
+                       SetActivityGroupVisibility;
+                     END;
+
+    OnAfterGetCurrRecord=BEGIN
+                           O365GettingStartedMgt.UpdateGettingStartedVisible(TileGettingStartedVisible,ReplayGettingStartedVisible);
+                         END;
+
+    ActionList=ACTIONS
+    {
+      { 6       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 7       ;1   ;Action    ;
+                      Name=Set Up Cues;
+                      CaptionML=[ENU=Set Up Cues;
+                                 ENG=Set Up Cues];
+                      ToolTipML=[ENU=Set up the cues (status tiles) related to the role.;
+                                 ENG=Set up the cues (status tiles) related to the role.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Setup;
+                      OnAction=VAR
+                                 CueRecordRef@1000 : RecordRef;
+                               BEGIN
+                                 CueRecordRef.GETTABLE(Rec);
+                                 CueSetup.OpenCustomizePageForCurrentUser(CueRecordRef.NUMBER);
+                               END;
+                                }
+      { 36      ;1   ;ActionGroup;
+                      Name=Show/Hide Activities;
+                      CaptionML=[ENU=Show/Hide Activities;
+                                 ENG=Show/Hide Activities];
+                      Image=Answers }
+      { 37      ;2   ;Action    ;
+                      Name=[Sales ];
+                      CaptionML=[ENU=Sales;
+                                 ENG=Sales];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Codeunit 1329;
+                      Image=Sales }
+      { 38      ;2   ;Action    ;
+                      Name=Purchases;
+                      CaptionML=[ENU=Purchases;
+                                 ENG=Purchases];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Codeunit 1331;
+                      Image=Purchase }
+      { 39      ;2   ;Action    ;
+                      Name=Payments;
+                      CaptionML=[ENU=Payments;
+                                 ENG=Payments];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Codeunit 1332;
+                      Image=Payment }
+      { 41      ;2   ;Action    ;
+                      Name=Incoming Documents;
+                      CaptionML=[ENU=Incoming Documents;
+                                 ENG=Incoming Documents];
+                      ToolTipML=;
+                      ApplicationArea=#Suite;
+                      RunObject=Codeunit 1333;
+                      Image=Documents }
+      { 40      ;2   ;Action    ;
+                      Name=Start;
+                      CaptionML=[ENU=Start;
+                                 ENG=Start];
+                      ApplicationArea=#Basic,#Suite;
+                      RunObject=Codeunit 1328;
+                      Image=NewDocument }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 35  ;1   ;Group     ;
+                Name=Welcome;
+                CaptionML=[ENU=Welcome;
+                           ENG=Welcome];
+                Visible=TileGettingStartedVisible;
+                GroupType=CueGroup;
+                ActionList=ACTIONS
+                {
+                  { 4       ;    ;Action    ;
+                                  Name=GettingStartedTile;
+                                  CaptionML=[ENU=Return to Getting Started;
+                                             ENG=Return to Getting Started];
+                                  ToolTipML=[ENU=Learn how to get started with Dynamics 365 for Financials.;
+                                             ENG=Learn how to get started with Dynamics 365 for Financials.];
+                                  ApplicationArea=#Basic,#Suite;
+                                  Image=TileVideo;
+                                  OnAction=BEGIN
+                                             O365GettingStartedMgt.LaunchWizard(TRUE,FALSE);
+                                           END;
+                                            }
+                }
+                 }
+
+    { 10  ;1   ;Group     ;
+                CaptionML=[ENU=Ongoing Sales;
+                           ENG=Ongoing Sales];
+                Visible=ShowSalesActivities;
+                GroupType=CueGroup }
+
+    { 13  ;2   ;Field     ;
+                CaptionML=[ENU=Quotes;
+                           ENG=Quotes];
+                ToolTipML=[ENU=Specifies sales quotes that have not yet been converted to invoices or orders.;
+                           ENG=Specifies sales quotes that have not yet been converted to invoices or orders.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Ongoing Sales Quotes";
+                DrillDownPageID=Sales Quotes }
+
+    { 20  ;2   ;Field     ;
+                CaptionML=[ENU=Orders;
+                           ENG=Orders];
+                ToolTipML=[ENU=Specifies sales orders that are not yet posted or only partially posted.;
+                           ENG=Specifies sales orders that are not yet posted or only partially posted.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Ongoing Sales Orders";
+                DrillDownPageID=Sales Order List }
+
+    { 2   ;2   ;Field     ;
+                CaptionML=[ENU=Invoices;
+                           ENG=Invoices];
+                ToolTipML=[ENU=Specifies sales invoices that are not yet posted or only partially posted.;
+                           ENG=Specifies sales invoices that are not yet posted or only partially posted.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Ongoing Sales Invoices";
+                DrillDownPageID=Sales Invoice List }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the sum of sales in the current month.;
+                           ENG=Specifies the sum of sales in the current month.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sales This Month";
+                DrillDownPageID=Sales Invoice List;
+                OnDrillDown=BEGIN
+                              ActivitiesMgt.DrillDownSalesThisMonth;
+                            END;
+                             }
+
+    { 28  ;1   ;Group     ;
+                CaptionML=[ENU=Document Exchange Service;
+                           ENG=Document Exchange Service];
+                Visible=ShowDocumentsPendingDocExchService;
+                GroupType=CueGroup }
+
+    { 27  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies sales invoices that await sending to the customer through the document exchange service.;
+                           ENG=Specifies sales invoices that await sending to the customer through the document exchange service.];
+                ApplicationArea=#Suite;
+                SourceExpr="Sales Inv. - Pending Doc.Exch.";
+                Visible=ShowDocumentsPendingDocExchService;
+                DrillDownPageID=Posted Sales Invoices }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies sales credit memos that await sending to the customer through the document exchange service.;
+                           ENG=Specifies sales credit memos that await sending to the customer through the document exchange service.];
+                ApplicationArea=#Suite;
+                SourceExpr="Sales CrM. - Pending Doc.Exch.";
+                Visible=ShowDocumentsPendingDocExchService;
+                DrillDownPageID=Posted Sales Credit Memos }
+
+    { 9   ;1   ;Group     ;
+                CaptionML=[ENU=Purchases;
+                           ENG=Purchases];
+                Visible=ShowPurchasesActivities;
+                GroupType=CueGroup }
+
+    { 42  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies purchases orders that are not posted or only partially posted.;
+                           ENG=Specifies purchases orders that are not posted or only partially posted.];
+                ApplicationArea=#Suite;
+                SourceExpr="Purchase Orders";
+                DrillDownPageID=Purchase Order List }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies purchases invoices that are not posted or only partially posted.;
+                           ENG=Specifies purchases invoices that are not posted or only partially posted.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Ongoing Purchase Invoices";
+                DrillDownPageID=Purchase Invoices }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the sum of your overdue payments to vendors.;
+                           ENG=Specifies the sum of your overdue payments to vendors.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Overdue Purch. Invoice Amount";
+                OnDrillDown=BEGIN
+                              ActivitiesMgt.DrillDownOverduePurchaseInvoiceAmount;
+                            END;
+                             }
+
+    { 11  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of payments to vendors that are due next week.;
+                           ENG=Specifies the number of payments to vendors that are due next week.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Purch. Invoices Due Next Week" }
+
+    { 24  ;1   ;Group     ;
+                CaptionML=[ENU=Approvals;
+                           ENG=Approvals];
+                Visible=FALSE;
+                GroupType=CueGroup }
+
+    { 25  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of approval requests that require your approval.;
+                           ENG=Specifies the number of approval requests that require your approval.];
+                ApplicationArea=#Suite;
+                SourceExpr="Requests to Approve";
+                DrillDownPageID=Requests to Approve }
+
+    { 12  ;1   ;Group     ;
+                CaptionML=[ENU=Payments;
+                           ENG=Payments];
+                Visible=ShowPaymentsActivities;
+                GroupType=CueGroup }
+
+    { 17  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the sum of overdue payments from customers.;
+                           ENG=Specifies the sum of overdue payments from customers.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Overdue Sales Invoice Amount";
+                OnDrillDown=BEGIN
+                              ActivitiesMgt.DrillDownCalcOverdueSalesInvoiceAmount;
+                            END;
+                             }
+
+    { 29  ;2   ;Field     ;
+                CaptionML=[ENU=Unprocessed Payments;
+                           ENG=Unprocessed Payments];
+                ToolTipML=[ENU=Specifies imported bank transactions for payments that are not yet reconciled in the Payment Reconciliation Journal window.;
+                           ENG=Specifies imported bank transactions for payments that are not yet reconciled in the Payment Reconciliation Journal window.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Non-Applied Payments";
+                OnDrillDown=BEGIN
+                              CODEUNIT.RUN(CODEUNIT::"Pmt. Rec. Journals Launcher");
+                            END;
+
+                Image=Cash }
+
+    { 19  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how long customers took to pay invoices in the last three months. This is the average number of days from when invoices are issued to when customers pay the invoices.;
+                           ENG=Specifies how long customers took to pay invoices in the last three months. This is the average number of days from when invoices are issued to when customers pay the invoices.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Average Collection Days" }
+
+    { 33  ;1   ;Group     ;
+                CaptionML=[ENU=Camera;
+                           ENG=Camera];
+                Visible=ShowCamera;
+                GroupType=CueGroup;
+                ActionList=ACTIONS
+                {
+                  { 21      ;    ;Action    ;
+                                  Name=CreateIncomingDocumentFromCamera;
+                                  CaptionML=[ENU=Create Incoming Doc. from Camera;
+                                             ENG=Create Incoming Doc. from Camera];
+                                  ToolTipML=[ENU=Create an incoming document by taking a photo of the document with your mobile device camera. The photo will be attached to the new document.;
+                                             ENG=Create an incoming document by taking a photo of the document with your mobile device camera. The photo will be attached to the new document.];
+                                  ApplicationArea=#Suite;
+                                  Image=TileCamera;
+                                  OnAction=VAR
+                                             CameraOptions@1000 : DotNet "'Microsoft.Dynamics.Nav.ClientExtensions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.Client.Capabilities.CameraOptions";
+                                           BEGIN
+                                             IF NOT HasCamera THEN
+                                               EXIT;
+
+                                             CameraOptions := CameraOptions.CameraOptions;
+                                             CameraOptions.Quality := 100; // 100%
+                                             CameraProvider.RequestPictureAsync(CameraOptions);
+                                           END;
+                                            }
+                }
+                 }
+
+    { 34  ;1   ;Group     ;
+                CaptionML=[ENU=Incoming Documents;
+                           ENG=Incoming Documents];
+                Visible=ShowIncomingDocuments;
+                GroupType=CueGroup }
+
+    { 30  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies incoming documents that are assigned to you.;
+                           ENG=Specifies incoming documents that are assigned to you.];
+                ApplicationArea=#Suite;
+                SourceExpr="My Incoming Documents" }
+
+    { 32  ;2   ;Field     ;
+                Name=Awaiting Verfication;
+                DrillDown=Yes;
+                ToolTipML=[ENU=Specifies incoming documents in OCR processing that require you to log on to the OCR service website to manually verify the OCR values before the documents can be received.;
+                           ENG=Specifies incoming documents in OCR processing that require you to log on to the OCR service website to manually verify the OCR values before the documents can be received.];
+                ApplicationArea=#Suite;
+                SourceExpr="Inc. Doc. Awaiting Verfication";
+                Visible=ShowAwaitingIncomingDoc;
+                OnDrillDown=VAR
+                              OCRServiceSetup@1000 : Record 1270;
+                            BEGIN
+                              IF OCRServiceSetup.GET THEN
+                                IF OCRServiceSetup.Enabled THEN
+                                  HYPERLINK(OCRServiceSetup."Sign-in URL");
+                            END;
+                             }
+
+    { 14  ;1   ;Group     ;
+                CaptionML=[ENU=Start;
+                           ENG=Start];
+                Visible=ShowStartActivities;
+                GroupType=CueGroup;
+                ActionList=ACTIONS
+                {
+                  { 15      ;    ;Action    ;
+                                  CaptionML=[ENU=Sales Quote;
+                                             ENG=Sales Quote];
+                                  ToolTipML=[ENU=Offer items or services to a customer.;
+                                             ENG=Offer items or services to a customer.];
+                                  ApplicationArea=#Basic,#Suite;
+                                  RunObject=Page 41;
+                                  Image=TileNew;
+                                  RunPageMode=Create }
+                  { 31      ;    ;Action    ;
+                                  CaptionML=[ENU=Sales Order;
+                                             ENG=Sales Order];
+                                  ToolTipML=[ENU=Create a new sales order for items or services that require partial posting.;
+                                             ENG=Create a new sales order for items or services that require partial posting.];
+                                  ApplicationArea=#Basic,#Suite;
+                                  RunObject=Page 42;
+                                  Image=TileNew;
+                                  RunPageMode=Create }
+                  { 16      ;    ;Action    ;
+                                  CaptionML=[ENU=Sales Invoice;
+                                             ENG=Sales Invoice];
+                                  ToolTipML=[ENU=Create a new invoice for items or services. Invoice quantities cannot be posted partially.;
+                                             ENG=Create a new invoice for items or services. Invoice quantities cannot be posted partially.];
+                                  ApplicationArea=#Basic,#Suite;
+                                  RunObject=Page 43;
+                                  Image=TileNew;
+                                  RunPageMode=Create }
+                  { 22      ;    ;Action    ;
+                                  CaptionML=[ENU=Purchase Invoice;
+                                             ENG=Purchase Invoice];
+                                  ToolTipML=[ENU=Create a new purchase invoice for items or services.;
+                                             ENG=Create a new purchase invoice for items or services.];
+                                  ApplicationArea=#Basic,#Suite;
+                                  RunObject=Page 51;
+                                  Image=TileNew;
+                                  RunPageMode=Create }
+                }
+                 }
+
+    { 44  ;1   ;Group     ;
+                CaptionML=[ENU=Get started;
+                           ENG=Get started];
+                Visible=ReplayGettingStartedVisible;
+                GroupType=CueGroup;
+                ActionList=ACTIONS
+                {
+                  { 23      ;    ;Action    ;
+                                  Name=ShowStartInMyCompany;
+                                  CaptionML=[ENU=Try with my own data;
+                                             ENG=Try with my own data];
+                                  ToolTipML=[ENU=Set up My Company with the settings you choose. We'll show you how, it's easy.;
+                                             ENG=Set up My Company with the settings you choose. We'll show you how, it's easy.];
+                                  ApplicationArea=#Basic,#Suite;
+                                  Visible=FALSE;
+                                  Image=TileSettings;
+                                  OnAction=BEGIN
+                                             IF UserTours.IsAvailable THEN
+                                               UserTours.StartUserTour(O365GettingStartedMgt.GetChangeCompanyTourID);
+                                           END;
+                                            }
+                  { 8       ;    ;Action    ;
+                                  Name=ReplayGettingStarted;
+                                  CaptionML=[ENU=Replay Getting Started;
+                                             ENG=Replay Getting Started];
+                                  ToolTipML=[ENU=Show the Getting Started guide again.;
+                                             ENG=Show the Getting Started guide again.];
+                                  ApplicationArea=#Basic,#Suite;
+                                  Image=TileVideo;
+                                  OnAction=VAR
+                                             O365GettingStarted@1000 : Record 1309;
+                                           BEGIN
+                                             IF O365GettingStarted.GET(USERID,CURRENTCLIENTTYPE) THEN BEGIN
+                                               O365GettingStarted."Tour in Progress" := FALSE;
+                                               O365GettingStarted."Current Page" := 1;
+                                               O365GettingStarted.MODIFY;
+                                               COMMIT;
+                                             END;
+
+                                             O365GettingStartedMgt.LaunchWizard(TRUE,FALSE);
+                                           END;
+                                            }
+                }
+                 }
+
+  }
+  CODE
+  {
+    VAR
+      ActivitiesMgt@1009 : Codeunit 1311;
+      CueSetup@1005 : Codeunit 9701;
+      O365GettingStartedMgt@1004 : Codeunit 1309;
+      CameraProvider@1007 : DotNet "'Microsoft.Dynamics.Nav.ClientExtensions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.Client.Capabilities.CameraProvider" WITHEVENTS RUNONCLIENT;
+      UserTours@1001 : DotNet "'Microsoft.Dynamics.Nav.ClientExtensions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.Client.Capabilities.UserTours" WITHEVENTS RUNONCLIENT;
+      PageNotifier@1002 : DotNet "'Microsoft.Dynamics.Nav.ClientExtensions, Version=10.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.Client.PageNotifier" WITHEVENTS RUNONCLIENT;
+      HasCamera@1008 : Boolean;
+      ShowCamera@1003 : Boolean;
+      ShowDocumentsPendingDocExchService@1006 : Boolean;
+      ShowStartActivities@1010 : Boolean;
+      ShowIncomingDocuments@1011 : Boolean;
+      ShowPaymentsActivities@1012 : Boolean;
+      ShowPurchasesActivities@1013 : Boolean;
+      ShowSalesActivities@1014 : Boolean;
+      ShowAwaitingIncomingDoc@1015 : Boolean;
+      TileGettingStartedVisible@1000 : Boolean;
+      ReplayGettingStartedVisible@1016 : Boolean;
+
+    LOCAL PROCEDURE CalculateCueFieldValues@6();
+    BEGIN
+      IF FIELDACTIVE("Overdue Sales Invoice Amount") THEN
+        "Overdue Sales Invoice Amount" := ActivitiesMgt.CalcOverdueSalesInvoiceAmount;
+      IF FIELDACTIVE("Overdue Purch. Invoice Amount") THEN
+        "Overdue Purch. Invoice Amount" := ActivitiesMgt.CalcOverduePurchaseInvoiceAmount;
+      IF FIELDACTIVE("Sales This Month") THEN
+        "Sales This Month" := ActivitiesMgt.CalcSalesThisMonthAmount;
+      IF FIELDACTIVE("Top 10 Customer Sales YTD") THEN
+        "Top 10 Customer Sales YTD" := ActivitiesMgt.CalcTop10CustomerSalesRatioYTD;
+      IF FIELDACTIVE("Average Collection Days") THEN
+        "Average Collection Days" := ActivitiesMgt.CalcAverageCollectionDays;
+    END;
+
+    LOCAL PROCEDURE SetActivityGroupVisibility@12();
+    VAR
+      StartActivitiesMgt@1001 : Codeunit 1328;
+      SalesActivitiesMgt@1002 : Codeunit 1329;
+      PurchasesActivitiesMgt@1003 : Codeunit 1331;
+      PaymentsActivitiesMgt@1004 : Codeunit 1332;
+      IncDocActivitiesMgt@1005 : Codeunit 1333;
+    BEGIN
+      ShowStartActivities := StartActivitiesMgt.IsActivitiesVisible;
+      ShowSalesActivities := SalesActivitiesMgt.IsActivitiesVisible;
+      ShowPurchasesActivities := PurchasesActivitiesMgt.IsActivitiesVisible;
+      ShowPaymentsActivities := PaymentsActivitiesMgt.IsActivitiesVisible;
+      ShowIncomingDocuments := IncDocActivitiesMgt.IsActivitiesVisible;
+      ShowCamera := HasCamera AND ShowIncomingDocuments;
+    END;
+
+    EVENT CameraProvider@1007::PictureAvailable@10(PictureName@1001 : Text;PictureFilePath@1000 : Text);
+    VAR
+      IncomingDocument@1002 : Record 130;
+    BEGIN
+      IncomingDocument.CreateIncomingDocumentFromServerFile(PictureName,PictureFilePath);
+      CurrPage.UPDATE;
+    END;
+
+    EVENT UserTours@1001::ShowTourWizard@13(hasTourCompleted@1000 : Boolean);
+    BEGIN
+      O365GettingStartedMgt.LaunchWizard(FALSE,hasTourCompleted);
+    END;
+
+    EVENT UserTours@1001::IsTourInProgressResultReady@14(isInProgress@1000 : Boolean);
+    BEGIN
+    END;
+
+    EVENT PageNotifier@1002::PageReady@9();
+    VAR
+      O365GettingStarted@1001 : Record 1309;
+      PermissionManager@1002 : Codeunit 9002;
+      WizardHasBeenShownToUser@1000 : Boolean;
+    BEGIN
+      IF NOT (CURRENTCLIENTTYPE IN [CLIENTTYPE::Tablet,CLIENTTYPE::Phone]) THEN
+        EXIT;
+
+      IF NOT PermissionManager.SoftwareAsAService THEN
+        EXIT;
+
+      WizardHasBeenShownToUser := O365GettingStarted.GET(USERID,CURRENTCLIENTTYPE);
+      IF NOT WizardHasBeenShownToUser THEN
+        PAGE.RUNMODAL(PAGE::"O365 Getting Started Device");
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

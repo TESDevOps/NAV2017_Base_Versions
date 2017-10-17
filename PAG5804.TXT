@@ -1,0 +1,292 @@
+OBJECT Page 5804 Applied Item Entries
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Applied Item Entries;
+               ENG=Applied Item Entries];
+    SourceTable=Table32;
+    PageType=List;
+    OnAfterGetRecord=BEGIN
+                       GetApplQty;
+                     END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 60      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Ent&ry;
+                                 ENG=Ent&ry];
+                      Image=Entry }
+      { 61      ;2   ;Action    ;
+                      AccessByPermission=TableData 348=R;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edits dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edits dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      ApplicationArea=#Suite;
+                      Image=Dimensions;
+                      OnAction=BEGIN
+                                 ShowDimensions;
+                               END;
+                                }
+      { 64      ;2   ;Action    ;
+                      ShortCutKey=Ctrl+F7;
+                      CaptionML=[ENU=&Value Entries;
+                                 ENG=&Value Entries];
+                      ToolTipML=[ENU=View amounts that relate to an item. Whenever you do something that changes a value for items in the inventory, like post an order, one or more value entries are added.;
+                                 ENG=View amounts that relate to an item. Whenever you do something that changes a value for items in the inventory, like post an order, one or more value entries are added.];
+                      RunObject=Page 5802;
+                      RunPageView=SORTING(Item Ledger Entry No.);
+                      RunPageLink=Item Ledger Entry No.=FIELD(Entry No.);
+                      Image=ValueLedger }
+      { 30      ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Application;
+                                 ENG=&Application];
+                      Image=Apply }
+      { 58      ;2   ;Action    ;
+                      CaptionML=[ENU=Applied E&ntries;
+                                 ENG=Applied E&ntries];
+                      ToolTipML=[ENU=View the ledger entries that have been applied to this record.;
+                                 ENG=View the ledger entries that have been applied to this record.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Approve;
+                      OnAction=BEGIN
+                                 CODEUNIT.RUN(CODEUNIT::"Show Applied Entries",Rec);
+                               END;
+                                }
+      { 56      ;2   ;Action    ;
+                      AccessByPermission=TableData 27=R;
+                      CaptionML=[ENU=Reservation Entries;
+                                 ENG=Reservation Entries];
+                      ToolTipML=[ENU=View information about reservation and item tracking.;
+                                 ENG=View information about reservation and item tracking.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=ReservationLedger;
+                      OnAction=BEGIN
+                                 ShowReservationEntries(TRUE);
+                               END;
+                                }
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 57      ;1   ;ActionGroup;
+                      CaptionML=[ENU=F&unctions;
+                                 ENG=F&unctions];
+                      Image=Action }
+      { 59      ;2   ;Action    ;
+                      CaptionML=[ENU=Order &Tracking;
+                                 ENG=Order &Tracking];
+                      ToolTipML=[ENU=Tracks the connection of a supply to its corresponding demand. This can help you find the original demand that created a specific production order or purchase order.;
+                                 ENG=Tracks the connection of a supply to its corresponding demand. This can help you find the original demand that created a specific production order or purchase order.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=OrderTracking;
+                      OnAction=VAR
+                                 TrackingForm@1001 : Page 99000822;
+                               BEGIN
+                                 TrackingForm.SetItemLedgEntry(Rec);
+                                 TrackingForm.RUNMODAL;
+                               END;
+                                }
+      { 32      ;1   ;Action    ;
+                      CaptionML=[ENU=&Navigate;
+                                 ENG=&Navigate];
+                      ToolTipML=[ENU=Find all entries and documents that exist for the document number and posting date on the selected entry or document.;
+                                 ENG=Find all entries and documents that exist for the document number and posting date on the selected entry or document.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=Navigate;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 Navigate.SetDoc("Posting Date","Document No.");
+                                 Navigate.RUN;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the entry's posting date.;
+                           ENG=Specifies the entry's posting date.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Posting Date" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies which type of transaction that the entry is created from.;
+                           ENG=Specifies which type of transaction that the entry is created from.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Entry Type" }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document number on the entry. The document is the voucher that the entry was based on, for example, a receipt.;
+                           ENG=Specifies the document number on the entry. The document is the voucher that the entry was based on, for example, a receipt.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Document No." }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the item in the entry.;
+                           ENG=Specifies the number of the item in the entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Item No." }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the variant code for the items.;
+                           ENG=Specifies the variant code for the items.];
+                SourceExpr="Variant Code";
+                Visible=FALSE }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description of the entry.;
+                           ENG=Specifies a description of the entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Description }
+
+    { 34  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code that the entry is linked to.;
+                           ENG=Specifies the dimension value code that the entry is linked to.];
+                SourceExpr="Global Dimension 1 Code";
+                Visible=FALSE }
+
+    { 36  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code that the entry is linked to.;
+                           ENG=Specifies the dimension value code that the entry is linked to.];
+                SourceExpr="Global Dimension 2 Code";
+                Visible=FALSE }
+
+    { 38  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the location that the entry is linked to.;
+                           ENG=Specifies the code for the location that the entry is linked to.];
+                SourceExpr="Location Code" }
+
+    { 20  ;2   ;Field     ;
+                CaptionML=[ENU=Applied Quantity;
+                           ENG=Applied Quantity];
+                ToolTipML=[ENU=Specifies how many units of the item that have been applied.;
+                           ENG=Specifies how many units of the item that have been applied.];
+                ApplicationArea=#Basic,#Suite;
+                DecimalPlaces=0:5;
+                SourceExpr=ApplQty }
+
+    { 12  ;2   ;Field     ;
+                CaptionML=[ENU=Quantity;
+                           ENG=Quantity];
+                ToolTipML=[ENU=Specifies the total quantity of items that have been applied.;
+                           ENG=Specifies the total quantity of items that have been applied.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Qty }
+
+    { 42  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how many units of the item on the line have been invoiced.;
+                           ENG=Specifies how many units of the item on the line have been invoiced.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Invoiced Quantity";
+                Visible=TRUE }
+
+    { 44  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity that remains in inventory in the Quantity field if the entry is an increase (a purchase or positive adjustment).;
+                           ENG=Specifies the quantity that remains in inventory in the Quantity field if the entry is an increase (a purchase or positive adjustment).];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Remaining Quantity";
+                Visible=TRUE }
+
+    { 117 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how many units of the item on the line have been reserved.;
+                           ENG=Specifies how many units of the item on the line have been reserved.];
+                SourceExpr="Reserved Quantity";
+                Visible=FALSE;
+                OnDrillDown=BEGIN
+                              ShowReservationEntries(TRUE);
+                            END;
+                             }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether the entry has been fully applied to.;
+                           ENG=Specifies whether the entry has been fully applied to.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Open }
+
+    { 52  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity per item unit of measure.;
+                           ENG=Specifies the quantity per item unit of measure.];
+                SourceExpr="Qty. per Unit of Measure";
+                Visible=FALSE }
+
+    { 80  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether the items on the line have been shipped directly to the customer.;
+                           ENG=Specifies whether the items on the line have been shipped directly to the customer.];
+                SourceExpr="Drop Shipment";
+                Visible=FALSE }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether there is one or more applied entries, which need to be adjusted.;
+                           ENG=Specifies whether there is one or more applied entries, which need to be adjusted.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Applied Entry to Adjust" }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies which type of order that the entry was created in.;
+                           ENG=Specifies which type of order that the entry was created in.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Order Type" }
+
+    { 54  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the order that created the entry.;
+                           ENG=Specifies the number of the order that created the entry.];
+                SourceExpr="Order No.";
+                Visible=FALSE }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the entry number for the entry.;
+                           ENG=Specifies the entry number for the entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Entry No." }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      Navigate@1000 : Page 344;
+      ApplQty@1001 : Decimal;
+      Qty@1002 : Decimal;
+
+    LOCAL PROCEDURE GetApplQty@1();
+    VAR
+      ItemLedgEntry@1000 : Record 32;
+    BEGIN
+      ItemLedgEntry.GET("Entry No.");
+      ApplQty := Quantity;
+      Qty := ItemLedgEntry.Quantity;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

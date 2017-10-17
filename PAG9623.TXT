@@ -1,0 +1,350 @@
+OBJECT Page 9623 Finish Up Design
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Finish Up Design;
+               ENG=Finish Up Design];
+    PageType=NavigatePage;
+    RefreshOnActivate=Yes;
+    OnInit=BEGIN
+             GoVisible := TRUE;
+             ChooseVisible := TRUE;
+             RequireEula := TRUE;
+           END;
+
+    ActionList=ACTIONS
+    {
+      { 6       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 7       ;1   ;Action    ;
+                      Name=Go;
+                      CaptionML=[ENU=Go;
+                                 ENG=Go];
+                      ApplicationArea=#Basic,#Suite;
+                      Visible=GoVisible;
+                      InFooterBar=Yes;
+                      Image=Approve;
+                      OnAction=BEGIN
+                                 GoVisible := FALSE;
+                                 ChooseVisible := FALSE;
+
+                                 NextVisible := TRUE;
+                                 PreviousVisible := TRUE;
+                                 Step1Visible := TRUE;
+                               END;
+                                }
+      { 8       ;1   ;Action    ;
+                      Name=Previous;
+                      CaptionML=[ENU=Previous;
+                                 ENG=Previous];
+                      ApplicationArea=#Basic,#Suite;
+                      Visible=PreviousVisible;
+                      InFooterBar=Yes;
+                      Image=PreviousRecord;
+                      OnAction=BEGIN
+                                 IF Step1Visible THEN BEGIN
+                                   GoVisible := TRUE;
+                                   ChooseVisible := TRUE;
+
+                                   NextVisible := FALSE;
+                                   PreviousVisible := FALSE;
+                                   Step1Visible := FALSE;
+                                 END ELSE
+                                   IF Step2Visible THEN BEGIN
+                                     NextVisible := TRUE;
+                                     Step1Visible := TRUE;
+
+                                     PublishVisible := FALSE;
+                                     Step2Visible := FALSE;
+                                   END;
+                               END;
+                                }
+      { 9       ;1   ;Action    ;
+                      Name=Next;
+                      CaptionML=[ENU=Next;
+                                 ENG=Next];
+                      ApplicationArea=#Basic,#Suite;
+                      Visible=NextVisible;
+                      InFooterBar=Yes;
+                      Image=NextRecord;
+                      OnAction=BEGIN
+                                 NextVisible := FALSE;
+                                 Step1Visible := FALSE;
+
+                                 PublishVisible := TRUE;
+                                 Step2Visible := TRUE;
+                               END;
+                                }
+      { 10      ;1   ;Action    ;
+                      Name=Publish;
+                      CaptionML=[ENU=Publish;
+                                 ENG=Publish];
+                      ApplicationArea=#Basic,#Suite;
+                      Visible=PublishVisible;
+                      InFooterBar=Yes;
+                      Image=Approve;
+                      OnAction=BEGIN
+                                 PreviousVisible := FALSE;
+                                 PublishVisible := FALSE;
+                                 Step2Visible := FALSE;
+
+                                 SuccessVisible := TRUE;
+                                 OkVisible := TRUE;
+                               END;
+                                }
+      { 11      ;1   ;Action    ;
+                      Name=Ok;
+                      CaptionML=[ENU=Ok;
+                                 ENG=Ok];
+                      ApplicationArea=#Basic,#Suite;
+                      Visible=OkVisible;
+                      InFooterBar=Yes;
+                      Image=Approve;
+                      OnAction=BEGIN
+                                 CurrPage.CLOSE;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=ChooseSave;
+                CaptionML=[ENU=ChooseSave;
+                           ENG=ChooseSave];
+                Visible=ChooseVisible;
+                GroupType=Group }
+
+    { 29  ;2   ;Field     ;
+                Name=ChooseDescription;
+                CaptionML=[ENU=Your changes to the pages have been recorded. You can review which changes to keep in the next step.;
+                           ENG=Your changes to the pages have been recorded. You can review which changes to keep in the next step.];
+                ApplicationArea=#Basic,#Suite }
+
+    { 3   ;2   ;Part      ;
+                Name=DesignListPart;
+                CaptionML=[ENU=Choose how to save changes;
+                           ENG=Choose how to save changes];
+                ApplicationArea=#Basic,#Suite;
+                PagePartID=Page9624;
+                Editable=FALSE;
+                PartType=Page }
+
+    { 12  ;1   ;Group     ;
+                Name=Step 1;
+                CaptionML=[ENU=Step 1;
+                           ENG=Step 1];
+                Visible=Step1Visible;
+                GroupType=Group }
+
+    { 13  ;2   ;Group     ;
+                Name=Step 1 of 2;
+                CaptionML=[ENU=Step 1 of 2;
+                           ENG=Step 1 of 2];
+                GroupType=Group }
+
+    { 14  ;3   ;Group     ;
+                Name=NEW EXTENSION DEFINITION;
+                CaptionML=[ENU=NEW EXTENSION DEFINITION;
+                           ENG=NEW EXTENSION DEFINITION];
+                GroupType=Group }
+
+    { 30  ;4   ;Field     ;
+                Name=NewExtensionDescription;
+                CaptionML=[ENU=Fill in information about the new extension and choose next. The information you provide is visible in the Store.;
+                           ENG=Fill in information about the new extension and choose next. The information you provide is visible in the Store.];
+                ApplicationArea=#Basic,#Suite }
+
+    { 31  ;4   ;Group     ;
+                GroupType=Group }
+
+    { 15  ;5   ;Field     ;
+                Name=Name;
+                CaptionML=[ENU=Name;
+                           ENG=Name];
+                ToolTipML=[ENU=Specifies the name of the Extension.;
+                           ENG=Specifies the name of the Extension.];
+                ApplicationArea=#Basic,#Suite;
+                NotBlank=Yes;
+                SourceExpr=ExtName;
+                ShowMandatory=TRUE }
+
+    { 16  ;5   ;Field     ;
+                Name=Publisher;
+                CaptionML=[ENU=Publisher;
+                           ENG=Publisher];
+                ToolTipML=[ENU=Specifies the name of the Extension publisher.;
+                           ENG=Specifies the name of the Extension publisher.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=ExtPub }
+
+    { 17  ;5   ;Field     ;
+                Name=Description;
+                CaptionML=[ENU=Description;
+                           ENG=Description];
+                ToolTipML=[ENU=Specifies the description of the Extension.;
+                           ENG=Specifies the description of the Extension.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=ExtDesc;
+                MultiLine=Yes }
+
+    { 18  ;1   ;Group     ;
+                Name=Step 2;
+                CaptionML=[ENU=Step 2;
+                           ENG=Step 2];
+                Visible=Step2Visible;
+                GroupType=Group }
+
+    { 19  ;2   ;Group     ;
+                Name=Step 2 of 2;
+                CaptionML=[ENU=Step 2 of 2;
+                           ENG=Step 2 of 2];
+                GroupType=Group }
+
+    { 20  ;3   ;Group     ;
+                Name=SUPPORT AND INSTALLATION;
+                CaptionML=[ENU=SUPPORT AND INSTALLATION;
+                           ENG=SUPPORT AND INSTALLATION];
+                GroupType=Group }
+
+    { 32  ;4   ;Field     ;
+                Name=SupportDescription;
+                CaptionML=[ENU=People installing the extension can look up information about it. Provide the links you want to publish with the extension.;
+                           ENG=People installing the extension can look up information about it. Provide the links you want to publish with the extension.];
+                ApplicationArea=#Basic,#Suite }
+
+    { 33  ;4   ;Group     ;
+                GroupType=Group }
+
+    { 21  ;5   ;Field     ;
+                Name=PublisherWebsite;
+                CaptionML=[ENU=Publisher website (URL);
+                           ENG=Publisher website (URL)];
+                ToolTipML=[ENU=Specifies the website for the Extension publisher.;
+                           ENG=Specifies the website for the Extension publisher.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=ExtWeb }
+
+    { 22  ;5   ;Field     ;
+                Name=SupportWebsite;
+                CaptionML=[ENU=Support website (URL);
+                           ENG=Support website (URL)];
+                ToolTipML=[ENU=Specifies a support website for the Extension.;
+                           ENG=Specifies a support website for the Extension.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=ExtHelp }
+
+    { 36  ;5   ;Field     ;
+                Name=RequireEula;
+                CaptionML=[ENU=Require EULA accept prior to installation;
+                           ENG=Require EULA accept prior to installation];
+                ToolTipML=[ENU=Specifies if users are required to accept the Extension's EULA before installation;
+                           ENG=Specifies if users are required to accept the Extension's EULA before installation];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=RequireEula }
+
+    { 24  ;4   ;Group     ;
+                Name=ADVANCED;
+                CaptionML=[ENU=ADVANCED;
+                           ENG=ADVANCED];
+                GroupType=Group }
+
+    { 23  ;5   ;Field     ;
+                Name=AdvancedDescription;
+                CaptionML=[ENU=Review the Extension contents and privileges if you want to update what goes into the Extension manifest.;
+                           ENG=Review the Extension contents and privileges if you want to update what goes into the Extension manifest.];
+                ApplicationArea=#Basic,#Suite }
+
+    { 25  ;5   ;Field     ;
+                Name=ReviewContents;
+                DrillDown=Yes;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=ReviewContentsLbl;
+                Editable=FALSE;
+                OnDrillDown=BEGIN
+                              CurrPage.CLOSE;
+                            END;
+
+                ShowCaption=No }
+
+    { 26  ;5   ;Field     ;
+                Name=ManagePrivileges;
+                DrillDown=Yes;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=ManagePrivilagesLbl;
+                Editable=FALSE;
+                OnDrillDown=BEGIN
+                              CurrPage.CLOSE;
+                            END;
+
+                ShowCaption=No }
+
+    { 27  ;1   ;Group     ;
+                Name=Success;
+                CaptionML=[ENU=Success;
+                           ENG=Success];
+                Visible=SuccessVisible;
+                GroupType=Group }
+
+    { 28  ;2   ;Group     ;
+                Name=PublishSuccess;
+                CaptionML=[ENU=Extension published successfully!;
+                           ENG=Extension published successfully!];
+                GroupType=Group }
+
+    { 34  ;3   ;Field     ;
+                Name=SuccessDescription;
+                CaptionML=[ENU=The extension is now available for installation from the Extension Management page.;
+                           ENG=The extension is now available for installation from the Extension Management page.];
+                ApplicationArea=#Basic,#Suite }
+
+    { 35  ;3   ;Field     ;
+                Name=MgmtLink;
+                DrillDown=Yes;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=GoToExtensionMgmtLbl;
+                Editable=FALSE;
+                OnDrillDown=BEGIN
+                              CurrPage.CLOSE;
+                              PAGE.RUN(PAGE::"Extension Management");
+                            END;
+
+                ShowCaption=No }
+
+  }
+  CODE
+  {
+    VAR
+      GoVisible@1000 : Boolean;
+      PreviousVisible@1001 : Boolean;
+      NextVisible@1002 : Boolean;
+      PublishVisible@1003 : Boolean;
+      OkVisible@1004 : Boolean;
+      ChooseVisible@1005 : Boolean;
+      Step1Visible@1006 : Boolean;
+      Step2Visible@1007 : Boolean;
+      SuccessVisible@1008 : Boolean;
+      GoToExtensionMgmtLbl@1009 : TextConst 'ENU=Go To Extension Management;ENG=Go To Extension Management';
+      RequireEula@1018 : Boolean;
+      ExtName@1010 : Text INDATASET;
+      ExtPub@1011 : Text;
+      ExtDesc@1012 : Text;
+      ExtHelp@1013 : Text;
+      ExtWeb@1014 : Text;
+      ReviewContentsLbl@1016 : TextConst 'ENU=Review and update Extension contents;ENG=Review and update Extension contents';
+      ManagePrivilagesLbl@1017 : TextConst 'ENU=Manage required Extension privileges;ENG=Manage required Extension privileges';
+
+    BEGIN
+    END.
+  }
+}
+

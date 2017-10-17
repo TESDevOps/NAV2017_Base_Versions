@@ -1,0 +1,191 @@
+OBJECT Page 472 VAT Posting Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=VAT Posting Setup;
+               ENG=VAT Posting Setup];
+    SourceTable=Table325;
+    DataCaptionFields=VAT Bus. Posting Group,VAT Prod. Posting Group;
+    PageType=List;
+    CardPageID=VAT Posting Setup Card;
+    ActionList=ACTIONS
+    {
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 19      ;1   ;Action    ;
+                      Name=Copy;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=&Copy;
+                                 ENG=&Copy];
+                      ToolTipML=[ENU=Copy a record with selected fields or all fields from the Tax posting setup to a new record. Before you start to copy you have to create the new record.;
+                                 ENG=Copy a record with selected fields or all fields from the VAT posting setup to a new record. Before you start to copy you have to create the new record.];
+                      ApplicationArea=#Basic,#Suite;
+                      Promoted=Yes;
+                      Image=Copy;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 CurrPage.SAVERECORD;
+                                 CopyVATPostingSetup.SetVATSetup(Rec);
+                                 CopyVATPostingSetup.RUNMODAL;
+                                 CLEAR(CopyVATPostingSetup);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a VAT business posting group code.;
+                           ENG=Specifies a VAT business posting group code.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="VAT Bus. Posting Group" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a VAT product posting group code.;
+                           ENG=Specifies a VAT product posting group code.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="VAT Prod. Posting Group" }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a code to group various VAT posting setups with similar attributes, for example VAT percentage.;
+                           ENG=Specifies a code to group various VAT posting setups with similar attributes, for example VAT percentage.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="VAT Identifier" }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the relevant VAT rate for the particular combination of VAT business posting group and VAT product posting group. Do not enter the percent sign, only the number. For example, if the VAT rate is 25 %, enter 25 in this field.;
+                           ENG=Specifies the relevant VAT rate for the particular combination of VAT business posting group and VAT product posting group. Do not enter the percent sign, only the number. For example, if the VAT rate is 25 %, enter 25 in this field.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="VAT %" }
+
+    { 15  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how VAT will be calculated for purchases or sales of items with this particular combination of VAT business posting group and VAT product posting group.;
+                           ENG=Specifies how VAT will be calculated for purchases or sales of items with this particular combination of VAT business posting group and VAT product posting group.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="VAT Calculation Type" }
+
+    { 47  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies how to handle unrealized VAT, which is VAT that is calculated but not due until the invoice is paid.;
+                           ENG=Specifies how to handle unrealised VAT, which is VAT that is calculated but not due until the invoice is paid.];
+                SourceExpr="Unrealized VAT Type";
+                Visible=FALSE }
+
+    { 40  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether to recalculate VAT amounts when you post payments that trigger payment discounts.;
+                           ENG=Specifies whether to recalculate VAT amounts when you post payments that trigger payment discounts.];
+                SourceExpr="Adjust for Payment Discount";
+                Visible=FALSE }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to which to post sales VAT for the particular combination of VAT business posting group and VAT product posting group.;
+                           ENG=Specifies the general ledger account number to which to post sales VAT for the particular combination of VAT business posting group and VAT product posting group.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sales VAT Account" }
+
+    { 41  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the general ledger account to post unrealized sales VAT to.;
+                           ENG=Specifies the number of the general ledger account to post unrealised sales VAT to.];
+                SourceExpr="Sales VAT Unreal. Account";
+                Visible=FALSE }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to which to post purchase VAT for the particular combination of business group and product group.;
+                           ENG=Specifies the general ledger account number to which to post purchase VAT for the particular combination of business group and product group.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Purchase VAT Account" }
+
+    { 43  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the general ledger account to post unrealized purchase VAT to.;
+                           ENG=Specifies the number of the general ledger account to post unrealised purchase VAT to.];
+                SourceExpr="Purch. VAT Unreal. Account";
+                Visible=FALSE }
+
+    { 17  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the general ledger account number to which you want to post reverse charge VAT (purchase VAT) for this combination of VAT business posting group and VAT product posting group, if you have selected the Reverse Charge VAT option in the VAT Calculation Type field.;
+                           ENG=Specifies the general ledger account number to which you want to post reverse charge VAT (purchase VAT) for this combination of VAT business posting group and VAT product posting group, if you have selected the Reverse Charge VAT option in the VAT Calculation Type field.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Reverse Chrg. VAT Acc." }
+
+    { 45  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the general ledger account to post amounts for unrealized reverse charge VAT to.;
+                           ENG=Specifies the number of the general ledger account to post amounts for unrealised reverse charge VAT to.];
+                SourceExpr="Reverse Chrg. VAT Unreal. Acc.";
+                Visible=FALSE }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the VAT Clause Code that is associated with the VAT Posting Setup.;
+                           ENG=Specifies the VAT Clause Code that is associated with the VAT Posting Setup.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="VAT Clause Code" }
+
+    { 23  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies if this combination of VAT business posting group and VAT product posting group are to be reported as services in the periodic VAT reports.;
+                           ENG=Specifies if this combination of VAT business posting group and VAT product posting group are to be reported as services in the periodic VAT reports.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="EU Service" }
+
+    { 3   ;2   ;Field     ;
+                SourceExpr="Certificate of Supply Required";
+                Visible=FALSE }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the VAT category in connection with electronic document sending. For example, when you send sales documents through the PEPPOL service, the value in this field is used to populate the TaxApplied element in the Supplier group. The number is based on the UNCL5305 standard.;
+                           ENG=Specifies the VAT category in connection with electronic document sending. For example, when you send sales documents through the PEPPOL service, the value in this field is used to populate the TaxApplied element in the Supplier group. The number is based on the UNCL5305 standard.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Tax Category" }
+
+    { 52  ;1   ;Group      }
+
+    { 61  ;2   ;Field     ;
+                Name=VAT Bus. Posting Group2;
+                ToolTipML=[ENU=Specifies a VAT business posting group code.;
+                           ENG=Specifies a VAT business posting group code.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="VAT Bus. Posting Group";
+                Editable=FALSE }
+
+    { 63  ;2   ;Field     ;
+                Name=VAT Prod. Posting Group2;
+                ToolTipML=[ENU=Specifies a VAT product posting group code.;
+                           ENG=Specifies a VAT product posting group code.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="VAT Prod. Posting Group";
+                Editable=FALSE }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      CopyVATPostingSetup@1001 : Report 85;
+
+    BEGIN
+    END.
+  }
+}
+

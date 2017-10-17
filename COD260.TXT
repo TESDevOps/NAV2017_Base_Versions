@@ -1,0 +1,122 @@
+OBJECT Codeunit 260 Document-Mailing
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    TableNo=472;
+    OnRun=VAR
+            ReportSelections@1005 : Record 77;
+          BEGIN
+            ReportSelections.SendEmailInBackground(Rec);
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      EmailSubjectCapTxt@1001 : TextConst '@@@="%1 = Customer Name. %2 = Document Type %3 = Invoice No.";ENU=%1 - %2 %3;ENG=%1 - %2 %3';
+      ReportAsPdfFileNameMsg@1000 : TextConst '@@@="%1 = Document Type %2 = Invoice No.";ENU=Sales %1 %2.pdf;ENG=Sales %1 %2.pdf';
+      EmailSubjectPluralCapTxt@1003 : TextConst '@@@="%1 = Customer Name. %2 = Document Type in plural form";ENU=%1 - %2;ENG=%1 - %2';
+      ReportAsPdfFileNamePluralMsg@1002 : TextConst '@@@="%1 = Document Type in plural form";ENU=Sales %1.pdf;ENG=Sales %1.pdf';
+      JobsReportAsPdfFileNameMsg@1004 : TextConst '@@@="%1 = Document Type %2 = Job Number";ENU=%1 %2.pdf;ENG=%1 %2.pdf';
+      PdfFileNamePluralMsg@1005 : TextConst '@@@="%1 = Document Type in plural form";ENU=%1.pdf;ENG=%1.pdf';
+
+    PROCEDURE EmailFile@3(AttachmentFilePath@1001 : Text[250];AttachmentFileName@1005 : Text[250];HtmlBodyFilePath@1007 : Text[250];PostedDocNo@1000 : Code[20];ToEmailAddress@1006 : Text[250];EmailDocName@1008 : Text[150];HideDialog@1003 : Boolean;ReportUsage@1010 : Integer);
+    VAR
+      O365EmailSetup@1014 : Record 2118;
+      TempEmailItem@1002 : TEMPORARY Record 9500;
+      CompanyInformation@1004 : Record 79;
+      ReportSelections@1011 : Record 77;
+      OfficeMgt@1009 : Codeunit 1630;
+    BEGIN
+      IF AttachmentFileName = '' THEN
+        IF PostedDocNo = '' THEN BEGIN
+          IF ReportUsage = ReportSelections.Usage::"P.Order" THEN
+            AttachmentFileName := STRSUBSTNO(PdfFileNamePluralMsg,EmailDocName)
+          ELSE
+            AttachmentFileName := STRSUBSTNO(ReportAsPdfFileNamePluralMsg,EmailDocName);
+        END ELSE
+          CASE ReportUsage OF
+            ReportSelections.Usage::JQ,ReportSelections.Usage::"P.Order":
+              AttachmentFileName := STRSUBSTNO(JobsReportAsPdfFileNameMsg,EmailDocName,PostedDocNo);
+            ELSE
+              AttachmentFileName := STRSUBSTNO(ReportAsPdfFileNameMsg,EmailDocName,PostedDocNo)
+          END;
+
+      CompanyInformation.GET;
+      WITH TempEmailItem DO BEGIN
+        "Send to" := ToEmailAddress;
+        IF ReportUsage = ReportSelections.Usage::"S.Invoice" THEN BEGIN
+          "Send CC" := O365EmailSetup.GetCCAddressesFromO365EmailSetup;
+          "Send BCC" := O365EmailSetup.GetBCCAddressesFromO365EmailSetup;
+        END;
+        IF PostedDocNo = '' THEN
+          Subject :=
+            COPYSTR(
+              STRSUBSTNO(EmailSubjectPluralCapTxt,CompanyInformation.Name,EmailDocName),1,MAXSTRLEN(Subject))
+        ELSE
+          Subject :=
+            COPYSTR(
+              STRSUBSTNO(EmailSubjectCapTxt,CompanyInformation.Name,EmailDocName,PostedDocNo),1,MAXSTRLEN(Subject));
+        "Attachment File Path" := AttachmentFilePath;
+        "Attachment Name" := AttachmentFileName;
+        IF HtmlBodyFilePath <> '' THEN BEGIN
+          VALIDATE("Plaintext Formatted",FALSE);
+          VALIDATE("Body File Path",HtmlBodyFilePath);
+        END;
+        IF OfficeMgt.AttachAvailable THEN
+          OfficeMgt.AttachDocument(AttachmentFilePath,AttachmentFileName,GetBodyText)
+        ELSE
+          Send(HideDialog);
+      END;
+    END;
+
+    PROCEDURE EmailFileWithSubject@1(AttachmentFilePath@1001 : Text;AttachmentFileName@1005 : Text;HtmlBodyFilePath@1007 : Text;EmailSubject@1000 : Text;ToEmailAddress@1006 : Text;HideDialog@1003 : Boolean) : Boolean;
+    VAR
+      TempEmailItem@1002 : TEMPORARY Record 9500;
+    BEGIN
+      WITH TempEmailItem DO BEGIN
+        "Send to" := COPYSTR(ToEmailAddress,1,MAXSTRLEN("Send to"));
+        Subject := COPYSTR(EmailSubject,1,MAXSTRLEN(Subject));
+        "Attachment File Path" := COPYSTR(AttachmentFilePath,1,MAXSTRLEN("Attachment File Path"));
+        "Attachment Name" := COPYSTR(AttachmentFileName,1,MAXSTRLEN("Attachment Name"));
+
+        VALIDATE("Plaintext Formatted",FALSE);
+        VALIDATE("Body File Path",COPYSTR(HtmlBodyFilePath,1,MAXSTRLEN("Body File Path")));
+
+        EXIT(Send(HideDialog));
+      END;
+    END;
+
+    PROCEDURE GetToAddressFromCustomer@16(BillToCustomerNo@1000 : Code[20]) : Text[250];
+    VAR
+      Customer@1002 : Record 18;
+      ToAddress@1001 : Text;
+    BEGIN
+      IF Customer.GET(BillToCustomerNo) THEN
+        ToAddress := Customer."E-Mail";
+
+      EXIT(ToAddress);
+    END;
+
+    PROCEDURE GetToAddressFromVendor@2(BuyFromVendorNo@1000 : Code[20]) : Text[250];
+    VAR
+      Vendor@1002 : Record 23;
+      ToAddress@1001 : Text;
+    BEGIN
+      IF Vendor.GET(BuyFromVendorNo) THEN
+        ToAddress := Vendor."E-Mail";
+
+      EXIT(ToAddress);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,59 @@
+OBJECT Page 743 VAT Report Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=VAT Report Setup;
+               ENG=VAT Report Setup];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    SourceTable=Table743;
+    PageType=Card;
+    OnOpenPage=BEGIN
+                 RESET;
+                 IF NOT GET THEN BEGIN
+                   INIT;
+                   INSERT;
+                 END;
+               END;
+
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                CaptionML=[ENU=General;
+                           ENG=General] }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies if users can modify VAT reports that have been submitted to the tax authorities. If the field is left blank, users must create a corrective or supplementary VAT report instead.;
+                           ENG=Specifies if users can modify VAT reports that have been submitted to the VAT authorities. If the field is left blank, users must create a corrective or supplementary VAT report instead.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Modify Submitted Reports" }
+
+    { 1904569201;1;Group  ;
+                CaptionML=[ENU=Numbering;
+                           ENG=Numbering] }
+
+    { 7   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number series that will be used for standard VAT reports.;
+                           ENG=Specifies the number series that will be used for standard VAT reports.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="No. Series" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

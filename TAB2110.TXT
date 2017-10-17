@@ -1,0 +1,59 @@
+OBJECT Table 2110 O365 Sales Initial Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=O365 Sales Initial Setup;
+               ENG=O365 Sales Initial Setup];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=[ENU=Primary Key;
+                                                              ENG=Primary Key] }
+    { 2   ;   ;Payment Reg. Template Name;Code10  ;TableRelation="Gen. Journal Template".Name;
+                                                   CaptionML=[ENU=Payment Reg. Template Name;
+                                                              ENG=Payment Reg. Template Name] }
+    { 3   ;   ;Payment Reg. Batch Name;Code10     ;TableRelation="Gen. Journal Batch".Name WHERE (Journal Template Name=FIELD(Payment Reg. Template Name));
+                                                   CaptionML=[ENU=Payment Reg. Batch Name;
+                                                              ENG=Payment Reg. Batch Name] }
+    { 4   ;   ;Is initialized      ;Boolean       ;CaptionML=[ENU=Is initialized;
+                                                              ENG=Is initialised] }
+    { 5   ;   ;Default Customer Template;Code10   ;TableRelation="Config. Template Header".Code WHERE (Table ID=CONST(18));
+                                                   CaptionML=[ENU=Default Customer Template;
+                                                              ENG=Default Customer Template] }
+    { 6   ;   ;Default Item Template;Code10       ;TableRelation="Config. Template Header".Code WHERE (Table ID=CONST(27));
+                                                   CaptionML=[ENU=Default Item Template;
+                                                              ENG=Default Item Template] }
+    { 7   ;   ;Default Payment Terms Code;Code10  ;TableRelation="Payment Terms";
+                                                   CaptionML=[ENU=Default Payment Terms Code;
+                                                              ENG=Default Payment Terms Code] }
+    { 8   ;   ;Default Payment Method Code;Code10 ;TableRelation="Payment Method";
+                                                   CaptionML=[ENU=Default Payment Method Code;
+                                                              ENG=Default Payment Method Code] }
+    { 9   ;   ;Sales Invoice No. Series;Code10    ;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Sales Invoice No. Series;
+                                                              ENG=Sales Invoice No. Series] }
+    { 10  ;   ;Posted Sales Inv. No. Series;Code10;TableRelation="No. Series";
+                                                   CaptionML=[ENU=Posted Sales Inv. No. Series;
+                                                              ENG=Posted Sales Inv. No. Series] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

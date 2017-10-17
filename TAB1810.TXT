@@ -1,0 +1,36 @@
+OBJECT Table 1810 Assisted Setup Icons
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Assisted Setup Icons;
+               ENG=Assisted Setup Icons];
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Code50        ;CaptionML=[ENU=No.;
+                                                              ENG=No.] }
+    { 2   ;   ;Image               ;Media         ;CaptionML=[ENU=Image;
+                                                              ENG=Image] }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

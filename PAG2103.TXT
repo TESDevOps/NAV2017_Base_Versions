@@ -1,0 +1,291 @@
+OBJECT Page 2103 O365 Sales Document List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Invoice List;
+               ENG=Invoice List];
+    DeleteAllowed=No;
+    SourceTable=Table2103;
+    SourceTableView=SORTING(Sell-to Customer Name);
+    PageType=ListPart;
+    SourceTableTemporary=Yes;
+    RefreshOnActivate=Yes;
+    OnInit=BEGIN
+             SetSortByDocDate;
+           END;
+
+    OnFindRecord=BEGIN
+                   EXIT(OnFind(Which));
+                 END;
+
+    OnNextRecord=BEGIN
+                   EXIT(OnNext(Steps));
+                 END;
+
+    ActionList=ACTIONS
+    {
+      { 16      ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 17      ;1   ;Action    ;
+                      Name=ShowLatest;
+                      CaptionML=[ENU=Show all invoices;
+                                 ENG=Show all invoices];
+                      ToolTipML=[ENU=Displays all invoices, sorted by their invoice date.;
+                                 ENG=Displays all invoices, sorted by their invoice date.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Document;
+                      OnAction=BEGIN
+                                 SETRANGE(Posted);
+                                 SETRANGE("Outstanding Amount");
+
+                                 SetSortByDocDate;
+                               END;
+                                }
+      { 18      ;1   ;Action    ;
+                      Name=ShowUnpaid;
+                      CaptionML=[ENU=Show only unpaid invoices;
+                                 ENG=Show only unpaid invoices];
+                      ToolTipML=[ENU=Displays invoices that have not yet been paid in full, sorted by the due date.;
+                                 ENG=Displays invoices that have not yet been paid in full, sorted by the due date.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=CloseDocument;
+                      OnAction=BEGIN
+                                 SETRANGE(Posted,TRUE);
+                                 SETFILTER("Outstanding Amount",'>0');
+
+                                 SetSortByDueDate;
+
+                                 // go to "most late" document
+                                 FindPostedDocument('-');
+                                 CurrPage.UPDATE;
+                               END;
+                                }
+      { 19      ;1   ;Action    ;
+                      Name=ShowDraft;
+                      CaptionML=[ENU=Show only draft invoices;
+                                 ENG=Show only draft invoices];
+                      ToolTipML=[ENU=Displays draft invoices.;
+                                 ENG=Displays draft invoices.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=DocumentEdit;
+                      OnAction=BEGIN
+                                 SETRANGE(Posted,FALSE);
+                                 SETRANGE("Outstanding Amount");
+
+                                 SetSortByDocDate;
+                               END;
+                                }
+      { 24      ;1   ;Action    ;
+                      Name=ShowSent;
+                      CaptionML=[ENU=Show only sent invoices;
+                                 ENG=Show only sent invoices];
+                      ToolTipML=[ENU=Displays invoices that are sent, sorted by the invoice date.;
+                                 ENG=Displays invoices that are sent, sorted by the invoice date.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=PostedTaxInvoice;
+                      OnAction=BEGIN
+                                 SETRANGE(Posted,TRUE);
+                                 SETRANGE("Outstanding Amount");
+
+                                 SetSortByDocDate;
+                               END;
+                                }
+      { 20      ;1   ;Action    ;
+                      Name=Open;
+                      ShortCutKey=Return;
+                      CaptionML=[ENU=Open;
+                                 ENG=Open];
+                      ToolTipML=[ENU=Open the card for the selected record.;
+                                 ENG=Open the card for the selected record.];
+                      ApplicationArea=#Basic,#Suite;
+                      Visible=FALSE;
+                      Image=DocumentEdit;
+                      Scope=Repeater;
+                      OnAction=VAR
+                                 SalesHeader@1000 : Record 36;
+                                 SalesInvoiceHeader@1001 : Record 112;
+                               BEGIN
+                                 IF Posted THEN BEGIN
+                                   IF NOT SalesInvoiceHeader.GET("No.") THEN
+                                     EXIT;
+                                   SalesInvoiceHeader.SETRECFILTER;
+                                   PAGE.RUN(PAGE::"O365 Posted Sales Invoice",SalesInvoiceHeader);
+                                 END ELSE BEGIN
+                                   IF NOT SalesHeader.GET("Document Type","No.") THEN
+                                     EXIT;
+                                   SalesHeader.SETRECFILTER;
+                                   PAGE.RUN(PAGE::"O365 Sales Invoice",SalesHeader);
+                                 END;
+                               END;
+                                }
+      { 26      ;1   ;Action    ;
+                      Name=DeleteDraftInvoice;
+                      CaptionML=[ENU=Delete;
+                                 ENG=Delete];
+                      ToolTipML=[ENU=Deletes the draft invoice.;
+                                 ENG=Deletes the draft invoice.];
+                      ApplicationArea=#Basic, #Suite;
+                      Image=Delete;
+                      Scope=Repeater;
+                      OnAction=VAR
+                                 SalesHeader@1000 : Record 36;
+                               BEGIN
+                                 IF SalesHeader.GET("Document Type","No.") THEN
+                                   SalesHeader.DELETE(TRUE)
+                                 ELSE
+                                   ERROR(DeletePostedInvoiceErr);
+                               END;
+                                }
+      { 25      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Payments;
+                                 ENG=Payments];
+                      Visible=Posted }
+      { 23      ;2   ;Action    ;
+                      Name=ShowPayments;
+                      CaptionML=[ENU=Show Payments;
+                                 ENG=Show Payments];
+                      ToolTipML=[ENU=Show a list of payments made for this invoice.;
+                                 ENG=Show a list of payments made for this invoice.];
+                      ApplicationArea=#Basic,#Suite;
+                      Visible=Posted;
+                      Image=Payment;
+                      Scope=Repeater;
+                      OnAction=BEGIN
+                                 O365SalesInvoicePayment.ShowHistory("No.");
+                               END;
+                                }
+      { 22      ;2   ;Action    ;
+                      Name=MarkAsPaid;
+                      CaptionML=[ENU=Mark as paid;
+                                 ENG=Mark as paid];
+                      ToolTipML=[ENU=Pay the invoice as specified in the default Payment Registration Setup.;
+                                 ENG=Pay the invoice as specified in the default Payment Registration Setup.];
+                      ApplicationArea=#Basic,#Suite;
+                      Visible=Posted AND ("outstanding amount" > 0);
+                      Image=Payment;
+                      Scope=Repeater;
+                      OnAction=BEGIN
+                                 O365SalesInvoicePayment.MarkAsPaid("No.");
+                               END;
+
+                      Gesture=RightSwipe }
+      { 21      ;2   ;Action    ;
+                      Name=MarkAsUnpaid;
+                      CaptionML=[ENU=Mark as unpaid;
+                                 ENG=Mark as unpaid];
+                      ToolTipML=[ENU=Mark the invoice as unpaid.;
+                                 ENG=Mark the invoice as unpaid.];
+                      ApplicationArea=#Basic,#Suite;
+                      Visible=Posted AND ("outstanding amount" = 0);
+                      Image=Cancel;
+                      Scope=Repeater;
+                      OnAction=BEGIN
+                                 O365SalesInvoicePayment.CancelSalesInvoicePayment("No.");
+                               END;
+
+                      Gesture=RightSwipe }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of the document.;
+                           ENG=Specifies the type of the document.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Document Type" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document number that references the document.;
+                           ENG=Specifies the document number that references the document.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="No." }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the customer who will receive the products and be billed by default.;
+                           ENG=Specifies the number of the customer who will receive the products and be billed by default.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Customer No." }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the customer who will receive the products and be billed by default.;
+                           ENG=Specifies the name of the customer who will receive the products and be billed by default.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Customer Name" }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the person to contact at the customer that the items were sold to.;
+                           ENG=Specifies the name of the person to contact at the customer that the items were sold to.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Sell-to Contact" }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date on which you created the sales document.;
+                           ENG=Specifies the date on which you created the sales document.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Document Date" }
+
+    { 9   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the currency of amounts on the sales document.;
+                           ENG=Specifies the currency of amounts on the sales document.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Currency Code" }
+
+    { 7   ;2   ;Field     ;
+                ToolTipML=[ENU="Specifies the currency with its symbol, such as $ for Dollar. ";
+                           ENG="Specifies the currency with its symbol, such as œ for British Pound. "];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Currency Symbol" }
+
+    { 10  ;2   ;Field     ;
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Posted }
+
+    { 11  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the status of the document that represents the forecast entry.;
+                           ENG=Specifies the status of the document that represents the forecast entry.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Document Status" }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the total invoices amount, displayed in Brick view.;
+                           ENG=Specifies the total invoices amount, displayed in Brick view.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Brick Total" }
+
+    { 13  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the outstanding amount, meaning the amount not paid, displayed in Brick view.;
+                           ENG=Specifies the outstanding amount, meaning the amount not paid, displayed in Brick view.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Brick Outstanding" }
+
+    { 15  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the visual identifier of the document format.;
+                           ENG=Specifies the visual identifier of the document format.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Document Icon" }
+
+  }
+  CODE
+  {
+    VAR
+      O365SalesInvoicePayment@1000 : Codeunit 2105;
+      DeletePostedInvoiceErr@1001 : TextConst 'ENU=Only draft invoices can be deleted.;ENG=Only draft invoices can be deleted.';
+
+    BEGIN
+    END.
+  }
+}
+

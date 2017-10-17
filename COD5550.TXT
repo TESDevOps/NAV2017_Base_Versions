@@ -1,0 +1,106 @@
+OBJECT Codeunit 5550 Fixed Asset Acquisition Wizard
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      GenJournalBatchNameTxt@1000 : TextConst '@@@=Translate normally and keep the upper case;ENU=AUTOMATIC;ENG=AUTOMATIC';
+      SimpleJnlDescriptionTxt@1001 : TextConst 'ENU=Fixed Asset Acquisition;ENG=Fixed Asset Acquisition';
+      FixedAssetNoTok@1002 : TextConst '@@@={Locked};ENU=FixedAssetNo;ENG=FixedAssetNo';
+      ReadyToAcquireMsg@1005 : TextConst 'ENU=You are ready to acquire the fixed asset.;ENG=You are ready to acquire the fixed asset.';
+      AcquireTxt@1004 : TextConst 'ENU=Acquire;ENG=Acquire';
+      RunAcquisitionWizardTok@1006 : TextConst '@@@={Locked};ENU=RunAcquisitionWizardFromNotification;ENG=RunAcquisitionWizardFromNotification';
+
+    PROCEDURE RunAcquisitionWizard@7(FixedAssetNo@1001 : Code[20]);
+    VAR
+      TempGenJournalLine@1003 : TEMPORARY Record 81;
+    BEGIN
+      TempGenJournalLine.SETRANGE("Account No.",FixedAssetNo);
+      PAGE.RUNMODAL(PAGE::"Fixed Asset Acquisition Wizard",TempGenJournalLine);
+    END;
+
+    PROCEDURE RunAcquisitionWizardFromNotification@2(FixedAssetAcquisitionNotification@1001 : Notification);
+    VAR
+      FixedAssetNo@1002 : Code[10];
+    BEGIN
+      InitializeFromNotification(FixedAssetAcquisitionNotification,FixedAssetNo);
+      RunAcquisitionWizard(FixedAssetNo);
+    END;
+
+    PROCEDURE PopulateDataOnNotification@1(VAR FixedAssetAcquisitionNotification@1000 : Notification;FixedAssetNo@1012 : Code[20]);
+    BEGIN
+      FixedAssetAcquisitionNotification.SETDATA(FixedAssetNoTok,FixedAssetNo);
+    END;
+
+    PROCEDURE InitializeFromNotification@4(FixedAssetAcquisitionNotification@1000 : Notification;VAR FixedAssetNo@1008 : Code[20]);
+    BEGIN
+      FixedAssetNo := FixedAssetAcquisitionNotification.GETDATA(FixedAssetNoTok);
+    END;
+
+    PROCEDURE GetAutogenJournalBatch@214() : Code[10];
+    VAR
+      GenJournalBatch@1000 : Record 232;
+    BEGIN
+      IF NOT GenJournalBatch.GET(SelectFATemplate,GenJournalBatchNameTxt) THEN BEGIN
+        GenJournalBatch.INIT;
+        GenJournalBatch."Journal Template Name" := SelectFATemplate;
+        GenJournalBatch.Name := GenJournalBatchNameTxt;
+        GenJournalBatch.Description := SimpleJnlDescriptionTxt;
+        GenJournalBatch.SetupNewBatch;
+        GenJournalBatch.INSERT;
+      END;
+
+      EXIT(GenJournalBatch.Name);
+    END;
+
+    PROCEDURE SelectFATemplate@215() ReturnValue : Code[10];
+    VAR
+      FAJournalLine@1170000001 : Record 5621;
+      FAJnlManagement@1003 : Codeunit 5638;
+      JnlSelected@1000 : Boolean;
+    BEGIN
+      FAJnlManagement.TemplateSelection(PAGE::"Fixed Asset Journal",FALSE,FAJournalLine,JnlSelected);
+
+      IF JnlSelected THEN BEGIN
+        FAJournalLine.FILTERGROUP := 2;
+        ReturnValue := COPYSTR(FAJournalLine.GETFILTER("Journal Template Name"),1,MAXSTRLEN(FAJournalLine."Journal Template Name"));
+        FAJournalLine.FILTERGROUP := 0;
+      END;
+    END;
+
+    PROCEDURE ShowAcquireWizardNotification@5(VAR FAAcquireWizardNotificationId@1004 : GUID;FixedAssetNo@1006 : Code[20]);
+    VAR
+      FixedAssetAcquisitionWizard@1001 : Codeunit 5550;
+      FAAcquireWizardNotification@1000 : Notification;
+    BEGIN
+      // Create a new ID
+      FAAcquireWizardNotificationId := GetFAAcquireWizardNotificationId;
+      FAAcquireWizardNotification.ID(FAAcquireWizardNotificationId);
+      FAAcquireWizardNotification.MESSAGE(ReadyToAcquireMsg);
+      FAAcquireWizardNotification.SCOPE(NOTIFICATIONSCOPE::LocalScope);
+      FAAcquireWizardNotification.ADDACTION(AcquireTxt,CODEUNIT::"Fixed Asset Acquisition Wizard",RunAcquisitionWizardTok);
+      FixedAssetAcquisitionWizard.PopulateDataOnNotification(FAAcquireWizardNotification,FixedAssetNo);
+      FAAcquireWizardNotification.SEND;
+    END;
+
+    LOCAL PROCEDURE GetFAAcquireWizardNotificationId@3() : GUID;
+    BEGIN
+      EXIT(CREATEGUID);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

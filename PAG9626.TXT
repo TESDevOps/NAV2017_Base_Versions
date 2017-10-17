@@ -1,0 +1,48 @@
+OBJECT Page 9626 New Page Patterns List Part
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=New Page Patterns List Part;
+               ENG=New Page Patterns List Part];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    SourceTable=Table2000000174;
+    DelayedInsert=No;
+    PageType=ListPart;
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                Name=Container;
+                CaptionML=[ENU=Container;
+                           ENG=Container];
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                ApplicationArea=#All;
+                SourceExpr="Display Name" }
+
+    { 4   ;2   ;Field     ;
+                ApplicationArea=#All;
+                SourceExpr=Description }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,225 @@
+OBJECT Page 447 Finance Charge Memo Lines
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00,NAVGB10.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Lines;
+               ENG=Lines];
+    LinksAllowed=No;
+    SourceTable=Table303;
+    PageType=ListPart;
+    AutoSplitKey=Yes;
+    OnAfterGetRecord=BEGIN
+                       DescriptionIndent := 0;
+                       DescriptionOnFormat;
+                       RemainingAmountOnFormat;
+                       AmountOnFormat;
+                     END;
+
+    OnAfterGetCurrRecord=BEGIN
+                           SetShowMandatoryConditions;
+                         END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 1906587504;1 ;ActionGroup;
+                      CaptionML=[ENU=F&unctions;
+                                 ENG=F&unctions];
+                      Image=Action }
+      { 1900206104;2 ;Action    ;
+                      AccessByPermission=TableData 279=R;
+                      CaptionML=[ENU=Insert &Ext. Texts;
+                                 ENG=Insert &Ext. Texts];
+                      ToolTipML=[ENU=Insert the extended item description that is set up for the item that is being processed on the line.;
+                                 ENG=Insert the extended item description that is set up for the item that is being processed on the line.];
+                      Image=Text;
+                      OnAction=BEGIN
+                                 InsertExtendedText(TRUE);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                IndentationColumnName=DescriptionIndent;
+                IndentationControls=Description;
+                GroupType=Repeater }
+
+    { 28  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the line type.;
+                           ENG=Specifies the line type.];
+                SourceExpr=Type;
+                OnValidate=BEGIN
+                             TypeOnAfterValidate;
+                             NoOnAfterValidate;
+                             SetShowMandatoryConditions
+                           END;
+
+                ShowMandatory=TRUE }
+
+    { 30  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the general ledger account this finance charge memo line is for.;
+                           ENG=Specifies the number of the general ledger account this finance charge memo line is for.];
+                SourceExpr="No.";
+                OnValidate=BEGIN
+                             NoOnAfterValidate;
+                           END;
+
+                ShowMandatory=TypeIsGLAccount }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the posting date of the customer ledger entry that this finance charge memo line is for.;
+                           ENG=Specifies the posting date of the customer ledger entry that this finance charge memo line is for.];
+                SourceExpr="Posting Date";
+                Visible=FALSE }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document date of the customer ledger entry this finance charge memo line is for.;
+                           ENG=Specifies the document date of the customer ledger entry this finance charge memo line is for.];
+                SourceExpr="Document Date";
+                Visible=FALSE }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document type of the customer ledger entry this finance charge memo line is for.;
+                           ENG=Specifies the document type of the customer ledger entry this finance charge memo line is for.];
+                SourceExpr="Document Type";
+                OnValidate=BEGIN
+                             DocumentTypeOnAfterValidate;
+                           END;
+
+                ShowMandatory=TypeIsCustomerLedgerEntry }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document number of the customer ledger entry this finance charge memo line is for.;
+                           ENG=Specifies the document number of the customer ledger entry this finance charge memo line is for.];
+                SourceExpr="Document No.";
+                OnValidate=BEGIN
+                             DocumentNoOnAfterValidate;
+                           END;
+
+                ShowMandatory=TypeIsCustomerLedgerEntry }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the due date of the customer ledger entry this finance charge memo line is for.;
+                           ENG=Specifies the due date of the customer ledger entry this finance charge memo line is for.];
+                SourceExpr="Due Date" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies an entry description, based on the contents of the Type field.;
+                           ENG=Specifies an entry description, based on the contents of the Type field.];
+                SourceExpr=Description }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the original amount of the customer ledger entry that this finance charge memo line is for.;
+                           ENG=Specifies the original amount of the customer ledger entry that this finance charge memo line is for.];
+                SourceExpr="Original Amount";
+                Visible=FALSE }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the remaining amount of the customer ledger entry this finance charge memo line is for.;
+                           ENG=Specifies the remaining amount of the customer ledger entry this finance charge memo line is for.];
+                SourceExpr="Remaining Amount" }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the amount in the currency that is represented by the currency code on the finance charge memo header.;
+                           ENG=Specifies the amount in the currency that is represented by the currency code on the finance charge memo header.];
+                SourceExpr=Amount }
+
+  }
+  CODE
+  {
+    VAR
+      TransferExtendedText@1000 : Codeunit 378;
+      DescriptionEmphasize@19010547 : Boolean INDATASET;
+      DescriptionIndent@19057867 : Integer INDATASET;
+      "Remaining AmountEmphasize"@19074967 : Boolean INDATASET;
+      AmountEmphasize@19073101 : Boolean INDATASET;
+      TypeIsGLAccount@1001 : Boolean;
+      TypeIsCustomerLedgerEntry@1002 : Boolean;
+
+    LOCAL PROCEDURE InsertExtendedText@5(Unconditionally@1000 : Boolean);
+    BEGIN
+      IF TransferExtendedText.FinChrgMemoCheckIfAnyExtText(Rec,Unconditionally) THEN BEGIN
+        CurrPage.SAVERECORD;
+        TransferExtendedText.InsertFinChrgMemoExtText(Rec);
+      END;
+      IF TransferExtendedText.MakeUpdate THEN
+        CurrPage.UPDATE;
+    END;
+
+    LOCAL PROCEDURE FormUpdateAttachedLines@3();
+    BEGIN
+      IF CheckAttachedLines THEN BEGIN
+        CurrPage.SAVERECORD;
+        UpdateAttachedLines;
+        CurrPage.UPDATE(FALSE);
+      END;
+    END;
+
+    LOCAL PROCEDURE TypeOnAfterValidate@19069045();
+    BEGIN
+      InsertExtendedText(FALSE);
+      FormUpdateAttachedLines;
+    END;
+
+    LOCAL PROCEDURE NoOnAfterValidate@19066594();
+    BEGIN
+      InsertExtendedText(FALSE);
+    END;
+
+    LOCAL PROCEDURE DocumentTypeOnAfterValidate@19030163();
+    BEGIN
+      FormUpdateAttachedLines;
+    END;
+
+    LOCAL PROCEDURE DocumentNoOnAfterValidate@19031352();
+    BEGIN
+      FormUpdateAttachedLines;
+      CurrPage.UPDATE;
+    END;
+
+    LOCAL PROCEDURE DescriptionOnFormat@19023855();
+    VAR
+      Indentation@1040002 : Integer;
+    BEGIN
+      IF "Multiple Interest Rates Entry" THEN BEGIN
+        Indentation := 2;
+        DescriptionIndent := Indentation;
+      END ELSE
+        DescriptionEmphasize := TRUE;
+    END;
+
+    LOCAL PROCEDURE RemainingAmountOnFormat@19008406();
+    BEGIN
+      IF NOT "Multiple Interest Rates Entry" THEN
+        "Remaining AmountEmphasize" := TRUE;
+    END;
+
+    LOCAL PROCEDURE AmountOnFormat@19014598();
+    BEGIN
+      IF NOT "Multiple Interest Rates Entry" THEN
+        AmountEmphasize := TRUE;
+    END;
+
+    LOCAL PROCEDURE SetShowMandatoryConditions@1();
+    BEGIN
+      TypeIsGLAccount := Type = Type::"G/L Account";
+      TypeIsCustomerLedgerEntry := Type = Type::"Customer Ledger Entry"
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

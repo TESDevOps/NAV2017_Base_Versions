@@ -1,0 +1,325 @@
+OBJECT Table 1300 Mini Customer Template
+{
+  OBJECT-PROPERTIES
+  {
+    Date=04/08/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.17972;
+  }
+  PROPERTIES
+  {
+    OnInsert=BEGIN
+               TESTFIELD("Template Name");
+
+               InsertConfigurationTemplateHeaderAndLines(Code,"Template Name",Rec);
+             END;
+
+    OnModify=VAR
+               TempRecordBuffer@1002 : TEMPORARY Record 6529;
+             BEGIN
+               TESTFIELD(Code);
+               TESTFIELD("Template Name");
+               CreateFieldNoList(TempRecordBuffer);
+               ConfigTemplateManagement.UpdateConfigTemplateAndLines(Code,"Template Name",DATABASE::Customer,Rec,TempRecordBuffer);
+             END;
+
+    OnDelete=VAR
+               ConfigTemplateHeader@1000 : Record 8618;
+             BEGIN
+               IF ConfigTemplateHeader.GET(Code) THEN BEGIN
+                 ConfigTemplateManagement.DeleteRelatedTemplates(Code,DATABASE::"Default Dimension");
+                 ConfigTemplateHeader.DELETE(TRUE);
+               END;
+             END;
+
+    CaptionML=[ENU=Mini Customer Template;
+               ENG=Mini Customer Template];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Key                 ;Integer       ;AutoIncrement=Yes;
+                                                   CaptionML=[ENU=Key;
+                                                              ENG=Key] }
+    { 2   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              ENG=Code];
+                                                   NotBlank=Yes }
+    { 3   ;   ;Template Name       ;Text50        ;CaptionML=[ENU=Template Name;
+                                                              ENG=Template Name];
+                                                   NotBlank=Yes }
+    { 7   ;   ;City                ;Text30        ;TableRelation=IF (Country/Region Code=CONST()) "Post Code".City
+                                                                 ELSE IF (Country/Region Code=FILTER(<>'')) "Post Code".City WHERE (Country/Region Code=FIELD(Country/Region Code));
+                                                   OnValidate=VAR
+                                                                PostCodeRec@1000 : Record 225;
+                                                              BEGIN
+                                                                IF City <> '' THEN BEGIN
+                                                                  PostCodeRec.SETFILTER("Search City",City);
+
+                                                                  CASE PostCodeRec.COUNT OF
+                                                                    0:
+                                                                      EXIT;
+                                                                    1:
+                                                                      PostCodeRec.FINDFIRST;
+                                                                    ELSE
+                                                                      IF PAGE.RUNMODAL(PAGE::"Post Codes",PostCodeRec,PostCodeRec.Code) <> ACTION::LookupOK THEN
+                                                                        EXIT;
+                                                                  END;
+
+                                                                  "Post Code" := PostCodeRec.Code;
+                                                                  "Country/Region Code" := PostCodeRec."Country/Region Code";
+                                                                END;
+                                                              END;
+
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=City;
+                                                              ENG=City] }
+    { 11  ;   ;Document Sending Profile;Code20    ;TableRelation="Document Sending Profile".Code;
+                                                   CaptionML=[ENU=Document Sending Profile;
+                                                              ENG=Document Sending Profile] }
+    { 20  ;   ;Credit Limit (LCY)  ;Decimal       ;CaptionML=[ENU=Credit Limit (LCY);
+                                                              ENG=Credit Limit (LCY)];
+                                                   AutoFormatType=1 }
+    { 21  ;   ;Customer Posting Group;Code10      ;TableRelation="Customer Posting Group";
+                                                   CaptionML=[ENU=Customer Posting Group;
+                                                              ENG=Customer Posting Group] }
+    { 22  ;   ;Currency Code       ;Code10        ;TableRelation=Currency;
+                                                   CaptionML=[ENU=Currency Code;
+                                                              ENG=Currency Code] }
+    { 23  ;   ;Customer Price Group;Code10        ;TableRelation="Customer Price Group";
+                                                   CaptionML=[ENU=Customer Price Group;
+                                                              ENG=Customer Price Group] }
+    { 24  ;   ;Language Code       ;Code10        ;TableRelation=Language;
+                                                   CaptionML=[ENU=Language Code;
+                                                              ENG=Language Code] }
+    { 27  ;   ;Payment Terms Code  ;Code10        ;TableRelation="Payment Terms";
+                                                   CaptionML=[ENU=Payment Terms Code;
+                                                              ENG=Payment Terms Code] }
+    { 28  ;   ;Fin. Charge Terms Code;Code10      ;TableRelation="Finance Charge Terms";
+                                                   CaptionML=[ENU=Fin. Charge Terms Code;
+                                                              ENG=Fin. Charge Terms Code] }
+    { 34  ;   ;Customer Disc. Group;Code20        ;TableRelation="Customer Discount Group";
+                                                   CaptionML=[ENU=Customer Disc. Group;
+                                                              ENG=Customer Disc. Group] }
+    { 35  ;   ;Country/Region Code ;Code10        ;TableRelation=Country/Region;
+                                                   CaptionML=[ENU=Country/Region Code;
+                                                              ENG=Country/Region Code] }
+    { 42  ;   ;Print Statements    ;Boolean       ;CaptionML=[ENU=Print Statements;
+                                                              ENG=Print Statements] }
+    { 47  ;   ;Payment Method Code ;Code10        ;TableRelation="Payment Method";
+                                                   CaptionML=[ENU=Payment Method Code;
+                                                              ENG=Payment Method Code] }
+    { 80  ;   ;Application Method  ;Option        ;CaptionML=[ENU=Application Method;
+                                                              ENG=Application Method];
+                                                   OptionCaptionML=[ENU=Manual,Apply to Oldest;
+                                                                    ENG=Manual,Apply to Oldest];
+                                                   OptionString=Manual,Apply to Oldest }
+    { 82  ;   ;Prices Including VAT;Boolean       ;CaptionML=[ENU=Prices Including VAT;
+                                                              ENG=Prices Including VAT] }
+    { 88  ;   ;Gen. Bus. Posting Group;Code10     ;TableRelation="Gen. Business Posting Group";
+                                                   CaptionML=[ENU=Gen. Bus. Posting Group;
+                                                              ENG=Gen. Bus. Posting Group] }
+    { 91  ;   ;Post Code           ;Code20        ;TableRelation=IF (Country/Region Code=CONST()) "Post Code"
+                                                                 ELSE IF (Country/Region Code=FILTER(<>'')) "Post Code" WHERE (Country/Region Code=FIELD(Country/Region Code));
+                                                   OnValidate=VAR
+                                                                PostCodeRec@1000 : Record 225;
+                                                              BEGIN
+                                                                IF "Post Code" <> '' THEN BEGIN
+                                                                  PostCodeRec.SETFILTER(Code,"Post Code");
+
+                                                                  CASE PostCodeRec.COUNT OF
+                                                                    0:
+                                                                      EXIT;
+                                                                    1:
+                                                                      PostCodeRec.FINDFIRST;
+                                                                    ELSE
+                                                                      IF PAGE.RUNMODAL(PAGE::"Post Codes",PostCodeRec,PostCodeRec.Code) <> ACTION::LookupOK THEN
+                                                                        EXIT;
+                                                                  END;
+
+                                                                  City := PostCodeRec.City;
+                                                                  "Country/Region Code" := PostCodeRec."Country/Region Code";
+                                                                END;
+                                                              END;
+
+                                                   ValidateTableRelation=No;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Post Code;
+                                                              ENG=Postcode] }
+    { 92  ;   ;County              ;Text30        ;CaptionML=[ENU=County;
+                                                              ENG=County] }
+    { 104 ;   ;Reminder Terms Code ;Code10        ;TableRelation="Reminder Terms";
+                                                   CaptionML=[ENU=Reminder Terms Code;
+                                                              ENG=Reminder Terms Code] }
+    { 110 ;   ;VAT Bus. Posting Group;Code10      ;TableRelation="VAT Business Posting Group";
+                                                   CaptionML=[ENU=VAT Bus. Posting Group;
+                                                              ENG=VAT Bus. Posting Group] }
+    { 116 ;   ;Block Payment Tolerance;Boolean    ;CaptionML=[ENU=Block Payment Tolerance;
+                                                              ENG=Block Payment Tolerance] }
+    { 7001;   ;Allow Line Disc.    ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=[ENU=Allow Line Disc.;
+                                                              ENG=Allow Line Disc.] }
+  }
+  KEYS
+  {
+    {    ;Key                                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      ConfigTemplateManagement@1000 : Codeunit 8612;
+
+    LOCAL PROCEDURE CreateFieldNoList@31(VAR TempRecordBuffer@1000 : TEMPORARY Record 6529);
+    BEGIN
+      AddFieldNo(TempRecordBuffer,FIELDNO(City));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Document Sending Profile"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Credit Limit (LCY)"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Customer Posting Group"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Currency Code"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Customer Price Group"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Language Code"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Payment Terms Code"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Fin. Charge Terms Code"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Customer Disc. Group"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Country/Region Code"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Print Statements"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Payment Method Code"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Application Method"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Prices Including VAT"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Gen. Bus. Posting Group"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Post Code"));
+      AddFieldNo(TempRecordBuffer,FIELDNO(County));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Reminder Terms Code"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("VAT Bus. Posting Group"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Block Payment Tolerance"));
+      AddFieldNo(TempRecordBuffer,FIELDNO("Allow Line Disc."));
+    END;
+
+    LOCAL PROCEDURE AddFieldNo@32(VAR TempRecordBuffer@1004 : TEMPORARY Record 6529;FieldNo@1002 : Integer);
+    BEGIN
+      TempRecordBuffer."Entry No." += 1;
+      TempRecordBuffer."Primary Key Field 1 No." := FieldNo;
+      TempRecordBuffer.INSERT;
+    END;
+
+    PROCEDURE InitializeTempRecordFromConfigTemplate@1(VAR TempMiniCustomerTemplate@1000 : TEMPORARY Record 1300;ConfigTemplateHeader@1001 : Record 8618);
+    VAR
+      RecRef@1003 : RecordRef;
+    BEGIN
+      TempMiniCustomerTemplate.INIT;
+      TempMiniCustomerTemplate.Code := ConfigTemplateHeader.Code;
+      TempMiniCustomerTemplate."Template Name" := ConfigTemplateHeader.Description;
+      TempMiniCustomerTemplate.INSERT;
+
+      RecRef.GETTABLE(TempMiniCustomerTemplate);
+
+      ConfigTemplateManagement.ApplyTemplateLinesWithoutValidation(ConfigTemplateHeader,RecRef);
+
+      RecRef.SETTABLE(TempMiniCustomerTemplate);
+    END;
+
+    PROCEDURE CreateConfigTemplateFromExistingCustomer@5(Customer@1000 : Record 18;VAR TempMiniCustomerTemplate@1001 : TEMPORARY Record 1300);
+    VAR
+      DimensionsTemplate@1002 : Record 1302;
+      ConfigTemplateHeader@1006 : Record 8618;
+      NewTemplateCode@1003 : Code[10];
+    BEGIN
+      InsertConfigurationTemplateHeaderAndLines(NewTemplateCode,'',Customer);
+
+      DimensionsTemplate.CreateTemplatesFromExistingMasterRecord(Customer."No.",NewTemplateCode,DATABASE::Customer);
+      ConfigTemplateHeader.GET(NewTemplateCode);
+      InitializeTempRecordFromConfigTemplate(TempMiniCustomerTemplate,ConfigTemplateHeader);
+    END;
+
+    PROCEDURE SaveAsTemplate@7(Customer@1000 : Record 18);
+    VAR
+      TempMiniCustomerTemplate@1001 : TEMPORARY Record 1300;
+      CustTemplateCard@1002 : Page 1341;
+    BEGIN
+      CustTemplateCard.CreateFromCust(Customer);
+      CustTemplateCard.SETRECORD(TempMiniCustomerTemplate);
+      CustTemplateCard.LOOKUPMODE := TRUE;
+      IF CustTemplateCard.RUNMODAL = ACTION::LookupOK THEN;
+    END;
+
+    LOCAL PROCEDURE InsertConfigurationTemplateHeaderAndLines@2(VAR TemplateCode@1005 : Code[10];TemplateDescription@1004 : Text[50];RecVar@1001 : Variant);
+    VAR
+      TempRecordBuffer@1002 : TEMPORARY Record 6529;
+    BEGIN
+      CreateFieldNoList(TempRecordBuffer);
+      ConfigTemplateManagement.CreateConfigTemplateAndLines(
+        TemplateCode,TemplateDescription,DATABASE::Customer,RecVar,TempRecordBuffer);
+    END;
+
+    PROCEDURE NewCustomerFromTemplate@3(VAR Customer@1001 : Record 18) : Boolean;
+    VAR
+      ConfigTemplateHeader@1004 : Record 8618;
+      ConfigTemplates@1005 : Page 1340;
+    BEGIN
+      ConfigTemplateHeader.SETRANGE("Table ID",DATABASE::Customer);
+      ConfigTemplateHeader.SETRANGE(Enabled,TRUE);
+
+      IF ConfigTemplateHeader.COUNT = 1 THEN BEGIN
+        ConfigTemplateHeader.FINDFIRST;
+        InsertCustomerFromTemplate(ConfigTemplateHeader,Customer);
+        EXIT(TRUE);
+      END;
+
+      IF (ConfigTemplateHeader.COUNT > 1) AND GUIALLOWED THEN BEGIN
+        ConfigTemplates.SETTABLEVIEW(ConfigTemplateHeader);
+        ConfigTemplates.LOOKUPMODE(TRUE);
+        ConfigTemplates.SetNewMode;
+        IF ConfigTemplates.RUNMODAL = ACTION::LookupOK THEN BEGIN
+          ConfigTemplates.GETRECORD(ConfigTemplateHeader);
+          InsertCustomerFromTemplate(ConfigTemplateHeader,Customer);
+          EXIT(TRUE);
+        END;
+      END;
+
+      EXIT(FALSE);
+    END;
+
+    PROCEDURE UpdateCustomerFromTemplate@8(VAR Customer@1000 : Record 18);
+    VAR
+      ConfigTemplateHeader@1001 : Record 8618;
+      DimensionsTemplate@1004 : Record 1302;
+      ConfigTemplates@1003 : Page 1340;
+      CustomerRecRef@1002 : RecordRef;
+    BEGIN
+      IF GUIALLOWED THEN BEGIN
+        ConfigTemplateHeader.SETRANGE("Table ID",DATABASE::Customer);
+        ConfigTemplateHeader.SETRANGE(Enabled,TRUE);
+        ConfigTemplates.SETTABLEVIEW(ConfigTemplateHeader);
+        ConfigTemplates.LOOKUPMODE(TRUE);
+        IF ConfigTemplates.RUNMODAL = ACTION::LookupOK THEN BEGIN
+          ConfigTemplates.GETRECORD(ConfigTemplateHeader);
+          CustomerRecRef.GETTABLE(Customer);
+          ConfigTemplateManagement.UpdateRecord(ConfigTemplateHeader,CustomerRecRef);
+          DimensionsTemplate.InsertDimensionsFromTemplates(ConfigTemplateHeader,Customer."No.",DATABASE::Customer);
+          CustomerRecRef.SETTABLE(Customer);
+        END;
+      END;
+    END;
+
+    PROCEDURE InsertCustomerFromTemplate@16(ConfigTemplateHeader@1006 : Record 8618;VAR Customer@1003 : Record 18);
+    VAR
+      DimensionsTemplate@1001 : Record 1302;
+      ConfigTemplateMgt@1002 : Codeunit 8612;
+      RecRef@1000 : RecordRef;
+    BEGIN
+      Customer.SetInsertFromTemplate(TRUE);
+      Customer.INSERT(TRUE);
+      RecRef.GETTABLE(Customer);
+      ConfigTemplateMgt.UpdateRecord(ConfigTemplateHeader,RecRef);
+      RecRef.SETTABLE(Customer);
+
+      DimensionsTemplate.InsertDimensionsFromTemplates(ConfigTemplateHeader,Customer."No.",DATABASE::Customer);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,159 @@
+OBJECT Page 2502 Extension Marketplace
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Extension Marketplace;
+               ENG=Extension Marketplace];
+  }
+  CONTROLS
+  {
+    { 1   ;    ;Container ;
+                Name=Container;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Field     ;
+                Name=Marketplace;
+                ToolTipML=[ENU=Specifies a window to load the marketplace and install new extensions.;
+                           ENG=Specifies a window to load the marketplace and install new extensions.];
+                ApplicationArea=#Basic,#Suite;
+                ControlAddIn=[Microsoft.Dynamics.Nav.Client.WebPageViewer;PublicKeyToken=31bf3856ad364e35] }
+
+  }
+  CODE
+  {
+    VAR
+      ExtensionMarketplaceMgmt@1001 : Codeunit 2501;
+      JObject@1000 : DotNet "'Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed'.Newtonsoft.Json.Linq.JObject";
+      MessageType@1002 : Text;
+      TelemetryUrl@1006 : Text;
+      ExtensionInstallationFailureErr@1007 : TextConst '@@@="%1=name of extension";ENU=The extension %1 failed to install.;ENG=The extension %1 failed to install.';
+      ExtensionNotFoundErr@1003 : TextConst '@@@=Error message for trying to install an extension that is not published;ENU=Selected extension could not be installed because it is not published.;ENG=Selected extension could not be installed because it is not published.';
+      OperationResult@1004 : 'UserNotAuthorized,DeploymentFailedDueToPackage,DeploymentFailed,Successful,UserCancel,UserTimeOut';
+
+    LOCAL PROCEDURE PerformAction@8(ActionName@1002 : Text);
+    VAR
+      applicationId@1000 : Text;
+      ActionOption@1001 : 'acquireApp';
+    BEGIN
+      IF EVALUATE(ActionOption,ActionName) THEN
+        CASE ActionOption OF
+          ActionOption::acquireApp:
+            BEGIN
+              TelemetryUrl := ExtensionMarketplaceMgmt.GetTelementryUrlFromData(JObject);
+              applicationId := ExtensionMarketplaceMgmt.GetApplicationIdFromData(JObject);
+              IF NOT InstallExtension(applicationId) THEN
+                MESSAGE(GETLASTERRORTEXT);
+            END;
+        END;
+    END;
+
+    [TryFunction]
+    LOCAL PROCEDURE InstallExtension@31(ApplicationID@1006 : Text);
+    VAR
+      NavAppTable@1000 : Record 2000000160;
+      NavExtensionInstallationMgmt@1003 : Codeunit 2500;
+      ExtensionInstallation@1002 : Page 2503;
+      ID@1004 : GUID;
+      ExtensionNotFound@1001 : Boolean;
+    BEGIN
+      ID := ExtensionMarketplaceMgmt.MapMarketplaceIdToPackageId(ApplicationID);
+      NavAppTable.SETFILTER("Package ID",'%1',ID);
+      ExtensionNotFound := NOT NavAppTable.FINDFIRST;
+      IF ExtensionNotFound THEN BEGIN
+        ID := ExtensionMarketplaceMgmt.MapMarketplaceIdToAppId(ApplicationID);
+        NavAppTable.SETFILTER("Package ID",'%1',NavExtensionInstallationMgmt.GetLatestVersionPackageId(ID));
+        ExtensionNotFound := NOT NavAppTable.FINDFIRST;
+      END;
+
+      IF NOT ExtensionNotFound THEN BEGIN
+        NavAppTable.responseUrl := TelemetryUrl;
+        ExtensionInstallation.SETRECORD(NavAppTable);
+        IF ExtensionInstallation.RUNMODAL = ACTION::OK THEN
+          EXIT;
+        NavAppTable.RESET;
+        ExtensionInstallation.GETRECORD(NavAppTable);
+        IF NOT NavExtensionInstallationMgmt.IsInstalled(NavAppTable."Package ID") THEN
+          ERROR(ExtensionInstallationFailureErr);
+      END ELSE BEGIN
+        MakeTelemetryCallback(OperationResult::DeploymentFailedDueToPackage,NavAppTable."Package ID");
+        ERROR(ExtensionNotFoundErr);
+      END;
+    END;
+
+    [TryFunction]
+    LOCAL PROCEDURE TryGetMsgType@35(data@1000 : Text);
+    BEGIN
+      JObject := JObject.Parse(data);
+      MessageType := ExtensionMarketplaceMgmt.GetMessageType(JObject);
+    END;
+
+    LOCAL PROCEDURE MakeTelemetryCallback@4(Result@1000 : 'UserNotAuthorized,DeploymentFailedDueToPackage,DeploymentFailed,Successful,UserCancel,UserTimeOut';PackageId@1001 : Text);
+    BEGIN
+      IF TelemetryUrl <> '' THEN
+        ExtensionMarketplaceMgmt.MakeMarketplaceTelemetryCallback(TelemetryUrl,Result,PackageId);
+    END;
+
+    EVENT Marketplace@-2::ControlAddInReady@6(callbackUrl@1000 : Text);
+    VAR
+      MarketplaceUrl@1001 : Text;
+    BEGIN
+      MarketplaceUrl := ExtensionMarketplaceMgmt.GetMarketplaceEmbeddedUrl;
+      CurrPage.Marketplace.SubscribeToEvent('message',MarketplaceUrl);
+      CurrPage.Marketplace.Navigate(MarketplaceUrl);
+    END;
+
+    EVENT Marketplace@-2::DocumentReady@7();
+    VAR
+      PostMessage@1001 : Text;
+    BEGIN
+      PostMessage := ExtensionMarketplaceMgmt.GetLoadMarketplaceMessage;
+      CurrPage.Marketplace.PostMessage(PostMessage,'*',TRUE);
+    END;
+
+    EVENT Marketplace@-2::Callback@8(data@1000 : Text);
+    BEGIN
+      IF TryGetMsgType(data) THEN
+        PerformAction(MessageType);
+    END;
+
+    EVENT Marketplace@-2::Refresh@9(callbackUrl@1000 : Text);
+    VAR
+      MarketplaceUrl@1001 : Text;
+    BEGIN
+      MarketplaceUrl := ExtensionMarketplaceMgmt.GetMarketplaceEmbeddedUrl;
+      CurrPage.Marketplace.SubscribeToEvent('message',MarketplaceUrl);
+      CurrPage.Marketplace.Navigate(MarketplaceUrl);
+    END;
+
+    EVENT JObject@1000::PropertyChanged@105(sender@1001 : Variant;e@1000 : DotNet "'System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.ComponentModel.PropertyChangedEventArgs");
+    BEGIN
+    END;
+
+    EVENT JObject@1000::PropertyChanging@106(sender@1001 : Variant;e@1000 : DotNet "'System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.ComponentModel.PropertyChangingEventArgs");
+    BEGIN
+    END;
+
+    EVENT JObject@1000::ListChanged@107(sender@1001 : Variant;e@1000 : DotNet "'System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.ComponentModel.ListChangedEventArgs");
+    BEGIN
+    END;
+
+    EVENT JObject@1000::AddingNew@108(sender@1001 : Variant;e@1000 : DotNet "'System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.ComponentModel.AddingNewEventArgs");
+    BEGIN
+    END;
+
+    EVENT JObject@1000::CollectionChanged@109(sender@1001 : Variant;e@1000 : DotNet "'System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Collections.Specialized.NotifyCollectionChangedEventArgs");
+    BEGIN
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,44 @@
+OBJECT Page 2127 O365 Email BCC Listpart
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=BCC;
+               ENG=BCC];
+    SourceTable=Table2118;
+    SourceTableView=WHERE(RecipientType=CONST(BCC));
+    PageType=ListPart;
+    OnNewRecord=BEGIN
+                  RecipientType := RecipientType::BCC;
+                END;
+
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the BCC recipient address on all new invoices;
+                           ENG=Specifies the BCC recipient address on all new invoices];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Email }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

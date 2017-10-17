@@ -1,0 +1,62 @@
+OBJECT Page 5944 Service Shelves
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Service Shelves;
+               ENG=Service Shelves];
+    SourceTable=Table5929;
+    PageType=List;
+    OnOpenPage=BEGIN
+                 IF CurrPage.LOOKUPMODE THEN
+                   CurrPage.EDITABLE(FALSE)
+                 ELSE
+                   CurrPage.EDITABLE(TRUE);
+               END;
+
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the shelf.;
+                           ENG=Specifies the number of the shelf.];
+                SourceExpr="No." }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description of the service shelf.;
+                           ENG=Specifies a description of the service shelf.];
+                SourceExpr=Description }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

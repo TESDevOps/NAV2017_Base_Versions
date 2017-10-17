@@ -1,0 +1,221 @@
+OBJECT Page 6038 Service Invoice Lines Subform
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Lines;
+               ENG=Lines];
+    LinksAllowed=No;
+    SourceTable=Table5993;
+    PageType=ListPart;
+    OnAfterGetRecord=BEGIN
+                       StyleIsStrong := IsFirstDocLine;
+                       DocumentNoHideValue := NOT IsFirstDocLine;
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                Lookup=No;
+                ToolTipML=[ENU=Specifies the number of the invoice.;
+                           ENG=Specifies the number of the invoice.];
+                SourceExpr="Document No.";
+                HideValue=DocumentNoHideValue;
+                Style=Strong;
+                StyleExpr=StyleIsStrong }
+
+    { 50  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the customer to whom you sent the invoice.;
+                           ENG=Specifies the number of the customer to whom you sent the invoice.];
+                SourceExpr="Bill-to Customer No.";
+                Visible=FALSE }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the customer who has received the service on the invoice.;
+                           ENG=Specifies the number of the customer who has received the service on the invoice.];
+                SourceExpr="Customer No.";
+                Visible=FALSE }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of this invoice line.;
+                           ENG=Specifies the type of this invoice line.];
+                SourceExpr=Type }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the general ledger account, item, resource, or cost on the line.;
+                           ENG=Specifies the code of the general ledger account, item, resource, or cost on the line.];
+                SourceExpr="No." }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the variant set up for the item on the invoice line.;
+                           ENG=Specifies the code for the variant set up for the item on the invoice line.];
+                SourceExpr="Variant Code";
+                Visible=FALSE }
+
+    { 30  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies that the item on the invoice line is a nonstock item.;
+                           ENG=Specifies that the item on the invoice line is a nonstock item.];
+                SourceExpr=Nonstock;
+                Visible=FALSE }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of an item, resource, cost, general ledger account description, or some descriptive text on the service invoice line.;
+                           ENG=Specifies the name of an item, resource, cost, general ledger account description, or some descriptive text on the service invoice line.];
+                SourceExpr=Description }
+
+    { 42  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code explaining why the item was returned.;
+                           ENG=Specifies the code explaining why the item was returned.];
+                SourceExpr="Return Reason Code";
+                Visible=FALSE }
+
+    { 18  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the location, such as warehouse or distribution center, in which the invoice line was registered.;
+                           ENG=Specifies the location, such as warehouse or distribution centre, in which the invoice line was registered.];
+                SourceExpr="Location Code";
+                Visible=FALSE }
+
+    { 20  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the bin from which the service items were shipped.;
+                           ENG=Specifies the code of the bin from which the service items were shipped.];
+                SourceExpr="Bin Code";
+                Visible=FALSE }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code assigned to the invoice line.;
+                           ENG=Specifies the dimension value code assigned to the invoice line.];
+                SourceExpr="Shortcut Dimension 1 Code";
+                Visible=FALSE }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code assigned to this invoice.;
+                           ENG=Specifies the dimension value code assigned to this invoice.];
+                SourceExpr="Shortcut Dimension 2 Code";
+                Visible=FALSE }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of one unit of measure of the item, resource time, or cost on the invoice line.;
+                           ENG=Specifies the code of one unit of measure of the item, resource time, or cost on the invoice line.];
+                SourceExpr="Unit of Measure Code" }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of item units, resource hours, general ledger account payments, or cost specified on the invoice line.;
+                           ENG=Specifies the number of item units, resource hours, general ledger account payments, or cost specified on the invoice line.];
+                SourceExpr=Quantity }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the unit of measure for the item, resource, or cost on the service line.;
+                           ENG=Specifies the name of the unit of measure for the item, resource, or cost on the service line.];
+                SourceExpr="Unit of Measure";
+                Visible=FALSE }
+
+    { 46  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the cost per unit of item, resource, or cost on this invoice line.;
+                           ENG=Specifies the cost per unit of item, resource, or cost on this invoice line.];
+                SourceExpr="Unit Cost (LCY)";
+                Visible=FALSE }
+
+    { 48  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the percentage of the discount provided on the invoice line.;
+                           ENG=Specifies the percentage of the discount provided on the invoice line.];
+                BlankZero=Yes;
+                SourceExpr="Line Discount %" }
+
+    { 52  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the amount of the discount calculated for the line.;
+                           ENG=Specifies the amount of the discount calculated for the line.];
+                SourceExpr="Line Discount Amount";
+                Visible=FALSE }
+
+    { 54  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies that an invoice discount has been calculated for this line.;
+                           ENG=Specifies that an invoice discount has been calculated for this line.];
+                SourceExpr="Allow Invoice Disc.";
+                Visible=FALSE }
+
+    { 56  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the invoice discount amount calculated on the line.;
+                           ENG=Specifies the invoice discount amount calculated on the line.];
+                SourceExpr="Inv. Discount Amount";
+                Visible=FALSE }
+
+    { 58  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the service price adjustment group code that applies to the invoice line.;
+                           ENG=Specifies the service price adjustment group code that applies to the invoice line.];
+                SourceExpr="Serv. Price Adjmt. Gr. Code";
+                Visible=FALSE }
+
+    { 62  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the contract associated with the posted service invoice.;
+                           ENG=Specifies the number of the contract associated with the posted service invoice.];
+                SourceExpr="Contract No.";
+                Visible=FALSE }
+
+    { 64  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the posted shipment for the invoice line.;
+                           ENG=Specifies the number of the posted shipment for the invoice line.];
+                SourceExpr="Shipment No.";
+                Visible=FALSE }
+
+    { 66  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the service item to which this invoice line is linked.;
+                           ENG=Specifies the number of the service item to which this invoice line is linked.];
+                SourceExpr="Service Item No.";
+                Visible=FALSE }
+
+    { 68  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the service ledger entry that the program applies this service invoice line to.;
+                           ENG=Specifies the number of the service ledger entry that the program applies this service invoice line to.];
+                SourceExpr="Appl.-to Service Entry";
+                Visible=FALSE }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the item ledger entry to which the items on the line were applied when the invoice was posted.;
+                           ENG=Specifies the number of the item ledger entry to which the items on the line were applied when the invoice was posted.];
+                SourceExpr="Appl.-to Item Entry";
+                Visible=FALSE }
+
+  }
+  CODE
+  {
+    VAR
+      TempServInvLine@1002 : TEMPORARY Record 5993;
+      StyleIsStrong@1000 : Boolean INDATASET;
+      DocumentNoHideValue@1001 : Boolean INDATASET;
+
+    LOCAL PROCEDURE IsFirstDocLine@2() : Boolean;
+    VAR
+      ServInvLine@1000 : Record 5993;
+    BEGIN
+      TempServInvLine.RESET;
+      TempServInvLine.COPYFILTERS(Rec);
+      TempServInvLine.SETRANGE("Document No.","Document No.");
+      IF NOT TempServInvLine.FINDFIRST THEN BEGIN
+        ServInvLine.COPYFILTERS(Rec);
+        ServInvLine.SETRANGE("Document No.","Document No.");
+        IF NOT ServInvLine.FINDFIRST THEN
+          EXIT(FALSE);
+        TempServInvLine := ServInvLine;
+        TempServInvLine.INSERT;
+      END;
+      EXIT("Line No." = TempServInvLine."Line No.");
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

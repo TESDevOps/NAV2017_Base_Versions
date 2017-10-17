@@ -1,0 +1,54 @@
+OBJECT Table 7506 Filter Item Attributes Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Filter Item Attributes Buffer;
+               ENG=Filter Item Attributes Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Attribute           ;Text250       ;CaptionML=[ENU=Attribute;
+                                                              ENG=Attribute] }
+    { 2   ;   ;Value               ;Text250       ;CaptionML=[ENU=Value;
+                                                              ENG=Value] }
+  }
+  KEYS
+  {
+    {    ;Attribute                               ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE ValueAssistEdit@1();
+    VAR
+      ItemAttribute@1000 : Record 7500;
+      FilterItemsAssistEdit@1001 : Page 7507;
+    BEGIN
+      ItemAttribute.SETRANGE(Name,Attribute);
+      IF ItemAttribute.FINDFIRST THEN
+        IF ItemAttribute.Type = ItemAttribute.Type::Option THEN BEGIN
+          FilterItemsAssistEdit.SETRECORD(ItemAttribute);
+          Value := COPYSTR(FilterItemsAssistEdit.LookupOptionValue(Value),1,MAXSTRLEN(Value));
+          EXIT;
+        END;
+
+      FilterItemsAssistEdit.SETTABLEVIEW(ItemAttribute);
+      FilterItemsAssistEdit.LOOKUPMODE(TRUE);
+      IF FilterItemsAssistEdit.RUNMODAL = ACTION::LookupOK THEN
+        Value := COPYSTR(FilterItemsAssistEdit.GenerateFilter,1,MAXSTRLEN(Value));
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

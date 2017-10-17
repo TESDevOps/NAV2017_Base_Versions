@@ -1,0 +1,56 @@
+OBJECT Table 1309 O365 Getting Started
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=O365 Getting Started;
+               ENG=O365 Getting Started];
+  }
+  FIELDS
+  {
+    { 1   ;   ;User ID             ;Text132       ;CaptionML=[ENU=User ID;
+                                                              ENG=User ID];
+                                                   Editable=No }
+    { 2   ;   ;Display Target      ;Code20        ;CaptionML=[ENU=Display Target;
+                                                              ENG=Display Target] }
+    { 10  ;   ;Current Page        ;Integer       ;InitValue=1;
+                                                   CaptionML=[ENU=Current Page;
+                                                              ENG=Current Page] }
+    { 11  ;   ;Tour in Progress    ;Boolean       ;CaptionML=[ENU=Tour in Progress;
+                                                              ENG=Tour in Progress] }
+    { 12  ;   ;Tour Completed      ;Boolean       ;CaptionML=[ENU=Tour Completed;
+                                                              ENG=Tour Completed] }
+  }
+  KEYS
+  {
+    {    ;User ID,Display Target                  ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE AlreadyShown@4() : Boolean;
+    BEGIN
+      EXIT(GET(USERID,CURRENTCLIENTTYPE));
+    END;
+
+    PROCEDURE MarkAsShown@1();
+    BEGIN
+      INIT;
+      "User ID" := USERID;
+      "Display Target" := FORMAT(CURRENTCLIENTTYPE);
+      INSERT;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

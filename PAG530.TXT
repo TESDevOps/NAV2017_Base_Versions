@@ -1,0 +1,274 @@
+OBJECT Page 530 Posted Purchase Cr. Memo Lines
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Posted Purchase Cr. Memo Lines;
+               ENG=Posted Purchase Cr. Memo Lines];
+    SourceTable=Table125;
+    PageType=List;
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 73      ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Line;
+                                 ENG=&Line];
+                      Image=Line }
+      { 74      ;2   ;Action    ;
+                      ShortCutKey=Shift+F7;
+                      CaptionML=[ENU=Show Document;
+                                 ENG=Show Document];
+                      ToolTipML=[ENU=Open the document that the selected line exists on.;
+                                 ENG=Open the document that the selected line exists on.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=View;
+                      OnAction=BEGIN
+                                 PurchCrMemoHeader.GET("Document No.");
+                                 PAGE.RUN(PAGE::"Posted Purchase Credit Memo",PurchCrMemoHeader);
+                               END;
+                                }
+      { 75      ;2   ;Action    ;
+                      AccessByPermission=TableData 348=R;
+                      ShortCutKey=Shift+Ctrl+D;
+                      CaptionML=[ENU=Dimensions;
+                                 ENG=Dimensions];
+                      ToolTipML=[ENU=View or edits dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyze transaction history.;
+                                 ENG=View or edits dimensions, such as area, project, or department, that you can assign to sales and purchase documents to distribute costs and analyse transaction history.];
+                      ApplicationArea=#Suite;
+                      Image=Dimensions;
+                      OnAction=BEGIN
+                                 ShowDimensions;
+                               END;
+                                }
+      { 6500    ;2   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+I;
+                      CaptionML=[ENU=Item &Tracking Lines;
+                                 ENG=Item &Tracking Lines];
+                      ToolTipML=[ENU=View or edit serial numbers and lot numbers that are assigned to the item on the document or journal line.;
+                                 ENG=View or edit serial numbers and lot numbers that are assigned to the item on the document or journal line.];
+                      Image=ItemTrackingLines;
+                      OnAction=BEGIN
+                                 ShowItemTrackingLines;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the document number.;
+                           ENG=Specifies the document number.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Document No." }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the vendor that you bought the items on the invoice from.;
+                           ENG=Specifies the number of the vendor that you bought the items on the invoice from.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Buy-from Vendor No." }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the line type.;
+                           ENG=Specifies the line type.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Type }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies an item number that identifies the account number that identifies the general ledger account used when posting the line.;
+                           ENG=Specifies an item number that identifies the account number that identifies the general ledger account used when posting the line.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="No." }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the variant code for the item.;
+                           ENG=Specifies the variant code for the item.];
+                SourceExpr="Variant Code";
+                Visible=FALSE }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies either the name of, or a description of, the item or general ledger account.;
+                           ENG=Specifies either the name of, or a description of, the item or general ledger account.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Description }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the dimension value associated with the credit memo.;
+                           ENG=Specifies the code for the dimension value associated with the credit memo.];
+                SourceExpr="Shortcut Dimension 1 Code";
+                Visible=FALSE }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code for the dimension value associated with the credit memo.;
+                           ENG=Specifies the code for the dimension value associated with the credit memo.];
+                SourceExpr="Shortcut Dimension 2 Code";
+                Visible=FALSE }
+
+    { 22  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the FA posting type of the purchase credit memo line.;
+                           ENG=Specifies the FA posting type of the purchase credit memo line.];
+                SourceExpr="FA Posting Type";
+                Visible=FALSE }
+
+    { 24  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the depreciation book code on the purchase credit memo line.;
+                           ENG=Specifies the depreciation book code on the purchase credit memo line.];
+                SourceExpr="Depreciation Book Code";
+                Visible=FALSE }
+
+    { 26  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of units of the item specified on the credit memo line.;
+                           ENG=Specifies the number of units of the item specified on the credit memo line.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Quantity }
+
+    { 28  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit of measure code for the item.;
+                           ENG=Specifies the unit of measure code for the item.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Unit of Measure Code" }
+
+    { 30  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit of measure for the item (bottle or piece, for example).;
+                           ENG=Specifies the unit of measure for the item (bottle or piece, for example).];
+                SourceExpr="Unit of Measure";
+                Visible=FALSE }
+
+    { 32  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the direct cost of one unit of the item.;
+                           ENG=Specifies the direct cost of one unit of the item.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Direct Unit Cost" }
+
+    { 34  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the percentage indirect cost for the item.;
+                           ENG=Specifies the percentage indirect cost for the item.];
+                SourceExpr="Indirect Cost %";
+                Visible=FALSE }
+
+    { 36  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit cost of the item on the line.;
+                           ENG=Specifies the unit cost of the item on the line.];
+                SourceExpr="Unit Cost (LCY)";
+                Visible=FALSE }
+
+    { 38  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the price for one unit of the item.;
+                           ENG=Specifies the price for one unit of the item.];
+                SourceExpr="Unit Price (LCY)";
+                Visible=FALSE }
+
+    { 40  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the line's net amount.;
+                           ENG=Specifies the line's net amount.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Amount }
+
+    { 42  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the amount. This field is intended only for internal use.;
+                           ENG=Specifies the amount. This field is intended only for internal use.];
+                SourceExpr="Amount Including VAT";
+                Visible=FALSE }
+
+    { 44  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the line discount % granted on items on each individual line.;
+                           ENG=Specifies the line discount % granted on items on each individual line.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Line Discount %" }
+
+    { 46  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the discount amount that was granted on the line.;
+                           ENG=Specifies the discount amount that was granted on the line.];
+                SourceExpr="Line Discount Amount";
+                Visible=FALSE }
+
+    { 48  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether the credit memo line could have been included in an invoice discount calculation.;
+                           ENG=Specifies whether the credit memo line could have been included in an invoice discount calculation.];
+                SourceExpr="Allow Invoice Disc.";
+                Visible=FALSE }
+
+    { 50  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the invoice discount amount calculated on the line.;
+                           ENG=Specifies the invoice discount amount calculated on the line.];
+                SourceExpr="Inv. Discount Amount";
+                Visible=FALSE }
+
+    { 56  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of a particular item entry to which the credit memo was applied.;
+                           ENG=Specifies the number of a particular item entry to which the credit memo was applied.];
+                SourceExpr="Appl.-to Item Entry";
+                Visible=FALSE }
+
+    { 58  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the job number the purchase invoice line is linked to.;
+                           ENG=Specifies the job number the purchase invoice line is linked to.];
+                SourceExpr="Job No.";
+                Visible=FALSE }
+
+    { 60  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the production order number.;
+                           ENG=Specifies the production order number.];
+                SourceExpr="Prod. Order No.";
+                Visible=FALSE }
+
+    { 62  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the insurance number on the purchase credit memo line.;
+                           ENG=Specifies the insurance number on the purchase credit memo line.];
+                SourceExpr="Insurance No.";
+                Visible=FALSE }
+
+    { 64  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether depreciation was calculated until the FA posting date of the line.;
+                           ENG=Specifies whether depreciation was calculated until the FA posting date of the line.];
+                SourceExpr="Depr. until FA Posting Date";
+                Visible=FALSE }
+
+    { 66  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies whether, when this line was posted, the additional acquisition cost posted on the line was depreciated in proportion to the amount by which the fixed asset had already been depreciated.;
+                           ENG=Specifies whether, when this line was posted, the additional acquisition cost posted on the line was depreciated in proportion to the amount by which the fixed asset had already been depreciated.];
+                SourceExpr="Depr. Acquisition Cost";
+                Visible=FALSE }
+
+    { 68  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the budgeted FA number on the purchase credit memo line.;
+                           ENG=Specifies the budgeted FA number on the purchase credit memo line.];
+                SourceExpr="Budgeted FA No.";
+                Visible=FALSE }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      PurchCrMemoHeader@1000 : Record 124;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,65 @@
+OBJECT Table 6707 Booking Item
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    TableType=Exchange;
+    ExternalName=BookingItem;
+    CaptionML=[ENU=Booking Item;
+               ENG=Booking Item];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Item ID             ;Text50        ;CaptionML=[ENU=Item ID;
+                                                              ENG=Item ID] }
+    { 2   ;   ;Start               ;DateTime      ;CaptionML=[ENU=Start;
+                                                              ENG=Start] }
+    { 3   ;   ;End                 ;DateTime      ;CaptionML=[ENU=End;
+                                                              ENG=End] }
+    { 4   ;   ;Duration            ;Integer       ;CaptionML=[ENU=Duration;
+                                                              ENG=Duration] }
+    { 5   ;   ;Notes               ;Text250       ;CaptionML=[ENU=Notes;
+                                                              ENG=Notes] }
+    { 7   ;   ;Price Type          ;Integer       ;CaptionML=[ENU=Price Type;
+                                                              ENG=Price Type] }
+    { 8   ;   ;Price               ;Decimal       ;CaptionML=[ENU=Price;
+                                                              ENG=Price] }
+    { 10  ;   ;Service ID          ;Text50        ;CaptionML=[ENU=Service ID;
+                                                              ENG=Service ID] }
+    { 11  ;   ;Service Name        ;Text50        ;CaptionML=[ENU=Service Name;
+                                                              ENG=Service Name] }
+    { 13  ;   ;Customer ID         ;Text50        ;CaptionML=[ENU=Customer ID;
+                                                              ENG=Customer ID] }
+    { 14  ;   ;Customer Email      ;Text80        ;CaptionML=[ENU=Customer Email;
+                                                              ENG=Customer Email] }
+    { 15  ;   ;Customer Name       ;Text50        ;CaptionML=[ENU=Customer Name;
+                                                              ENG=Customer Name] }
+    { 17  ;   ;Invoiced            ;Boolean       ;CaptionML=[ENU=Invoiced;
+                                                              ENG=Invoiced] }
+    { 18  ;   ;Invoice Link        ;Text250       ;CaptionML=[ENU=Invoice Link;
+                                                              ENG=Invoice Link] }
+    { 19  ;   ;Invoice No.         ;Code20        ;CaptionML=[ENU=Invoice No.;
+                                                              ENG=Invoice No.] }
+    { 21  ;   ;Paid                ;Boolean       ;CaptionML=[ENU=Paid;
+                                                              ENG=Paid] }
+  }
+  KEYS
+  {
+    {    ;Item ID                                 ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

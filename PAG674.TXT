@@ -1,0 +1,188 @@
+OBJECT Page 674 Job Queue Log Entries
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Job Queue Log Entries;
+               ENG=Job Queue Log Entries];
+    SourceTable=Table474;
+    SourceTableView=SORTING(Start Date/Time,ID)
+                    ORDER(Descending);
+    PageType=List;
+    OnOpenPage=BEGIN
+                 IF FINDFIRST THEN;
+               END;
+
+    ActionList=ACTIONS
+    {
+      { 5       ;    ;ActionContainer;
+                      CaptionML=[ENU=Delete Log Entries;
+                                 ENG=Delete Log Entries];
+                      ActionContainerType=ActionItems }
+      { 7       ;1   ;Action    ;
+                      Name=Delete7days;
+                      CaptionML=[ENU=Delete Entries Older Than 7 Days;
+                                 ENG=Delete Entries Older Than 7 Days];
+                      ToolTipML=[ENU=Clear the list of log entries that are older than 7 days.;
+                                 ENG=Clear the list of log entries that are older than 7 days.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=ClearLog;
+                      OnAction=BEGIN
+                                 DeleteEntries(7);
+                               END;
+                                }
+      { 9       ;1   ;Action    ;
+                      Name=Delete0days;
+                      CaptionML=[ENU=Delete All Entries;
+                                 ENG=Delete All Entries];
+                      ToolTipML=[ENU=Clear the list of all log entries.;
+                                 ENG=Clear the list of all log entries.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Delete;
+                      OnAction=BEGIN
+                                 DeleteEntries(0);
+                               END;
+                                }
+      { 3       ;1   ;Action    ;
+                      CaptionML=[ENU=Show Error Message;
+                                 ENG=Show Error Message];
+                      ToolTipML=[ENU=Show the error message that has stopped the entry.;
+                                 ENG=Show the error message that has stopped the entry.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Error;
+                      OnAction=BEGIN
+                                 ShowErrorMessage;
+                               END;
+                                }
+      { 18      ;1   ;Action    ;
+                      Name=SetStatusToError;
+                      CaptionML=[ENU=Set Status to Error;
+                                 ENG=Set Status to Error];
+                      ToolTipML=[ENU=Change the status of the entry.;
+                                 ENG=Change the status of the entry.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=DefaultFault;
+                      OnAction=BEGIN
+                                 IF CONFIRM(JobQueueEntryRunningQst,FALSE) THEN
+                                   MarkAsError;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 14  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the status of the running of the job queue entry in a log.;
+                           ENG=Specifies the status of the running of the job queue entry in a log.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Status }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the ID of the user who inserted the job in the job queue.;
+                           ENG=Specifies the ID of the user who inserted the job in the job queue.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="User ID" }
+
+    { 11  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a description of the job queue entry in the log.;
+                           ENG=Specifies a description of the job queue entry in the log.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Description }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the type of the object that is to be run for the job.;
+                           ENG=Specifies the type of the object that is to be run for the job.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Object Type to Run" }
+
+    { 10  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the ID of the object that is to be run for the job.;
+                           ENG=Specifies the ID of the object that is to be run for the job.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Object ID to Run" }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name or caption of the object that was run for the job.;
+                           ENG=Specifies the name or caption of the object that was run for the job.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Object Caption to Run" }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date and time when the job was started.;
+                           ENG=Specifies the date and time when the job was started.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Start Date/Time" }
+
+    { 13  ;2   ;Field     ;
+                Name=Duration;
+                CaptionML=[ENU=Duration;
+                           ENG=Duration];
+                SourceExpr=Duration }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date and time when the job ended.;
+                           ENG=Specifies the date and time when the job ended.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="End Date/Time";
+                Visible=FALSE }
+
+    { 16  ;2   ;Field     ;
+                CaptionML=[ENU=Error Message;
+                           ENG=Error Message];
+                ToolTipML=[ENU=Specifies an error that occurred in the job queue.;
+                           ENG=Specifies an error that occurred in the job queue.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=GetErrorMessage;
+                OnAssistEdit=BEGIN
+                               ShowErrorMessage;
+                             END;
+                              }
+
+    { 15  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the user ID of the job queue entry processor. The user ID comes from the job queue entry card.;
+                           ENG=Specifies the user ID of the job queue entry processor. The user ID comes from the job queue entry card.];
+                SourceExpr="Processed by User ID";
+                Visible=FALSE }
+
+    { 17  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the category code for the entry in the job queue log.;
+                           ENG=Specifies the category code for the entry in the job queue log.];
+                SourceExpr="Job Queue Category Code";
+                Visible=FALSE }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      JobQueueEntryRunningQst@1000 : TextConst 'ENU=This job queue entry may be still running. If you set the status to Error, it may keep running in the background. Are you sure you want to set the status to Error?;ENG=This job queue entry may be still running. If you set the status to Error, it may keep running in the background. Are you sure you want to set the status to Error?';
+
+    BEGIN
+    END.
+  }
+}
+

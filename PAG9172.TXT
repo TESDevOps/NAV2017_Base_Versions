@@ -1,0 +1,220 @@
+OBJECT Page 9172 User Personalization Card
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=User Personalization Card;
+               ENG=User Personalisation Card];
+    SourceTable=Table2000000073;
+    DataCaptionExpr="User ID";
+    DelayedInsert=Yes;
+    PageType=Card;
+    OnOpenPage=BEGIN
+                 HideExternalUsers;
+               END;
+
+    OnInsertRecord=BEGIN
+                     TESTFIELD("User SID");
+                   END;
+
+    OnModifyRecord=BEGIN
+                     TESTFIELD("User SID");
+                   END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 13      ;1   ;ActionGroup;
+                      CaptionML=[ENU=User &Personalization;
+                                 ENG=User &Personalisation];
+                      Image=Grid }
+      { 14      ;2   ;Action    ;
+                      ShortCutKey=Shift+Ctrl+L;
+                      CaptionML=[ENU=List;
+                                 ENG=List];
+                      ToolTipML=[ENU=View or edit a list of all users who have personalized their user interface by customizing one or more pages.;
+                                 ENG=View or edit a list of all users who have Personalised their user interface by customising one or more pages.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=OpportunitiesList;
+                      OnAction=VAR
+                                 UserPersList@1102601000 : Page 9173;
+                               BEGIN
+                                 UserPersList.LOOKUPMODE := TRUE;
+                                 UserPersList.SETRECORD(Rec);
+                                 IF UserPersList.RUNMODAL = ACTION::LookupOK THEN
+                                   UserPersList.GETRECORD(Rec);
+                               END;
+                                }
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 20      ;1   ;ActionGroup;
+                      CaptionML=[ENU=F&unctions;
+                                 ENG=F&unctions];
+                      Image=Action }
+      { 21      ;2   ;Action    ;
+                      CaptionML=[ENU=C&lear Personalized Pages;
+                                 ENG=C&lear Personalised Pages];
+                      ToolTipML=[ENU=Delete all personalizations made by the selected user.;
+                                 ENG=Delete all personalisations made by the selected user.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=Cancel;
+                      OnAction=BEGIN
+                                 ConfPersMgt.ClearUserPersonalization(Rec);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                CaptionML=[ENU=General;
+                           ENG=General] }
+
+    { 4   ;2   ;Field     ;
+                DrillDown=No;
+                CaptionML=[ENU=User ID;
+                           ENG=User ID];
+                ToolTipML=[ENU=Specifies the user ID of a user who is using Database Server Authentication to log on to Dynamics NAV.;
+                           ENG=Specifies the user ID of a user who is using Database Server Authentication to log on to Dynamics NAV.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="User ID";
+                Editable=FALSE;
+                OnAssistEdit=VAR
+                               UserPersonalization@1005 : Record 2000000073;
+                               UserMgt@1002 : Codeunit 418;
+                               SID@1006 : GUID;
+                               UserID@1001 : Code[50];
+                             BEGIN
+                               UserMgt.LookupUser(UserID,SID);
+
+                               IF (SID <> "User SID") AND NOT ISNULLGUID(SID) THEN BEGIN
+                                 IF UserPersonalization.GET(SID) THEN BEGIN
+                                   UserPersonalization.CALCFIELDS("User ID");
+                                   ERROR(Text000,TABLECAPTION,UserPersonalization."User ID");
+                                 END;
+
+                                 VALIDATE("User SID",SID);
+                                 CALCFIELDS("User ID");
+
+                                 CurrPage.UPDATE;
+                               END;
+                             END;
+                              }
+
+    { 6   ;2   ;Field     ;
+                CaptionML=[ENU=Profile ID;
+                           ENG=Profile ID];
+                ToolTipML=[ENU=Specifies the ID of the profile that is associated with the current user.;
+                           ENG=Specifies the ID of the profile that is associated with the current user.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Profile ID";
+                LookupPageID=Profile List }
+
+    { 8   ;2   ;Field     ;
+                CaptionML=[ENU=Language ID;
+                           ENG=Language ID];
+                ToolTipML=[ENU=Specifies the ID of the language that Microsoft Windows is set up to run for the selected user.;
+                           ENG=Specifies the ID of the language that Microsoft Windows is set up to run for the selected user.];
+                BlankZero=Yes;
+                SourceExpr="Language ID";
+                OnValidate=VAR
+                             ApplicationManagement@1001 : Codeunit 1;
+                           BEGIN
+                             ApplicationManagement.ValidateApplicationlLanguage("Language ID");
+                           END;
+
+                OnLookup=VAR
+                           ApplicationManagement@1002 : Codeunit 1;
+                         BEGIN
+                           ApplicationManagement.LookupApplicationlLanguage("Language ID");
+
+                           IF "Language ID" <> xRec."Language ID" THEN
+                             VALIDATE("Language ID","Language ID");
+                         END;
+                          }
+
+    { 2   ;2   ;Field     ;
+                CaptionML=[ENU=Locale ID;
+                           ENG=Locale ID];
+                ToolTipML=[ENU=Specifies the ID of the locale that Microsoft Windows is set up to run for the selected user.;
+                           ENG=Specifies the ID of the locale that Microsoft Windows is set up to run for the selected user.];
+                ApplicationArea=#Basic,#Suite;
+                BlankZero=Yes;
+                SourceExpr="Locale ID";
+                TableRelation="Windows Language"."Language ID";
+                Importance=Additional }
+
+    { 3   ;2   ;Field     ;
+                CaptionML=[ENU=Time Zone;
+                           ENG=Time Zone];
+                ToolTipML=[ENU=Specifies the time zone that Microsoft Windows is set up to run for the selected user.;
+                           ENG=Specifies the time zone that Microsoft Windows is set up to run for the selected user.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Time Zone";
+                Importance=Additional;
+                OnValidate=BEGIN
+                             ConfPersMgt.ValidateTimeZone("Time Zone")
+                           END;
+
+                OnLookup=BEGIN
+                           EXIT(ConfPersMgt.LookupTimeZone(Text))
+                         END;
+                          }
+
+    { 10  ;2   ;Field     ;
+                CaptionML=[ENU=Company;
+                           ENG=Company];
+                ToolTipML=[ENU=Specifies the company that is associated with the user.;
+                           ENG=Specifies the company that is associated with the user.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr=Company }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+    VAR
+      ConfPersMgt@1000 : Codeunit 9170;
+      Text000@1008 : TextConst '@@@=User Personalization User1 already exists.;ENU=%1 %2 already exists.;ENG=%1 %2 already exists.';
+
+    LOCAL PROCEDURE HideExternalUsers@5();
+    VAR
+      PermissionManager@1001 : Codeunit 9002;
+      OriginalFilterGroup@1000 : Integer;
+    BEGIN
+      IF NOT PermissionManager.SoftwareAsAService THEN
+        EXIT;
+
+      OriginalFilterGroup := FILTERGROUP;
+      FILTERGROUP := 2;
+      CALCFIELDS("License Type");
+      SETFILTER("License Type",'<>%1',"License Type"::"External User");
+      FILTERGROUP := OriginalFilterGroup;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,59 @@
+OBJECT Table 8630 Config. Media Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Config. Media Buffer;
+               ENG=Config. Media Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Package Code        ;Code20        ;CaptionML=[ENU=Package Code;
+                                                              ENG=Package Code] }
+    { 2   ;   ;Media Set ID        ;GUID          ;CaptionML=[ENU=Media Set ID;
+                                                              ENG=Media Set ID] }
+    { 3   ;   ;Media ID            ;GUID          ;CaptionML=[ENU=Media ID;
+                                                              ENG=Media ID] }
+    { 4   ;   ;No.                 ;Integer       ;CaptionML=[ENU=No.;
+                                                              ENG=No.] }
+    { 10  ;   ;Media Blob          ;BLOB          ;CaptionML=[ENU=Media Blob;
+                                                              ENG=Media Blob] }
+    { 11  ;   ;Media Set           ;MediaSet      ;CaptionML=[ENU=Media Set;
+                                                              ENG=Media Set] }
+    { 12  ;   ;Media               ;Media         ;CaptionML=[ENU=Media;
+                                                              ENG=Media] }
+  }
+  KEYS
+  {
+    {    ;Package Code,Media Set ID,Media ID,No.  ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE GetNextNo@1() : Integer;
+    VAR
+      ConfigMediaBuffer@1003 : Record 8630;
+    BEGIN
+      ConfigMediaBuffer.SETRANGE("Package Code","Package Code");
+      ConfigMediaBuffer.SETRANGE("Media Set ID","Media Set ID");
+      ConfigMediaBuffer.SETRANGE("Media ID","Media ID");
+
+      IF ConfigMediaBuffer.FINDLAST THEN
+        EXIT(ConfigMediaBuffer."No." + 1);
+
+      EXIT(1);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

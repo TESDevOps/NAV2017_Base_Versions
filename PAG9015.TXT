@@ -1,0 +1,609 @@
+OBJECT Page 9015 Job Project Manager RC
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/10/16;
+    Time=12:00:00;
+    Version List=NAVW110.00;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Role Center;
+               ENG=Role Centre];
+    PageType=RoleCenter;
+    ActionList=ACTIONS
+    {
+      { 1900000011;0 ;ActionContainer;
+                      ActionContainerType=HomeItems }
+      { 12      ;1   ;Action    ;
+                      Name=Jobs;
+                      CaptionML=[ENU=Jobs;
+                                 ENG=Jobs];
+                      ToolTipML=[ENU=View all jobs.;
+                                 ENG=View all jobs.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 89;
+                      Image=Job }
+      { 53      ;1   ;Action    ;
+                      Name=JobsOnOrder;
+                      CaptionML=[ENU=Open;
+                                 ENG=Open];
+                      ToolTipML=[ENU=View all jobs on order.;
+                                 ENG=View all jobs on order.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 89;
+                      RunPageView=WHERE(Status=FILTER(Open)) }
+      { 54      ;1   ;Action    ;
+                      Name=JobsPlannedAndQuoted;
+                      CaptionML=[ENU=Planned and Quoted;
+                                 ENG=Planned and Quoted];
+                      ToolTipML=[ENU=View all planned and quoted jobs.;
+                                 ENG=View all planned and quoted jobs.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 89;
+                      RunPageView=WHERE(Status=FILTER(Quote|Planning)) }
+      { 35      ;1   ;Action    ;
+                      Name=JobsCompleted;
+                      CaptionML=[ENU=Completed;
+                                 ENG=Completed];
+                      ToolTipML=[ENU=View all completed jobs.;
+                                 ENG=View all completed jobs.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 89;
+                      RunPageView=WHERE(Status=FILTER(Completed)) }
+      { 55      ;1   ;Action    ;
+                      Name=JobsUnassigned;
+                      CaptionML=[ENU=Unassigned;
+                                 ENG=Unassigned];
+                      ToolTipML=[ENU=View all unassigned jobs.;
+                                 ENG=View all unassigned jobs.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 89;
+                      RunPageView=WHERE(Person Responsible=FILTER('')) }
+      { 36      ;1   ;Action    ;
+                      CaptionML=[ENU=Job Tasks;
+                                 ENG=Job Tasks];
+                      ToolTipML=[ENU=View all job tasks.;
+                                 ENG=View all job tasks.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 1004 }
+      { 37      ;1   ;Action    ;
+                      CaptionML=[ENU=Sales Invoices;
+                                 ENG=Sales Invoices];
+                      ToolTipML=[ENU=View all sales invoices.;
+                                 ENG=View all sales invoices.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 9301;
+                      Image=Invoice }
+      { 38      ;1   ;Action    ;
+                      CaptionML=[ENU=Sales Credit Memos;
+                                 ENG=Sales Credit Memos];
+                      ToolTipML=[ENU=View all sales credit memos.;
+                                 ENG=View all sales credit memos.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 9302 }
+      { 39      ;1   ;Action    ;
+                      CaptionML=[ENU=Purchase Orders;
+                                 ENG=Purchase Orders];
+                      ToolTipML=[ENU=View all purchase orders.;
+                                 ENG=View all purchase orders.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 9307 }
+      { 40      ;1   ;Action    ;
+                      CaptionML=[ENU=Purchase Invoices;
+                                 ENG=Purchase Invoices];
+                      ToolTipML=[ENU=View all purchase invoices.;
+                                 ENG=View all purchase invoices.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 9308 }
+      { 41      ;1   ;Action    ;
+                      CaptionML=[ENU=Purchase Credit Memos;
+                                 ENG=Purchase Credit Memos];
+                      ToolTipML=[ENU=View all purchase credit memos.;
+                                 ENG=View all purchase credit memos.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 9309 }
+      { 42      ;1   ;Action    ;
+                      CaptionML=[ENU=Resources;
+                                 ENG=Resources];
+                      ToolTipML=[ENU=View all resources.;
+                                 ENG=View all resources.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 77 }
+      { 43      ;1   ;Action    ;
+                      CaptionML=[ENU=Resource Groups;
+                                 ENG=Resource Groups];
+                      ToolTipML=[ENU=View all resource groups.;
+                                 ENG=View all resource groups.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 72 }
+      { 44      ;1   ;Action    ;
+                      CaptionML=[ENU=Items;
+                                 ENG=Items];
+                      ToolTipML=[ENU=View all items.;
+                                 ENG=View all items.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 31;
+                      Image=Item }
+      { 45      ;1   ;Action    ;
+                      CaptionML=[ENU=Customers;
+                                 ENG=Customers];
+                      ToolTipML=[ENU=View all customers.;
+                                 ENG=View all customers.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 22;
+                      Image=Customer }
+      { 4       ;1   ;Action    ;
+                      CaptionML=[ENU=Time Sheets;
+                                 ENG=Time Sheets];
+                      ToolTipML=[ENU=View all time sheets.;
+                                 ENG=View all time sheets.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 951 }
+      { 11      ;1   ;Action    ;
+                      Name=Page Manager Time Sheets;
+                      CaptionML=[ENU=Manager Time Sheets;
+                                 ENG=Manager Time Sheets];
+                      ToolTipML=[ENU=Open the Manager Time Sheet list.;
+                                 ENG=Open the Manager Time Sheet list.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 953 }
+      { 1900000012;0 ;ActionContainer;
+                      ActionContainerType=ActivityButtons }
+      { 13      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Journals;
+                                 ENG=Journals];
+                      Image=Journals }
+      { 18      ;2   ;Action    ;
+                      Name=JobJournals;
+                      CaptionML=[ENU=Job Journals;
+                                 ENG=Job Journals];
+                      ToolTipML=[ENU=View all job journals.;
+                                 ENG=View all job journals.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 276;
+                      RunPageView=WHERE(Recurring=CONST(No)) }
+      { 19      ;2   ;Action    ;
+                      Name=JobGLJournals;
+                      CaptionML=[ENU=Job G/L Journals;
+                                 ENG=Job G/L Journals];
+                      ToolTipML=[ENU=View all job G/L journals.;
+                                 ENG=View all job G/L journals.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 251;
+                      RunPageView=WHERE(Template Type=CONST(Jobs),
+                                        Recurring=CONST(No)) }
+      { 20      ;2   ;Action    ;
+                      Name=ResourceJournals;
+                      CaptionML=[ENU=Resource Journals;
+                                 ENG=Resource Journals];
+                      ToolTipML=[ENU=View all resource journals.;
+                                 ENG=View all resource journals.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 272;
+                      RunPageView=WHERE(Recurring=CONST(No)) }
+      { 22      ;2   ;Action    ;
+                      Name=ItemJournals;
+                      CaptionML=[ENU=Item Journals;
+                                 ENG=Item Journals];
+                      ToolTipML=[ENU=View all item journals.;
+                                 ENG=View all item journals.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 262;
+                      RunPageView=WHERE(Template Type=CONST(Item),
+                                        Recurring=CONST(No)) }
+      { 23      ;2   ;Action    ;
+                      Name=RecurringJobJournals;
+                      CaptionML=[ENU=Recurring Job Journals;
+                                 ENG=Recurring Job Journals];
+                      ToolTipML=[ENU=View all recurring job journals.;
+                                 ENG=View all recurring job journals.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 276;
+                      RunPageView=WHERE(Recurring=CONST(Yes)) }
+      { 46      ;2   ;Action    ;
+                      Name=RecurringResourceJournals;
+                      CaptionML=[ENU=Recurring Resource Journals;
+                                 ENG=Recurring Resource Journals];
+                      ToolTipML=[ENU=View all recurring resource journals.;
+                                 ENG=View all recurring resource journals.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 272;
+                      RunPageView=WHERE(Recurring=CONST(Yes)) }
+      { 47      ;2   ;Action    ;
+                      Name=RecurringItemJournals;
+                      CaptionML=[ENU=Recurring Item Journals;
+                                 ENG=Recurring Item Journals];
+                      ToolTipML=[ENU=View all recurring item journals.;
+                                 ENG=View all recurring item journals.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 262;
+                      RunPageView=WHERE(Template Type=CONST(Item),
+                                        Recurring=CONST(Yes)) }
+      { 62      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Posted Documents;
+                                 ENG=Posted Documents];
+                      ToolTipML=[ENU=View history for sales, shipments, and inventory.;
+                                 ENG=View history for sales, shipments, and inventory.];
+                      Image=FiledPosted }
+      { 67      ;2   ;Action    ;
+                      CaptionML=[ENU=Posted Shipments;
+                                 ENG=Posted Shipments];
+                      ToolTipML=[ENU=View all posted sales shipments.;
+                                 ENG=View all posted sales shipments.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 142 }
+      { 68      ;2   ;Action    ;
+                      CaptionML=[ENU=Posted Sales Invoices;
+                                 ENG=Posted Sales Invoices];
+                      ToolTipML=[ENU=View all posted sales invoices.;
+                                 ENG=View all posted sales invoices.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 143;
+                      Image=PostedOrder }
+      { 69      ;2   ;Action    ;
+                      CaptionML=[ENU=Posted Sales Credit Memos;
+                                 ENG=Posted Sales Credit Memos];
+                      ToolTipML=[ENU=View all posted sales credit memos.;
+                                 ENG=View all posted sales credit memos.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 144;
+                      Image=PostedOrder }
+      { 70      ;2   ;Action    ;
+                      CaptionML=[ENU=Posted Purchase Receipts;
+                                 ENG=Posted Purchase Receipts];
+                      ToolTipML=[ENU=View all purchase receipts.;
+                                 ENG=View all purchase receipts.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 145 }
+      { 71      ;2   ;Action    ;
+                      CaptionML=[ENU=Posted Purchase Invoices;
+                                 ENG=Posted Purchase Invoices];
+                      ToolTipML=[ENU=View all posted purchase invoices.;
+                                 ENG=View all posted purchase invoices.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 146 }
+      { 72      ;2   ;Action    ;
+                      CaptionML=[ENU=Posted Purchase Credit Memos;
+                                 ENG=Posted Purchase Credit Memos];
+                      ToolTipML=[ENU=View all posted purchase credit memos.;
+                                 ENG=View all posted purchase credit memos.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 147 }
+      { 73      ;2   ;Action    ;
+                      CaptionML=[ENU=G/L Registers;
+                                 ENG=G/L Registers];
+                      ToolTipML=[ENU=View all G/L registers.;
+                                 ENG=View all G/L registers.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 116;
+                      Image=GLRegisters }
+      { 74      ;2   ;Action    ;
+                      CaptionML=[ENU=Job Registers;
+                                 ENG=Job Registers];
+                      ToolTipML=[ENU=View all job registers.;
+                                 ENG=View all job registers.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 278;
+                      Image=JobRegisters }
+      { 75      ;2   ;Action    ;
+                      CaptionML=[ENU=Item Registers;
+                                 ENG=Item Registers];
+                      ToolTipML=[ENU=View all item registers.;
+                                 ENG=View all item registers.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 117;
+                      Image=ItemRegisters }
+      { 76      ;2   ;Action    ;
+                      CaptionML=[ENU=Resource Registers;
+                                 ENG=Resource Registers];
+                      ToolTipML=[ENU=View all resource registers.;
+                                 ENG=View all resource registers.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 274;
+                      Image=ResourceRegisters }
+      { 85      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Self-Service;
+                                 ENG=Self-Service];
+                      ToolTipML=[ENU=Manage your time sheets and assignments.;
+                                 ENG=Manage your time sheets and assignments.];
+                      Image=HumanResources }
+      { 82      ;2   ;Action    ;
+                      CaptionML=[ENU=Time Sheets;
+                                 ENG=Time Sheets];
+                      ToolTipML=[ENU=View all time sheets.;
+                                 ENG=View all time sheets.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 951;
+                      Gesture=None }
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 58      ;1   ;ActionGroup;
+                      Name=NewGroup;
+                      CaptionML=[ENU=New;
+                                 ENG=New];
+                      ActionContainerType=NewDocumentItems }
+      { 59      ;2   ;Action    ;
+                      Name=Page Job;
+                      CaptionML=[ENU=Job;
+                                 ENG=Job];
+                      ToolTipML=[ENU=Create a new job.;
+                                 ENG=Create a new job.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 1816;
+                      Promoted=Yes;
+                      Image=Job;
+                      PromotedCategory=New;
+                      RunPageMode=Create }
+      { 57      ;2   ;Action    ;
+                      CaptionML=[ENU=Job J&ournal;
+                                 ENG=Job J&ournal];
+                      ToolTipML=[ENU=Open the Edit Job Journal page.;
+                                 ENG=Open the Edit Job Journal page.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 201;
+                      Promoted=Yes;
+                      Image=JobJournal;
+                      PromotedCategory=New }
+      { 52      ;2   ;Action    ;
+                      CaptionML=[ENU=Job G/L &Journal;
+                                 ENG=Job G/L &Journal];
+                      ToolTipML=[ENU=Open the Edit Job G/L Journal page.;
+                                 ENG=Open the Edit Job G/L Journal page.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 1020;
+                      Promoted=Yes;
+                      Image=GLJournal;
+                      PromotedCategory=New }
+      { 51      ;2   ;Action    ;
+                      CaptionML=[ENU=R&esource Journal;
+                                 ENG=R&esource Journal];
+                      ToolTipML=[ENU=Open the Edit Resource Journal page.;
+                                 ENG=Open the Edit Resource Journal page.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 207;
+                      Promoted=Yes;
+                      Image=ResourceJournal;
+                      PromotedCategory=New }
+      { 48      ;2   ;Action    ;
+                      CaptionML=[ENU=Job &Create Sales Invoice;
+                                 ENG=Job &Create Sales Invoice];
+                      ToolTipML=[ENU=Run the Job Create Sales Invoice report.;
+                                 ENG=Run the Job Create Sales Invoice report.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Report 1093;
+                      Image=CreateJobSalesInvoice }
+      { 49      ;2   ;Action    ;
+                      CaptionML=[ENU=Update Job I&tem Cost;
+                                 ENG=Update Job I&tem Cost];
+                      ToolTipML=[ENU=Run Update Job Item Cost report.;
+                                 ENG=Run Update Job Item Cost report.];
+                      ApplicationArea=#Suite;
+                      RunObject=Report 1095;
+                      Image=Report }
+      { 50      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Reports;
+                                 ENG=Reports] }
+      { 30      ;2   ;ActionGroup;
+                      CaptionML=[ENU=Job Reports;
+                                 ENG=Job Reports];
+                      Image=ReferenceData }
+      { 29      ;3   ;Action    ;
+                      CaptionML=[ENU=Job &Analysis;
+                                 ENG=Job &Analysis];
+                      ToolTipML=[ENU=View the Job Analysis report.;
+                                 ENG=View the Job Analysis report.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Report 1008;
+                      Image=Report }
+      { 26      ;3   ;Action    ;
+                      CaptionML=[ENU=Job Actual To &Budget;
+                                 ENG=Job Actual To &Budget];
+                      ToolTipML=[ENU=View the Job Actual to Budget report.;
+                                 ENG=View the Job Actual to Budget report.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Report 1009;
+                      Image=Report }
+      { 25      ;3   ;Action    ;
+                      CaptionML=[ENU=Job - Pla&nning Line;
+                                 ENG=Job - Pla&nning Line];
+                      ToolTipML=[ENU=View the Job Planning Line report.;
+                                 ENG=View the Job Planning Line report.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Report 1006;
+                      Image=Report }
+      { 16      ;3   ;Separator  }
+      { 15      ;3   ;Action    ;
+                      CaptionML=[ENU=Job Su&ggested Billing;
+                                 ENG=Job Su&ggested Billing];
+                      ToolTipML=[ENU=View the Job Suggested Billing report.;
+                                 ENG=View the Job Suggested Billing report.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Report 1011;
+                      Image=Report }
+      { 14      ;3   ;Action    ;
+                      CaptionML=[ENU=Jobs per &Customer;
+                                 ENG=Jobs per &Customer];
+                      ToolTipML=[ENU=View the Jobs per Customer report.;
+                                 ENG=View the Jobs per Customer report.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Report 1012;
+                      Image=Report }
+      { 8       ;3   ;Action    ;
+                      CaptionML=[ENU=Items per &Job;
+                                 ENG=Items per &Job];
+                      ToolTipML=[ENU=View the Items per Job report.;
+                                 ENG=View the Items per Job report.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Report 1013;
+                      Image=Report }
+      { 6       ;3   ;Action    ;
+                      CaptionML=[ENU=Jobs per &Item;
+                                 ENG=Jobs per &Item];
+                      ToolTipML=[ENU=View the Jobs per Item report.;
+                                 ENG=View the Jobs per Item report.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Report 1014;
+                      Image=Report }
+      { 60      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Manage;
+                                 ENG=Manage] }
+      { 61      ;2   ;ActionGroup;
+                      Name=Timesheet;
+                      CaptionML=[ENU=Time Sheet;
+                                 ENG=Time Sheet];
+                      Image=Worksheets }
+      { 65      ;3   ;Action    ;
+                      Name=Create Time Sheets;
+                      CaptionML=[ENU=Create Time Sheets;
+                                 ENG=Create Time Sheets];
+                      ToolTipML=[ENU=Create new time sheets for selected resources.;
+                                 ENG=Create new time sheets for selected resources.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Report 950;
+                      Image=JobTimeSheet }
+      { 66      ;3   ;Action    ;
+                      Name=Manage Time Sheets;
+                      CaptionML=[ENU=Manager Time Sheets;
+                                 ENG=Manager Time Sheets];
+                      ToolTipML=[ENU=Open a list of time sheets by resource.;
+                                 ENG=Open a list of time sheets by resource.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 952;
+                      Image=JobTimeSheet }
+      { 1       ;3   ;Action    ;
+                      CaptionML=[ENU=Manager Time Sheet by Job;
+                                 ENG=Manager Time Sheet by Job];
+                      ToolTipML=[ENU=Open a list of time sheets by job.;
+                                 ENG=Open a list of time sheets by job.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Page 954;
+                      Image=JobTimeSheet }
+      { 5       ;3   ;Separator  }
+      { 7       ;3   ;Separator  }
+      { 63      ;2   ;ActionGroup;
+                      Name=WIP;
+                      CaptionML=[ENU=Job Closing;
+                                 ENG=Job Closing];
+                      Image=Job }
+      { 9       ;3   ;Action    ;
+                      CaptionML=[ENU=Job Calculate &WIP;
+                                 ENG=Job Calculate &WIP];
+                      ToolTipML=[ENU=Calculate the general ledger entries needed to update or close the job.;
+                                 ENG=Calculate the general ledger entries needed to update or close the job.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Report 1086;
+                      Image=CalculateWIP }
+      { 10      ;3   ;Action    ;
+                      CaptionML=[ENU=Jo&b Post WIP to G/L;
+                                 ENG=Jo&b Post WIP to G/L];
+                      ToolTipML=[ENU=Post to the general ledger the entries calculated for your jobs.;
+                                 ENG=Post to the general ledger the entries calculated for your jobs.];
+                      ApplicationArea=#Jobs;
+                      RunObject=Report 1085;
+                      Image=PostOrder }
+      { 27      ;3   ;Action    ;
+                      CaptionML=[ENU=Job WIP;
+                                 ENG=Job WIP];
+                      ToolTipML=[ENU=Overview of Job WIP;
+                                 ENG=Overview of Job WIP];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 1027;
+                      Image=WIP }
+      { 64      ;1   ;ActionGroup;
+                      CaptionML=[ENU=History;
+                                 ENG=History] }
+      { 24      ;2   ;Action    ;
+                      CaptionML=[ENU=Navi&gate;
+                                 ENG=Navi&gate];
+                      ToolTipML=[ENU=Open the Navigate page.;
+                                 ENG=Open the Navigate page.];
+                      ApplicationArea=#Suite;
+                      RunObject=Page 344;
+                      Image=Navigate }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000008;0;Container;
+                ContainerType=RoleCenterArea }
+
+    { 1900724808;1;Group   }
+
+    { 33  ;2   ;Part      ;
+                ApplicationArea=#Jobs;
+                PagePartID=Page9068;
+                PartType=Page }
+
+    { 77  ;2   ;Part      ;
+                ApplicationArea=#Suite;
+                PagePartID=Page9042;
+                PartType=Page }
+
+    { 34  ;2   ;Part      ;
+                ApplicationArea=#Jobs;
+                PagePartID=Page9154;
+                PartType=Page }
+
+    { 56  ;2   ;Part      ;
+                Name=Job Actual Price to Budget Price;
+                CaptionML=[ENU=Job Actual Price to Budget Price;
+                           ENG=Job Actual Price to Budget Price];
+                ApplicationArea=#Jobs;
+                PagePartID=Page731;
+                PartType=Page }
+
+    { 1900724708;1;Group   }
+
+    { 32  ;2   ;Part      ;
+                Name=Job Profitability;
+                CaptionML=[ENU=Job Profitability;
+                           ENG=Job Profitability];
+                ApplicationArea=#Jobs;
+                PagePartID=Page759;
+                PartType=Page }
+
+    { 28  ;2   ;Part      ;
+                Name=Job Actual Cost to Budget Cost;
+                CaptionML=[ENU=Job Actual Cost to Budget Cost;
+                           ENG=Job Actual Cost to Budget Cost];
+                ApplicationArea=#Jobs;
+                PagePartID=Page730;
+                PartType=Page }
+
+    { 1907692008;2;Part   ;
+                PagePartID=Page9150;
+                Visible=false;
+                Enabled=false;
+                Editable=false;
+                PartType=Page }
+
+    { 21  ;2   ;Part      ;
+                PagePartID=Page675;
+                Visible=false;
+                PartType=Page }
+
+    { 1903012608;2;Part   ;
+                PagePartID=Page9175;
+                Visible=false;
+                PartType=Page }
+
+    { 31  ;2   ;Part      ;
+                PagePartID=Page681;
+                Visible=FALSE;
+                PartType=Page }
+
+    { 1901377608;2;Part   ;
+                Visible=False;
+                PartType=System;
+                SystemPartID=MyNotes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

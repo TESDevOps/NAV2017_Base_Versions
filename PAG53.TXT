@@ -1,0 +1,245 @@
+OBJECT Page 53 Purchase List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=28/04/17;
+    Time=12:00:00;
+    Version List=NAVW110.00.00.16585;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Purchase List;
+               ENG=Purchase List];
+    SourceTable=Table38;
+    DataCaptionFields=Document Type;
+    PageType=List;
+    OnOpenPage=BEGIN
+                 CopyBuyFromVendorFilter;
+               END;
+
+    OnAfterGetCurrRecord=BEGIN
+                           CurrPage.IncomingDocAttachFactBox.PAGE.LoadDataFromRecord(Rec);
+                         END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000003;0 ;ActionContainer;
+                      ActionContainerType=RelatedInformation }
+      { 19      ;1   ;ActionGroup;
+                      CaptionML=[ENU=&Line;
+                                 ENG=&Line];
+                      Image=Line }
+      { 25      ;2   ;Action    ;
+                      ShortCutKey=Shift+F7;
+                      CaptionML=[ENU=Card;
+                                 ENG=Card];
+                      ToolTipML=[ENU=View or change detailed information about the vendor.;
+                                 ENG=View or change detailed information about the vendor.];
+                      ApplicationArea=#Basic,#Suite;
+                      Image=EditLines;
+                      OnAction=VAR
+                                 PageManagement@1000 : Codeunit 700;
+                               BEGIN
+                                 PageManagement.PageRun(Rec);
+                               END;
+                                }
+      { 1900000006;0 ;ActionContainer;
+                      ActionContainerType=Reports }
+      { 1905111706;1 ;Action    ;
+                      CaptionML=[ENU=Purchase Reservation Avail.;
+                                 ENG=Purchase Reservation Avail.];
+                      ToolTipML=[ENU=Print, view, or save a list of the availability of items for shipment on purchase documents, for example credit memos.;
+                                 ENG=Print, view, or save a list of the availability of items for shipment on purchase documents, for example credit memos.];
+                      RunObject=Report 409;
+                      Promoted=No;
+                      Image=Report;
+                      PromotedCategory=Report }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the purchase document.;
+                           ENG=Specifies the number of the purchase document.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="No." }
+
+    { 4   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the number of the vendor that you buy from.;
+                           ENG=Specifies the number of the vendor that you buy from.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Buy-from Vendor No." }
+
+    { 13  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the order address code linked to the relevant vendor's order address.;
+                           ENG=Specifies the order address code linked to the relevant vendor's order address.];
+                SourceExpr="Order Address Code";
+                Visible=FALSE }
+
+    { 6   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the vendor who delivers the items.;
+                           ENG=Specifies the name of the vendor who delivers the items.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Buy-from Vendor Name" }
+
+    { 15  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the identification number of a compensation agreement.;
+                           ENG=Specifies the identification number of a compensation agreement.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Vendor Authorization No." }
+
+    { 27  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code of the address.;
+                           ENG=Specifies the postcode of the address.];
+                SourceExpr="Buy-from Post Code";
+                Visible=FALSE }
+
+    { 23  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the country/region code of the address.;
+                           ENG=Specifies the country/region code of the address.];
+                SourceExpr="Buy-from Country/Region Code";
+                Visible=FALSE }
+
+    { 35  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the person to contact about shipment of the item from this vendor.;
+                           ENG=Specifies the name of the person to contact about shipment of the item from this vendor.];
+                SourceExpr="Buy-from Contact";
+                Visible=FALSE }
+
+    { 163 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the vendor who is sending the invoice.;
+                           ENG=Specifies the vendor who is sending the invoice.];
+                SourceExpr="Pay-to Vendor No.";
+                Visible=FALSE }
+
+    { 161 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the vendor sending the invoice.;
+                           ENG=Specifies the name of the vendor sending the invoice.];
+                SourceExpr="Pay-to Name";
+                Visible=FALSE }
+
+    { 33  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code of the address.;
+                           ENG=Specifies the postcode of the address.];
+                SourceExpr="Pay-to Post Code";
+                Visible=FALSE }
+
+    { 29  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the country/region code of the address.;
+                           ENG=Specifies the country/region code of the address.];
+                SourceExpr="Pay-to Country/Region Code";
+                Visible=FALSE }
+
+    { 151 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the person to contact about an invoice from this vendor.;
+                           ENG=Specifies the name of the person to contact about an invoice from this vendor.];
+                SourceExpr="Pay-to Contact";
+                Visible=FALSE }
+
+    { 147 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a ship-to code if you want a different shipment address from the one that has been automatically entered.;
+                           ENG=Specifies a ship-to code if you want a different shipment address from the one that has been automatically entered.];
+                SourceExpr="Ship-to Code";
+                Visible=FALSE }
+
+    { 145 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of the company at the address to which you want the items to be shipped.;
+                           ENG=Specifies the name of the company at the address to which you want the items to be shipped.];
+                SourceExpr="Ship-to Name";
+                Visible=FALSE }
+
+    { 21  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the postal code of the address.;
+                           ENG=Specifies the postcode of the address.];
+                SourceExpr="Ship-to Post Code";
+                Visible=FALSE }
+
+    { 17  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the country/region code of the address.;
+                           ENG=Specifies the country/region code of the address.];
+                SourceExpr="Ship-to Country/Region Code";
+                Visible=FALSE }
+
+    { 135 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the name of a contact person for the address where the items should be shipped.;
+                           ENG=Specifies the name of a contact person for the address where the items should be shipped.];
+                SourceExpr="Ship-to Contact";
+                Visible=FALSE }
+
+    { 131 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the date when the posting of the purchase document will be recorded.;
+                           ENG=Specifies the date when the posting of the purchase document will be recorded.];
+                SourceExpr="Posting Date";
+                Visible=FALSE }
+
+    { 113 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code associated with the purchase header.;
+                           ENG=Specifies the dimension value code associated with the purchase header.];
+                SourceExpr="Shortcut Dimension 1 Code";
+                Visible=FALSE }
+
+    { 111 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the dimension value code associated with the purchase header.;
+                           ENG=Specifies the dimension value code associated with the purchase header.];
+                SourceExpr="Shortcut Dimension 2 Code";
+                Visible=FALSE }
+
+    { 115 ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies a code for the location where you want the items to be placed when they are received.;
+                           ENG=Specifies a code for the location where you want the items to be placed when they are received.];
+                SourceExpr="Location Code" }
+
+    { 99  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies which purchaser is assigned to the vendor.;
+                           ENG=Specifies which purchaser is assigned to the vendor.];
+                SourceExpr="Purchaser Code";
+                Visible=FALSE }
+
+    { 31  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the ID of the user who is responsible for the document.;
+                           ENG=Specifies the ID of the user who is responsible for the document.];
+                ApplicationArea=#Basic,#Suite;
+                SourceExpr="Assigned User ID" }
+
+    { 11  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the code of the currency of the amounts on the purchase lines.;
+                           ENG=Specifies the code of the currency of the amounts on the purchase lines.];
+                SourceExpr="Currency Code";
+                Visible=FALSE }
+
+    { 1900000007;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 7   ;1   ;Part      ;
+                Name=IncomingDocAttachFactBox;
+                ApplicationArea=#Basic,#Suite;
+                PagePartID=Page193;
+                PartType=Page;
+                ShowFilter=No }
+
+    { 1900383207;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1905767507;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+
